@@ -9,6 +9,10 @@ dotenv.config();
 
 // lancement du serveur
 server.use(express.json());
+server.use("/", () => {
+    console.log("Accueil")
+});
+
 server.listen(process.env.PORT_SERVER, () => {
     console.log(`Server is listening port ${process.env.PORT_SERVER}`);
 });
