@@ -1,18 +1,46 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <GraphBarComponent :donnees="value" :filter="true" />
+    <!--
+      :label_abscisse="Caractéristiques individuelles"
+      :label_ordonnee="Temps de réaction "
+      :titre=" Graphique " -->
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
+
+import GraphBarComponent from '@/components/GraphBarComponent.vue'
 
 export default {
   name: 'HomeView',
   components: {
-    HelloWorld
-  }
+    GraphBarComponent
+  },
+  data: () => ({
+    value: {
+      labels: [
+        'January',
+        'February',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December'
+      ],
+      datasets: [
+        {
+          label: 'Data One',
+          backgroundColor: '#f87979',
+          data: [40, 20, 12, 39, 10, 40, 39, 80, 40, 20, 12, 11]
+        }
+      ]
+    }
+  })
 }
 </script>
