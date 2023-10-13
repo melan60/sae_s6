@@ -6,7 +6,6 @@
 </template>
 
 
-
 <script>
 import { Chart, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js'
 import { Line } from 'vue-chartjs'
