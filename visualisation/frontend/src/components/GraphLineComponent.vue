@@ -1,9 +1,10 @@
 <template>
     <div style="height: 400px;">
         <FilterComponent :stimulis="stimulis" />
-        <Line :data="data" :options="options" />
+        <GraphLine :data="data" :options="options" /> <!-- Use the correct component name -->
     </div>
 </template>
+
 
 
 <script>
@@ -17,7 +18,7 @@ export default {
     name: 'GraphLineComponent',
     components: {
         FilterComponent,
-        Line
+        GraphLine: Line,
     },
     props: {
         data: Object,
