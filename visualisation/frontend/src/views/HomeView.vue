@@ -1,24 +1,42 @@
 <template>
-  <div class="home">
-    <GraphBarComponent :donnees="value" :filter="true" />
-    <!--
-      :label_abscisse="Caractéristiques individuelles"
-      :label_ordonnee="Temps de réaction "
-      :titre=" Graphique " -->
+  <div>
+
+    <div class="container-graph">
+      <GraphBarComponent :data="value" :options="options" class="graphique" />
+      <GraphBarComponent :data="value" :options="options" class="graphique" />
+    </div>
+
+    <div class="container-graph">
+      <GraphLineComponent :data="chartData" :options="options" class="graphique" />
+      <GraphLineComponent :data="chartData" :options="options" class="graphique" />
+    </div>
+
   </div>
 </template>
 
-<script>
 
+<script>
 import GraphBarComponent from '@/components/GraphBarComponent.vue'
+import GraphLineComponent from '@/components/GraphLineComponent.vue'
 
 export default {
   name: 'HomeView',
   components: {
-    GraphBarComponent
+    GraphBarComponent,
+    GraphLineComponent
   },
   data: () => ({
     value: {
+      labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+      datasets: [
+        {
+          label: 'Data One',
+          backgroundColor: '#f87979',
+          data: [40, 39, 10, 40, 39, 80, 40]
+        }
+      ]
+    },
+    chartData: {
       labels: [
         'January',
         'February',
@@ -26,21 +44,31 @@ export default {
         'April',
         'May',
         'June',
-        'July',
-        'August',
-        'September',
-        'October',
-        'November',
-        'December'
+        'July'
       ],
       datasets: [
         {
           label: 'Data One',
           backgroundColor: '#f87979',
-          data: [40, 20, 12, 39, 10, 40, 39, 80, 40, 20, 12, 11]
+          data: [40, 39, 10, 40, 39, 80, 40]
         }
       ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false
     }
   })
 }
 </script>
+
+
+<style scoped>
+.container-graph {
+  display: flex;
+  flex-wrap: wrap;
+}
+.graphique {
+  width: 50%;
+}
+</style>
