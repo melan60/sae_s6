@@ -7,7 +7,7 @@
     </div>
 
     <div class="container-graph">
-      <GraphLineComponent :data="chartData" :options="options" class="graphique" />
+      <GraphLineComponent :data="value" :options="options" class="graphique" />
       <GraphLineComponent :data="chartData" :options="options" class="graphique" />
     </div>
 
@@ -37,20 +37,63 @@ export default {
       ]
     },
     chartData: {
-      labels: [
-        'January',
-        'February',
-        'March',
-        'April',
-        'May',
-        'June',
-        'July'
-      ],
+      labels: ['January', 'February', 'March', 'April', 'May'],
       datasets: [
         {
-          label: 'Data One',
+          label: 'Scatter Dataset 1',
+          fill: false,
+          borderColor: '#f87979',
           backgroundColor: '#f87979',
-          data: [40, 39, 10, 40, 39, 80, 40]
+          data: [
+            {
+              x: -2,
+              y: 4
+            },
+            {
+              x: -1,
+              y: 1
+            },
+            {
+              x: 0,
+              y: 0
+            },
+            {
+              x: 1,
+              y: 1
+            },
+            {
+              x: 2,
+              y: 4
+            }
+          ]
+        },
+        {
+          label: 'Scatter Dataset 2',
+          fill: false,
+          borderColor: '#7acbf9',
+          backgroundColor: '#7acbf9',
+          data: [
+            {
+              x: -2,
+              y: -4
+            },
+            {
+              x: -1,
+              y: -1
+            },
+            {
+              x: 0,
+              y: 1
+            },
+            {
+              x: 1,
+              y: -1
+            },
+            {
+              x: 2,
+              y: -4
+            }
+          ]
         }
       ]
     },
@@ -68,6 +111,7 @@ export default {
   display: flex;
   flex-wrap: wrap;
 }
+
 .graphique {
   width: 50%;
 }
