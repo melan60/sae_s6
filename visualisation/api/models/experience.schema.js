@@ -4,6 +4,10 @@ const Config = require("../config");
 
 let ExperienceSchema = new Schema(
   {
+    id_exp: {
+      type: Number,
+      required: true
+    },
     name: {
       type: String,
       required: true,

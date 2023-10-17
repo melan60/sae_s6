@@ -5,6 +5,10 @@ const ResultSchema = require("./result.schema");
 
 let UserSchema = new Schema(
   {
+    id_user: {
+      type: Number,
+      required: true
+    },
     name: {
       type: String,
       required: true,
