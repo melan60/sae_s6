@@ -1,16 +1,26 @@
 <template>
   <div id="app">
-    <nav>
-      <router-link to="/">Accueil</router-link>
-      <router-link to="/login">Login</router-link>
-    </nav>
+    <navbar-layout/>
     <router-view/>
   </div>
 </template>
 
+<script>
+import navbarLayout from "@/views/layout/navbarLayout.vue";
+
+export default {
+  name: "app",
+  components: {
+    'navbar-layout': navbarLayout,
+  }
+}
+</script>
+
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Nunito&family=Work+Sans&display=swap');
+
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Montserrat', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
