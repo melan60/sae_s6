@@ -9,15 +9,11 @@ let ResultSchema = new Schema(
       ref: "Experience",
     },
     reactTime: {
-      type: Date("HH:mm:ss"), // TODO
+      type: Date, // TODO
       required: false,
     },
     execTime: {
-      type: Date("HH:mm:ss"),
-      required: true,
-    },
-    date: {
-      type: Date("YYYY-MM-DD"),
+      type: Date,
       required: true,
     },
   },
