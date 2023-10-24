@@ -1,6 +1,6 @@
 const User = require("./models/user.model");
 //const Module = require('./models/module.model');
-//const Chipset = require('./models/chipset.model')
+//const Chipset = require('./models/chipset.model');
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const SALT_WORK_FACTOR = 10;
@@ -80,10 +80,10 @@ const SALT_WORK_FACTOR = 10;
 // }
 
 async function initUsers() {
-  let dev_db_url = "mongodb://localhost/saeS5";
-  mongoose.connect(dev_db_url);
+  let dev_db_url = "mongodb://127.0.0.1:27017/saeS5";
   let user = null;
   try {
+    await mongoose.connect(dev_db_url);
     user = await User.findOne({ name: "nom" }).exec();
     console.log(user);
     if (user === null) {

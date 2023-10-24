@@ -4,7 +4,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /users:
+ * /graphs/users:
  *   get:
  *      description: Get results for one people
  *      tags:
@@ -12,7 +12,7 @@ const router = express.Router();
  *      parameters:
  *          - in: query
  *            name: id_user
- *            type: integer
+ *            type: string
  *            required: true
  *            description: ID of the user
  *      responses:

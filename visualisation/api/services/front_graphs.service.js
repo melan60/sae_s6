@@ -2,11 +2,26 @@
 // const mongoose = require("mongoose");
 const { User } = require('../models/index.models');
 
-const getIndividualData = async (id_user) => {
-    User.findOne({ key: id_user })
+const getIndividualData = async (id_user, callback) => {
+    User.findOne({ _id: id_user })
         .exec()
-        .then(res => callback(null, res))
-        .catch(e => callback(e)); // TODO message err ou juste e
+        .then(user => {
+            let resultat = {
+                "nom": user.name,
+                "prenom": user.firstName,
+                "results": user.results.map((exp, index) => {
+                    return {
+                        num_exp: index + 1,
+                        reactTime: exp.reactTime,
+                        execTime: exp.execTime
+                    }
+                })
+            }
+            callback(null, resultat)
+        })
+        .catch(e => {
+            callback(e)
+        }); // TODO message err ou juste e
 }
 
 // const getReactAndExecTime = () => {
@@ -72,7 +87,7 @@ const getIndividualData = async (id_user) => {
 //     return callback(null, resultReact);
 // };
 
-const getReactAndExecTime = async (req, res) => {
+const getReactAndExecTime = async (req, res, callback) => {
     const resultsAge = {
         labels: ["Enfants", "Adolescent", "Adulte", "Personnes Agées"],
         data: [0, 0, 0, 0]
