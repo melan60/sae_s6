@@ -1,102 +1,116 @@
-const User = require("./models/user.model");
-//const Module = require('./models/module.model');
-//const Chipset = require('./models/chipset.model')
+const { User, Experience, Result, Module } = require("./models/index.models");
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const SALT_WORK_FACTOR = 10;
 
-// two chipsets are initialized
-// let lm35 = null;
-// let bme280 = null;
+async function initModules() {
+  let module = null;
+  try {
+    module = await Module.findOne({ name: "module1" }).exec();
+    if (module === null) {
+      module = new Module({
+        name: "module1",
+        uc: "esp32",
+        description: "led + buttons + motion sensor",
+      });
+      module = await module.save();
+      console.log("added module Module");
+    }
+  } catch (err) {
+    console.log("cannot add module Module");
+  }
+}
 
-// async function initChipsets() {
-//   try {
-//     lm35 = await Chipset.findOne({name: 'lm35'}).exec()
-//     if (lm35 === null) {
-//       lm35 = new Chipset({
-//         name: "lm35",
-//         description: "temperature sensor",
-//         links: ["https://arduino-france.site/capteur-lm35/"],
-//         caps: ["temperature"],
-//       })
-//       lm35 = await lm35.save()
-//       console.log("added lm35 chipset");
-//     }
-//   } catch (err) {
-//     console.log("cannot add lm35 chipset")
-//   }
-//   try {
-//     bme280 = await Chipset.findOne({name: 'bme280'}).exec()
-//     if (bme280 === null) {
-//       bme280 = new Chipset({
-//         name: "bme280",
-//         description: "temperature/humidity/pressure sensor",
-//         links: ["https://passionelectronique.fr/tutorial-bme280/"],
-//         caps: ["temperature", "humidity", "pressure"],
-//       })
-//       bme280 = await bme280.save()
-//       console.log("added bme280 chipset");
-//     }
-//   } catch (err) {
-//     console.log("cannot add bme280 chipset")
-//   }
-// }
+async function initResults() {
+  let result1 = null;
+  let result2 = null;
+  try {
+    // result1 = await Result.findOne({ name: "result1" }).exec();
+    // if (result1 === null) {
+    result1 = new Result({
+      experience: "Experience 1",
+      reactTime: "2020-05-18T14:10:30Z",
+      execTime: "2020-05-18T14:10:32Z",
+    });
+    result1 = await result1.save();
+    console.log("added result1 Result");
+    // }
+  } catch (err) {
+    console.log("cannot add result1 Result");
+  }
+  try {
+    // result2 = await Result.findOne({ name: "result2" }).exec();
+    // if (result2 === null) {
+    result2 = new Result({
+      experience: "Experience 2",
+      reactTime: "2020-05-18T14:10:30Z",
+      execTime: "2020-05-18T14:10:32Z",
+    });
+    result2 = await result2.save();
+    console.log("added result2 Result");
+    // }
+  } catch (err) {
+    console.log("cannot add result2 Result");
+  }
+}
 
-// async function initModules() {
-//   let mod1 = null;
-//   let mod2 = null;
-//   try {
-//     mod1 = await Module.findOne({name: 'module 1'}).exec()
-//     if (mod1 === null) {
-//       mod1 = new Module({
-//         name: "module 1",
-//         shortName: "mod1",
-//         key: "58ae1d8f-027b-4061-a4c7-b37c3f8ed54e",
-//         uc: "esp32",
-//         chipsets: [ lm35._id, bme280._id],
-//       })
-//       mod1 = await mod1.save()
-//       console.log("added module 1");
-//     }
-//   } catch (err) {
-//     console.log("cannot add module 1")
-//   }
-//   try {
-//     mod2 = await Module.findOne({name: 'module 2'}).exec()
-//     if (mod2 === null) {
-//       mod2 = new Module({
-//         name: "module 2",
-//         shortName: "mod2",
-//         key: "2e46990d-3e85-45f8-82c8-f05eec1a1212",
-//         uc: "esp8266",
-//         chipsets: [ bme280._id],
-//       })
-//       mod2 = await mod2.save()
-//       console.log("added module 2");
-//     }
-//   } catch (err) {
-//     console.log("cannot add module 2")
-//   }
-// }
+async function initExperiences() {
+  let exp1 = null;
+  let exp2 = null;
+  try {
+    console.log("init experiences");
+    exp1 = await Experience.findOne({ name: "Experience 1" }).exec();
+    if (exp1 === null) {
+      exp1 = new Experience({
+        name: "Experience 1",
+        typeStimulus: "visuel",
+        // distraction: "58ae1d8f-027b-4061-a4c7-b37c3f8ed54e",
+        // modules: "esp32",
+      });
+      exp1 = await exp1.save();
+      console.log("added experience 1");
+    }
+  } catch (err) {
+    console.log("cannot add experience 1");
+  }
+  try {
+    exp2 = await Experience.findOne({ name: "Experience 2" }).exec();
+    if (exp2 === null) {
+      exp2 = new Experience({
+        name: "Experience 2",
+        typeStimulus: "visuel",
+        distraction: "bruit",
+        // modules: "esp32",
+      });
+      exp2 = await exp2.save();
+      console.log("added experience 2");
+    }
+  } catch (err) {
+    console.log("cannot add experience 2");
+  }
+}
 
 async function initUsers() {
-  let dev_db_url = "mongodb://localhost/saeS5";
-  mongoose.connect(dev_db_url);
   let user = null;
   try {
-    user = await User.findOne({ name: "nom" }).exec();
+    user = await User.findOne({ name: "Johnson" }).exec();
     console.log(user);
     if (user === null) {
       const salt = bcrypt.genSaltSync(SALT_WORK_FACTOR);
-      const password = bcrypt.hashSync("nom", salt);
+      const password = bcrypt.hashSync("Johnson", salt);
+      let res = await Result.findOne({
+        experience: "457870657269656e63652031",
+      }).exec();
+      console.log(res);
       user = new User({
-        name: "nom",
-        firstName: "prénom",
+        name: "Johnson",
+        firstName: "Emily",
         password: password,
-        email: "test@gmail.com",
-        age: 100,
+        email: "johnEmily@gmail.com",
+        age: 25,
         gender: "Féminin",
         typeUser: ["cobaye"],
+        results: [res],
       });
       console.log(user);
       user = await user.save();
@@ -110,19 +124,19 @@ async function initUsers() {
   }
 
   try {
-    user = await User.findOne({ name: "nom" }).exec();
+    user = await User.findOne({ name: "Patel" }).exec();
     console.log(user);
     if (user === null) {
       const salt = bcrypt.genSaltSync(SALT_WORK_FACTOR);
-      const password = bcrypt.hashSync("nom", salt);
+      const password = bcrypt.hashSync("Patel", salt);
       user = new User({
-        name: "nom",
-        firstName: "prénom",
-        password: "00000000",
-        email: "test@gmail.com",
-        age: 100,
-        gender: "Féminin",
-        typeUser: ["cobaye"],
+        name: "Patel",
+        firstName: "Aiden",
+        password: password,
+        email: "patelaiden@gmail.com",
+        age: 31,
+        gender: "Masculin",
+        typeUser: ["admin"],
       });
       console.log(user);
       user = await user.save();
@@ -134,29 +148,14 @@ async function initUsers() {
     console.log("cannot add user");
     console.log(err);
   }
-  // let test = null
-  // try {
-  //   test = await User.findOne({login: 'test'}).exec()
-  //   if (test === null) {
-  //     const salt = bcrypt.genSaltSync(SALT_WORK_FACTOR);
-  //     const password = bcrypt.hashSync('azer', salt);
-  //     test = new User({
-  //       login: "test",
-  //       password: password,
-  //       email: "sdomas@univ-fcomte.fr",
-  //       rights: ['basic'],
-  //     })
-  //     test = await test.save()
-  //     console.log("added test");
-  //   }
-  // } catch (err) {
-  //   console.log("cannot add test")
-  // }
 }
 
 async function initBdD() {
-  // await initChipsets()
-  // await initModules()
+  let dev_db_url = "mongodb://localhost/saeS5";
+  await mongoose.connect(dev_db_url);
+  await initExperiences();
+  await initModules();
+  await initResults();
   await initUsers();
 }
 
