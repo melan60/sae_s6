@@ -1,0 +1,51 @@
+.color {
+    color1: #7fdbe8;
+    color2: #35a9a0;
+    color3: #294f40;
+    color4: #62e07f;
+    color5: #2c3e50;
+    color6: #6bc2e0;
+    color7: #308bf4;
+}
+
+.nav-item {
+    color: black;
+}
+
+.nav-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    transition: background-color 0.3s ease;
+    display: block;
+    margin-top: 0;
+    width: auto;
+    height: auto;
+    white-space: nowrap;
+}
+
+.dropdown-item{
+    white-space: nowrap;
+    width: auto;
+    height: auto;
+    border-radius: 8px;
+    display:block;
+}
+
+.removePadding > a{
+    padding: 4px 8px !important;
+}
+
+.rounded {
+    animation: 8s infinite alternate rotate;
+}
+
+
+.ConnectLabel > legend {
+    font-family: 'Montserrat', sans-serif;
+    letter-spacing:1px;
+    color: #495388;
+}
+
+.navbar-collapse{
+    text-indent: 0 !important;
+}

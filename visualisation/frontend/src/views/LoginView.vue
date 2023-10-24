@@ -1,53 +1,196 @@
 <template>
-<b-container fluid style="border-radius: 20px;
-        margin-right: 200px;
-        margin-left: 200px;
-        background-color: white;
-         ">
-  <b-row align-h="center">
-    Se connecter
-  </b-row>
-<!--  submit & reset -->
-  <b-form>
-    <b-form-group label="Email">
-      <b-form-input
-          id="input-1"
-          v-model="form.email"
-          type="email"
-          placeholder="Saisir email"
-          required
-      ></b-form-input>
-    </b-form-group>
+  <div class="app-container">
+    <div id="bg-wrap">
+      <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice">
+        <defs>
+          <radialGradient id="Gradient1" cx="50%" cy="50%" fx="0.441602%" fy="50%" r=".5">
+            <animate attributeName="fx" dur="34s" values="0%;3%;0%" repeatCount="indefinite"></animate>
+            <stop offset="0%" stop-color="rgba(127, 219, 232, 0.2)"></stop>
+            <stop offset="100%" stop-color="rgba(255, 255, 255, 0)"></stop>
+          </radialGradient>
 
-    <b-form-group label="Password">
-      <b-form-input
-          id="input-1"
-          v-model="form.password"
-          type="password"
-          placeholder="Saisir mot de passe"
-          required
-      ></b-form-input>
-    </b-form-group>
-    <b-button type="submit" variant="primary">Submit</b-button>
-    <b-button type="reset" variant="danger">Reset</b-button>
-  </b-form>
-</b-container>
+          <radialGradient id="Gradient2" cx="50%" cy="50%" fx="2.68147%" fy="50%" r=".5">
+            <animate attributeName="fx" dur="23.5s" values="0%;3%;0%" repeatCount="indefinite"></animate>
+            <stop offset="0%" stop-color="rgba(53, 169, 160, 0.2)"></stop>
+            <stop offset="100%" stop-color="rgba(255, 255, 255, 0)"></stop>
+          </radialGradient>
+
+          <radialGradient id="Gradient3" cx="50%" cy="50%" fx="0.836536%" fy="50%" r=".5">
+            <animate attributeName="fx" dur="21.5s" values="0%;3%;0%" repeatCount="indefinite"></animate>
+            <stop offset="0%" stop-color="rgb(48, 139, 244, 0.2)"></stop>
+            <stop offset="100%" stop-color="rgba(255, 255, 255, 0)"></stop>
+          </radialGradient>
+
+          <radialGradient id="Gradient4" cx="50%" cy="50%" fx="4.56417%" fy="50%" r=".5">
+            <animate attributeName="fx" dur="23s" values="0%;5%;0%" repeatCount="indefinite"></animate>
+            <stop offset="0%" stop-color="rgba(98, 224, 127, 0.2)"></stop>
+            <stop offset="100%" stop-color="rgba(255, 255, 255, 0)"></stop>
+          </radialGradient>
+
+          <radialGradient id="Gradient5" cx="50%" cy="50%" fx="2.65405%" fy="50%" r=".5">
+            <animate attributeName="fx" dur="24.5s" values="0%;5%;0%" repeatCount="indefinite"></animate>
+            <stop offset="0%" stop-color="rgb(54, 163, 149,0.2)"></stop>
+            <stop offset="100%" stop-color="rgba(255, 255, 255, 0)"></stop>
+          </radialGradient>
+        </defs>
+
+        <rect x="13.744%" y="1.18473%" width="100%" height="100%" fill="url(#Gradient1)"
+              transform="rotate(334.41 50 50)">
+          <animate attributeName="x" dur="20s" values="25%;0%;25%" repeatCount="indefinite"></animate>
+          <animate attributeName="y" dur="21s" values="0%;25%;0%" repeatCount="indefinite"></animate>
+          <animateTransform attributeName="transform" type="rotate" from="0 50 50" to="360 50 50" dur="7s"
+                            repeatCount="indefinite"></animateTransform>
+        </rect>
+        <rect x="-2.17916%" y="35.4267%" width="100%" height="100%" fill="url(#Gradient2)"
+              transform="rotate(255.072 50 50)">
+          <animate attributeName="x" dur="23s" values="-25%;0%;-25%" repeatCount="indefinite"></animate>
+          <animate attributeName="y" dur="24s" values="0%;50%;0%" repeatCount="indefinite"></animate>
+          <animateTransform attributeName="transform" type="rotate" from="0 50 50" to="360 50 50" dur="12s"
+                            repeatCount="indefinite"></animateTransform>
+        </rect>
+        <rect x="9.00483%" y="14.5733%" width="100%" height="100%" fill="url(#Gradient3)"
+              transform="rotate(139.903 50 50)">
+          <animate attributeName="x" dur="25s" values="0%;25%;0%" repeatCount="indefinite"></animate>
+          <animate attributeName="y" dur="12s" values="0%;25%;0%" repeatCount="indefinite"></animate>
+          <animateTransform attributeName="transform" type="rotate" from="360 50 50" to="0 50 50" dur="9s"
+                            repeatCount="indefinite"></animateTransform>
+        </rect>
+      </svg>
+    </div>
+
+    <div class="container">
+      <div class="justify-content-center"><h1 class="card-title text-center p-3" >LOGIN</h1></div>
+      <div class="d-flex justify-content-center align-items-center">
+        <div class="col-md-4">
+          <div class="card" :class="{ 'animate-on-load': animateCard }">
+            <div class="card-body">
+              <form @submit.prevent="handleLogin">
+                <div class="form-group p-1">
+                  <label class="justify-content-center label" for="email">Email</label>
+                  <input type="email" class="form-control" id="email" placeholder="Entrez votre email" v-model="email" required>
+                </div>
+                <div class="form-group">
+                  <label class="justify-content-center label" for="password">Password</label>
+                  <input type="password" class="form-control" id="password" placeholder="Entrez votre mot de passe" v-model="password" required>
+                </div>
+                <button type="submit" class="btn btn-block button">SE CONNECTER</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
+
 export default {
   name: "LoginView",
-  data(){
-    return{
-      form: {
-        email: null,
-        password: null
-      }
+  data() {
+    return {
+      email: '',
+      password: '',
+      animateCard: false,
+
+    };
+  },
+  methods: {
+    handleLogin() {
+      console.log('Email:', this.email, 'Password:', this.password);
     }
-  }
+  },
+  mounted() {
+    this.animateCard = true;
+  },
 }
 </script>
 
-<style scoped>
+<style>
+@import '../../public/css/login.css';
+
+.card {
+  float: none;
+  margin: 0 auto 10px;
+  background-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 4px 8px rgb(37, 53, 89, 0.5), 0 6px 20px rgb(37, 53, 89,0.07);
+
+}
+
+.container {
+  width: auto;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%)
+}
+
+.label {
+  padding-bottom: 15px;
+  padding-top: 10px;
+}
+
+.button {
+  border: 0 !important;
+  background-color: #35a9a0 !important;
+}
+
+.button:hover {
+  background-color: #2c3e50 !important;
+  color: white !important;
+  transition: background-color 0.3s ease;
+
+}
+
+.form-group {
+  padding-bottom: 15px;
+}
+
+@keyframes zoomOutWithBlur {
+  from {
+    transform: scale(1.1);
+    filter: blur(5px); /* Start with 5px of blur.*/
+  }
+  to {
+    transform: scale(1);
+    filter: blur(0px); /* End with no blur. */
+  }
+}
+
+
+.card.animate-on-load {
+  animation: zoomOutWithBlur 0.7s forwards;
+}
+
+@keyframes h1Animation {
+  0% {
+    filter: blur(5px);
+    transform: scale(1.1);
+  }
+  100% {
+    filter: blur(0);
+    transform: scale(1);
+  }
+}
+
+h1.card-title {
+  animation: h1Animation 0.7s forwards;
+}
+
+
+#bg-wrap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1; /* Ensure the SVG is behind your content */
+}
+
+input {
+  display: block;
+  padding: 0 1.25rem;
+}
+
 
 </style>
