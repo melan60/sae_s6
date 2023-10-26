@@ -25,7 +25,7 @@ export default {
     },
     data() {
         return {
-            stimulis: ["sonor", "visuel"]
+            stimulis: ["sonore", "visuel"]
         }
     }
 }

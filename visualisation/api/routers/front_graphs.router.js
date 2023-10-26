@@ -25,7 +25,7 @@ router.get("/users", controller.getIndividualData);
 
 /**
  * @swagger
- * /time:
+ * /graphs/time:
  *   get:
  *      description: Get react and exec time depends on age and gender
  *      tags:

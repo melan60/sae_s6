@@ -93,10 +93,8 @@ async function initExperiences() {
 }
 
 async function initUsers() {
-  let dev_db_url = "mongodb://127.0.0.1:27017/saeS5";
   let user = null;
   try {
-    await mongoose.connect(dev_db_url);
     user = await User.findOne({ name: "Johnson" }).exec();
     console.log(user);
     if (user === null) {
@@ -155,7 +153,7 @@ async function initUsers() {
 }
 
 async function initBdD() {
-  let dev_db_url = "mongodb://localhost/saeS5";
+  let dev_db_url = "mongodb://127.0.0.1/saeS5";
   await mongoose.connect(dev_db_url);
   await initExperiences();
   await initModules();

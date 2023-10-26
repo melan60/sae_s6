@@ -1,14 +1,14 @@
 <template>
   <div>
 
-    <div class="container-graph">
-      <GraphBarComponent :data="value" :options="options" class="graphique" />
-      <GraphBarComponent :data="value" :options="options" class="graphique" />
-    </div>
+    <div v-for="(value, index) in values" :key="index">
+      <div v-if="index < 2" class="container-graph">
+        <GraphBarComponent :data="value" :options="options" class="graphique" />
+      </div>
 
-    <div class="container-graph">
-      <GraphLineComponent :data="value" :options="options" class="graphique" />
-      <GraphLineComponent :data="chartData" :options="options" class="graphique" />
+      <div v-if="index > 1" class="container-graph">
+        <GraphLineComponent :data="value" :options="options" class="graphique" />
+      </div>
     </div>
 
   </div>
@@ -16,8 +16,9 @@
 
 
 <script>
-import GraphBarComponent from '@/components/GraphBarComponent.vue'
-import GraphLineComponent from '@/components/GraphLineComponent.vue'
+import axios from "axios";
+import GraphBarComponent from '@/components/GraphBarComponent.vue';
+import GraphLineComponent from '@/components/GraphLineComponent.vue';
 
 export default {
   name: 'HomeView',
@@ -26,16 +27,6 @@ export default {
     GraphLineComponent
   },
   data: () => ({
-    value: {
-      labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-      datasets: [
-        {
-          label: 'Data One',
-          backgroundColor: '#f87979',
-          data: [40, 39, 10, 40, 39, 80, 40]
-        }
-      ]
-    },
     chartData: {
       labels: ['January', 'February', 'March', 'April', 'May'],
       datasets: [
@@ -45,18 +36,6 @@ export default {
           borderColor: '#f87979',
           backgroundColor: '#f87979',
           data: [
-            {
-              x: -2,
-              y: 4
-            },
-            {
-              x: -1,
-              y: 1
-            },
-            {
-              x: 0,
-              y: 0
-            },
             {
               x: 1,
               y: 1
@@ -74,18 +53,6 @@ export default {
           backgroundColor: '#7acbf9',
           data: [
             {
-              x: -2,
-              y: -4
-            },
-            {
-              x: -1,
-              y: -1
-            },
-            {
-              x: 0,
-              y: 1
-            },
-            {
               x: 1,
               y: -1
             },
@@ -100,8 +67,32 @@ export default {
     options: {
       responsive: true,
       maintainAspectRatio: false
+    },
+    values: [],
+  }),
+  created() {
+    axios.get("http://localhost:5000/graphs/time")
+      .then(res => {
+        for (let value of res.data.data) this.initGraph(value);
+      })
+      .catch((e) => {
+        console.log(e)
+      });
+  },
+  methods: {
+    initGraph(results) {
+      this.values.push({
+        labels: results.labels,
+        datasets: [
+          {
+            label: 'Nom expérience',
+            backgroundColor: '#f87979',
+            data: [32, 25, 10, 40]
+          }
+        ]
+      })
     }
-  })
+  }
 }
 </script>
 
