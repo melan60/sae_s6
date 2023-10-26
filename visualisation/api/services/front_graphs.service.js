@@ -27,18 +27,22 @@ const getIndividualData = async (id_user, callback) => {
 const getReactAndExecTime = async (callback) => {
     const resultsAge = {
         labels: ["Enfants", "Adolescent", "Adulte", "Personnes Agées"],
+        titre: "Temps de réaction en fonction de l'âge",
         data: [0, 0, 0, 0]
     };
     const resultsSexe = {
         labels: ["Autre", "Féminin", "Masculin"],
+        titre: "Temps de réaction en fonction du sexe",
         data: [0, 0, 0]
     };
     const resultExec = {
         labels: ["Expérience 1", "Expérience 2", "Expérience 3", "Expérience 4"],
+        titre: "Temps d'exécution",
         data: [0, 0, 0, 0]
     };
     const resultReact = {
         labels: ["Expérience 1", "Expérience 2", "Expérience 3", "Expérience 4"],
+        titre: "Temps de réaction",
         data: [0, 0, 0, 0]
     };
 

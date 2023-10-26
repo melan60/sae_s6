@@ -85,7 +85,7 @@ export default {
         labels: results.labels,
         datasets: [
           {
-            label: 'Nom expérience',
+            label: results.titre,
             backgroundColor: '#f87979',
             data: [32, 25, 10, 40]
           }
