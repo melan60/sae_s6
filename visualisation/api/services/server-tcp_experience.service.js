@@ -1,3 +1,4 @@
+const errors = require('../errors_messages');
 const { Experience } = require('../models/index.models');
 
 /**
@@ -7,19 +8,29 @@ const { Experience } = require('../models/index.models');
  * @return {Promise}
  */
 const createExperience = async (experience, callback) => {
-    Experience.create({
-        name: experience.name,
-        typeStimulus: experience.typeStimulus,
-        distraction: experience.distraction,
-        modules: experience.modules
-    })
+
+    Experience.findOne({ name: experience.name })
         .exec()
-        .then(experience => {
-            callback(null, experience);
+        .then(result => {
+
+            if (result) {
+                return callback(errors.already_registered);
+            }
+
+            Experience.create({
+                name: experience.name,
+                typeStimulus: experience.typeStimulus,
+                distraction: experience.distraction,
+                modules: experience.modules
+            })
+                .then(experience => {
+                    return callback(null, experience);
+                })
+                .catch(e => {
+                    return callback(e)
+                });
         })
-        .catch(e => {
-            callback(e)
-        }); // TODO message err ou juste e
+        .catch();
 }
 
 module.exports = { createExperience }

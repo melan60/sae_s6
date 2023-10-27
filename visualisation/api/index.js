@@ -6,6 +6,7 @@ const express = require("express");
 
 const routes_auth = require("./routers/front_auth.router");
 const routes_graphs = require("./routers/front_graphs.router");
+const routes_server_tcp_experience = require("./routers/server-tcp_experience.router");
 const routes_server_tcp_user = require("./routers/server-tcp_user.router");
 
 const swaggerJsdoc = require("swagger-jsdoc");
@@ -50,6 +51,7 @@ server.use(express.json());
 server.use("/auth", routes_auth);
 server.use("/graphs", routes_graphs);
 
+server.use("/experience", routes_server_tcp_experience);
 server.use("/user", routes_server_tcp_user);
 
 

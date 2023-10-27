@@ -22,10 +22,10 @@ const getIndividualData = async (id_user, callback) => {
                     }
                 })
             }
-            callback(null, resultat)
+            return callback(null, resultat)
         })
         .catch(e => {
-            callback(e)
+            return callback(e)
         }); // TODO message err ou juste e
 }
 
@@ -84,8 +84,7 @@ const getReactAndExecTime = async (callback) => {
             return callback(null, [resultsAge, resultsSexe, resultExec, resultReact]);
         })
         .catch(e => {
-            console.log(e)
-            callback(e)
+            return callback(e)
         }); // TODO message err ou juste e
 }
 

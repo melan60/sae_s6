@@ -11,10 +11,10 @@ const connectToFront = async (email, password, callback) => {
     User.findOne({ email: email, password: password })
         .exec()
         .then(user => {
-            callback(null, user);
+            return callback(null, user);
         })
         .catch(e => {
-            callback(e)
+            return callback(e)
         }); // TODO message err ou juste e
 }
 

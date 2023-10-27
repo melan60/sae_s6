@@ -1,3 +1,4 @@
+const errors = require('../errors_messages');
 const { User } = require('../models/index.models');
 
 /**
@@ -7,23 +8,33 @@ const { User } = require('../models/index.models');
  * @return {Promise}
  */
 const createUser = async (user, callback) => {
-    User.create({
-        name: user.name,
-        firstName: user.firstName,
-        password: user.password,
-        email: user.email,
-        age: user.age,
-        gender: user.gender,
-        typeUser: user.typeUser,
-        results: []
-    })
+
+    User.findOne({ email: user.email })
         .exec()
-        .then(user => {
-            callback(null, user);
+        .then(result => {
+
+            if (result) {
+                return callback(errors.already_registered);
+            }
+
+            User.create({
+                name: user.name,
+                firstName: user.firstName,
+                password: user.password,
+                email: user.email,
+                age: user.age,
+                gender: user.gender,
+                typeUser: user.typeUser,
+                results: []
+            })
+                .then(user => {
+                    return callback(null, user);
+                })
+                .catch(e => {
+                    return callback(e)
+                });
         })
-        .catch(e => {
-            callback(e)
-        }); // TODO message err ou juste e
+        .catch();
 }
 
 module.exports = { createUser }
