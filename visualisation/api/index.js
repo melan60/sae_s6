@@ -3,7 +3,11 @@ const cors = require("cors");
 const db = require("./db.init");
 const dotenv = require("dotenv");
 const express = require("express");
+
+const routes_auth = require("./routers/front_auth.router");
 const routes_graphs = require("./routers/front_graphs.router");
+const routes_server_tcp_user = require("./routers/server-tcp_user.router");
+
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUI = require("swagger-ui-express");
 
@@ -43,7 +47,10 @@ server.use(express.json());
 
 
 // redirections de chaques routes vers les routers appropriés
+server.use("/auth", routes_auth);
 server.use("/graphs", routes_graphs);
+
+server.use("/user", routes_server_tcp_user);
 
 
 // initialisation de la base de donnees

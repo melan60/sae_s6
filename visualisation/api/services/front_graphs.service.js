@@ -1,7 +1,12 @@
-// TODO
-// const mongoose = require("mongoose");
 const { User } = require('../models/index.models');
 
+/**
+ * function to get results for a user
+ * @param {string} email
+ * @param {string} password
+ * @param {function(error: Error, result: any)} callback
+ * @return {Promise}
+ */
 const getIndividualData = async (id_user, callback) => {
     User.findOne({ _id: id_user })
         .exec()
@@ -24,6 +29,13 @@ const getIndividualData = async (id_user, callback) => {
         }); // TODO message err ou juste e
 }
 
+/**
+ * function to get all results
+ * @param email
+ * @param password
+ * @param callback
+ * @return {Promise}
+ */
 const getReactAndExecTime = async (callback) => {
     const resultsAge = {
         labels: ["Enfants", "Adolescent", "Adulte", "Personnes Agées"],
