@@ -31,8 +31,8 @@ async function initResults() {
     // if (result1 === null) {
     result1 = new Result({
       experience: "Experience 1",
-      reactTime: "2020-05-18T14:10:30Z",
-      execTime: "2020-05-18T14:10:32Z",
+      reactTime: "10",
+      execTime: "12",
     });
     result1 = await result1.save();
     console.log("added result1 Result");
@@ -45,8 +45,8 @@ async function initResults() {
     // if (result2 === null) {
     result2 = new Result({
       experience: "Experience 2",
-      reactTime: "2020-05-18T14:10:30Z",
-      execTime: "2020-05-18T14:10:32Z",
+      reactTime: "12",
+      execTime: "13",
     });
     result2 = await result2.save();
     console.log("added result2 Result");

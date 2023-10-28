@@ -81,13 +81,14 @@ export default {
   },
   methods: {
     initGraph(results) {
+      console.log(results)
       this.values.push({
         labels: results.labels,
         datasets: [
           {
             label: results.titre,
             backgroundColor: '#f87979',
-            data: [32, 25, 10, 40]
+            data: results.data
           }
         ]
       })

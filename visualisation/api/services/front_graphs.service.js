@@ -70,14 +70,14 @@ const getReactAndExecTime = async (callback) => {
                 else if (user.age < 20) index_age = 1;
                 else if (user.age < 60) index_age = 2;
 
-                user.results.forEach(result => {
-                    var index = result.experience_id;
-
+                user.results.forEach((result, index) => {
                     resultsAge.data[index_age] += result.reactTime;
                     resultsSexe.data[index_sexe] += result.reactTime;
 
                     resultExec.data[index] += result.execTime;
                     resultReact.data[index] += result.reactTime;
+
+                    console.log(resultExec)
 
                 });
             });
