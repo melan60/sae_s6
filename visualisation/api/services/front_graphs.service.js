@@ -61,7 +61,6 @@ const getReactAndExecTime = async (callback) => {
     User.find()
         .exec()
         .then(users => {
-            console.log(users)
             users.forEach(user => {
                 var index_age = 3;
                 var index_sexe = resultsSexe.labels.indexOf(user.gender);
@@ -76,9 +75,6 @@ const getReactAndExecTime = async (callback) => {
 
                     resultExec.data[index] += result.execTime;
                     resultReact.data[index] += result.reactTime;
-
-                    console.log(resultExec)
-
                 });
             });
             return callback(null, [resultsAge, resultsSexe, resultExec, resultReact]);

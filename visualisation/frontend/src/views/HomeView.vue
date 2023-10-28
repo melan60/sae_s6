@@ -27,43 +27,6 @@ export default {
     GraphLineComponent
   },
   data: () => ({
-    chartData: {
-      labels: ['January', 'February', 'March', 'April', 'May'],
-      datasets: [
-        {
-          label: 'Scatter Dataset 1',
-          fill: false,
-          borderColor: '#f87979',
-          backgroundColor: '#f87979',
-          data: [
-            {
-              x: 1,
-              y: 1
-            },
-            {
-              x: 2,
-              y: 4
-            }
-          ]
-        },
-        {
-          label: 'Scatter Dataset 2',
-          fill: false,
-          borderColor: '#7acbf9',
-          backgroundColor: '#7acbf9',
-          data: [
-            {
-              x: 1,
-              y: -1
-            },
-            {
-              x: 2,
-              y: -4
-            }
-          ]
-        }
-      ]
-    },
     options: {
       responsive: true,
       maintainAspectRatio: false
@@ -81,13 +44,12 @@ export default {
   },
   methods: {
     initGraph(results) {
-      console.log(results)
       this.values.push({
         labels: results.labels,
         datasets: [
           {
             label: results.titre,
-            backgroundColor: '#f87979',
+            backgroundColor: '#35a9a0',
             data: results.data
           }
         ]
