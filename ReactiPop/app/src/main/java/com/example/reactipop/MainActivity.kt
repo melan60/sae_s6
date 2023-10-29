@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity() {
         viewBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)
 
-        // Demander les autorisations de la caméra
+        // Request camera permissions
         if (allPermissionsGranted()) {
             startCamera()
         } else {
@@ -49,13 +49,13 @@ class MainActivity : AppCompatActivity() {
                 this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
         }
 
-        // Mettre en place les écouteurs pour les boutons de capture de photo et de vidéo
+        // Set up listeners for photo and video capture buttons
         viewBinding.videoCaptureButton.setOnClickListener { captureVideo() }
 
         cameraExecutor = Executors.newSingleThreadExecutor()
     }
 
-    // Implémente la capture vidéo et aussi le démarrage et l'arrêt de la capture.
+    // Implements video capture and starting/stopping the capture session.
     private fun captureVideo() {
         val videoCapture = this.videoCapture ?: return
 
@@ -63,13 +63,13 @@ class MainActivity : AppCompatActivity() {
 
         val curRecording = recording
         if (curRecording != null) {
-            // Arrêter la session d'enregistrement en cours.
+            // Stop the ongoing recording session.
             curRecording.stop()
             recording = null
             return
         }
 
-        // Créer et démarrer une nouvelle session d'enregistrement
+        // Create and start a new recording session
         val name = SimpleDateFormat(FILENAME_FORMAT, Locale.FRANCE)
             .format(System.currentTimeMillis())
         val contentValues = ContentValues().apply {
@@ -128,10 +128,10 @@ class MainActivity : AppCompatActivity() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
 
         cameraProviderFuture.addListener({
-            // Utilisé pour lier le cycle de vie des caméras au propriétaire du cycle de vie
+            // Used to bind camera lifecycle to the owner's lifecycle
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
 
-            // Aperçu
+            // Preview
             val preview = Preview.Builder()
                 .build()
                 .also {
@@ -142,14 +142,14 @@ class MainActivity : AppCompatActivity() {
                 .build()
             videoCapture = VideoCapture.withOutput(recorder)
 
-            // Sélectionner la caméra arrière par défaut
+            // Select the default rear camera
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
             try {
-                // Désactiver tous les cas d'utilisation avant de les réactiver
+                // Unbind all use cases before rebinding
                 cameraProvider.unbindAll()
 
-                // Lier les cas d'utilisation à la caméra
+                // Bind use cases to the camera
                 cameraProvider.bindToLifecycle(this, cameraSelector, preview, videoCapture)
 
             } catch(exc: Exception) {
@@ -199,3 +199,4 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
+    
