@@ -1,19 +1,25 @@
 <template>
-  <div>
-
+  <div class="main-container">
     <div class="container-graph">
-      <GraphBarComponent :data="value" :options="options" class="graphique" />
-      <GraphBarComponent :data="value" :options="options" class="graphique" />
+      <div class="graph-container">
+        <GraphBarComponent :data="value" :options="options" class="graphique" />
+      </div>
+      <div class="graph-container">
+        <GraphBarComponent :data="value" :options="options" class="graphique" />
+      </div>
     </div>
 
     <div class="container-graph">
-      <GraphLineComponent :data="value" :options="options" class="graphique" />
-      <GraphLineComponent :data="chartData" :options="options" class="graphique" />
+      <div class="graph-container">
+        <GraphLineComponent :data="value" :options="options" class="graphique" />
+      </div>
+      <div class="graph-container">
+        <GraphLineComponent :data="chartData" :options="options" class="graphique" />
+      </div>
     </div>
 
   </div>
 </template>
-
 
 <script>
 import GraphBarComponent from '@/components/GraphBarComponent.vue'
@@ -31,7 +37,7 @@ export default {
       datasets: [
         {
           label: 'Data One',
-          backgroundColor: '#f87979',
+          backgroundColor: ['#7fdbe8', '#35a9a0', '#294f40', '#62e07f', '#2c3e50', '#6bc2e0', '#308bf4'],
           data: [40, 39, 10, 40, 39, 80, 40]
         }
       ]
@@ -42,8 +48,8 @@ export default {
         {
           label: 'Scatter Dataset 1',
           fill: false,
-          borderColor: '#f87979',
-          backgroundColor: '#f87979',
+          borderColor: '#308bf4',
+          backgroundColor: ['#308bf4', '#7fdbe8'],
           data: [
             {
               x: -2,
@@ -99,7 +105,7 @@ export default {
     },
     options: {
       responsive: true,
-      maintainAspectRatio: false
+      maintainAspectRatio: true
     }
   })
 }
@@ -107,12 +113,28 @@ export default {
 
 
 <style scoped>
+.main-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .container-graph {
   display: flex;
-  flex-wrap: wrap;
+  width: 100%;
+  justify-content: center;
 }
 
 .graphique {
-  width: 50%;
+  width: 100%;
+}
+
+.graph-container {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 10px;
+  width: 45%;
+  box-sizing: border-box;
 }
 </style>
