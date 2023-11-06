@@ -59,7 +59,11 @@ server.use("/user", routes_server_tcp_user);
 // initialisation de la base de donnees
 
 function initialisationBDD() {
-  const dev_db_url = `mongodb://127.0.0.1/${process.env.DATABASE_NAME}`;
+  let dev_db_url;
+  if(process.env.PORT_SERVER)
+    dev_db_url = `mongodb://mongodb:27017/${process.env.DATABASE_NAME}`
+  else
+    dev_db_url = `mongodb://127.0.0.1/${process.env.DATABASE_NAME}`;
   mongoose.connect(dev_db_url)
   .then(async () => {
     await db.initBdD();
