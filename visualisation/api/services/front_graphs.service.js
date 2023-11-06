@@ -1,9 +1,8 @@
-const { User } = require('../models/index.models');
+const { User, Experience } = require('../models/index.models');
 
 /**
  * function to get results for a user
- * @param {string} email
- * @param {string} password
+ * @param {string} id_user
  * @param {function(error: Error, result: any)} callback
  * @return {Promise}
  */
@@ -31,9 +30,7 @@ const getIndividualData = async (id_user, callback) => {
 
 /**
  * function to get all results
- * @param email
- * @param password
- * @param callback
+ * @param {function(error: Error, result: any)} callback
  * @return {Promise}
  */
 const getReactAndExecTime = async (callback) => {
@@ -84,7 +81,26 @@ const getReactAndExecTime = async (callback) => {
         }); // TODO message err ou juste e
 }
 
+/**
+ * function to get all stimulis
+ * @param {function(error: Error, result: any)} callback
+ * @return {Promise}
+ */
+const getAllStimulis = async (callback) => {
+    Experience.find()
+        .exec()
+        .then(experiences => {
+            let stimulis = experiences.map(exp => exp.typeStimulus);
+            stimulis = stimulis.filter((exp, index) => stimulis.indexOf(exp) === index);
+            return callback(null, stimulis);
+        })
+        .catch(e => {
+            return callback(e)
+        }); // TODO message err ou juste e
+}
+
 module.exports = {
     getIndividualData,
     getReactAndExecTime,
+    getAllStimulis
 }

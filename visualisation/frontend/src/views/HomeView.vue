@@ -1,14 +1,9 @@
 <template>
-  <div>
+  <div class="graphs_page">
 
     <div v-for="(value, index) in values" :key="index">
-      <div v-if="index < 2" class="container-graph">
-        <GraphBarComponent :data="value" :options="options" class="graphique" />
-      </div>
-
-      <div v-if="index > 1" class="container-graph">
-        <GraphLineComponent :data="value" :options="options" class="graphique" />
-      </div>
+      <GraphBarComponent v-if="index < 2" :data="value" :options="options" />
+      <GraphLineComponent v-if="index > 1" :data="value" :options="options" />
     </div>
 
   </div>
@@ -61,12 +56,7 @@ export default {
 
 
 <style scoped>
-.container-graph {
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.graphique {
-  width: 50%;
+.graphs_page {
+  padding: 2%;
 }
 </style>

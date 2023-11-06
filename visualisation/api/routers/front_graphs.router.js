@@ -38,4 +38,19 @@ router.get("/users", controller.getIndividualData);
  */
 router.get("/time", controller.getReactAndExecTime);
 
+/**
+ * @swagger
+ * /graphs/stimulis:
+ *   get:
+ *      description: Get all stimulis
+ *      tags:
+ *          - GRAPHS
+ *      responses:
+ *          '200':
+ *              description: Results gotten successfully
+ *          '500':
+ *              description: Internal server error
+ */
+router.get("/stimulis", controller.getAllStimulis);
+
 module.exports = router;

@@ -6,8 +6,8 @@
       <label>{{ elem }}</label>
       <br>
     </div>
-    <button type="submit">Valider</button>
-    <button type="reset">Effacer</button>
+    <b-button type="submit" class="btn-submit" @click=submitFilter>Valider</b-button>
+    <b-button type="reset" class="btn-reset" @click=resetFilter>Effacer</b-button>
   </div>
 </template>
 
@@ -21,8 +21,41 @@ export default {
   data: () => ({
     stimulus: null
   }),
+  methods: {
+    submitFilter() {
+      if (this.stimulus == null) {
+        // popup erreur
+      }
+      else {
+        console.log("appel methode du composant parents");
+      }
+    },
+    resetFilter() {
+      this.stimulus = null;
+    }
+  }
 }
 </script>
 
 
-<style scoped></style>
+<style scoped>
+.btn-submit {
+  background-color: #4CD078;
+  margin: 5px;
+}
+
+.btn-submit:hover {
+  background-color: #4CD078;
+  margin: 5px;
+}
+
+.btn-reset {
+  background-color: #900000;
+  margin: 5px;
+}
+
+.btn-reset:hover {
+  background-color: #900000;
+  margin: 5px;
+}
+</style>

@@ -7,6 +7,7 @@
 
 
 <script>
+import axios from "axios";
 import { Chart, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js'
 import { Line } from 'vue-chartjs'
 import FilterComponent from './FilterComponent.vue'
@@ -23,11 +24,20 @@ export default {
         data: Object,
         options: Object
     },
-    data() {
-        return {
-            stimulis: ["sonore", "visuel"]
-        }
-    }
+    data: () => ({
+        stimulis: null // TODO routes vers API pour récup tous les stimulis
+    }),
+    created() {
+        axios.get("http://localhost:5000/graphs/stimulis")
+            .then(res => {
+                console.log("res.data", res.data.data)
+                this.stimulis = res.data.data
+            })
+            .catch((e) => {
+                console.log(e)
+            });
+    },
+    methods: {} // TODO route vers API pour filtrer data en fct type de stimulis
 }
 </script>
 

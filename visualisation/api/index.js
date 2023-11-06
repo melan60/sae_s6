@@ -57,10 +57,9 @@ server.use("/user", routes_server_tcp_user);
 
 // initialisation de la base de donnees
 db.initBdD()
-.then( () => {
-  server.listen(process.env.PORT_SERVER, () => {
-    console.log(`Server is listening port ${process.env.PORT_SERVER}`);
+  .then(() => {
+    server.listen(process.env.PORT_SERVER, () => {
+      console.log(`Server is listening port ${process.env.PORT_SERVER}`);
+    })
   })
-})
-.catch(e => console.log(e));
-
+  .catch(e => console.log(e));

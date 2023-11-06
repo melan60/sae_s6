@@ -10,7 +10,7 @@ const getIndividualData = async (req, res) => {
     });
 }
 
-const getReactAndExecTime = async(req, res) => {
+const getReactAndExecTime = async (req, res) => {
     await services.getReactAndExecTime((error, result) => {
         if (error) {
             return res.status(500).send({ success: 0, data: error });
@@ -20,7 +20,17 @@ const getReactAndExecTime = async(req, res) => {
 
 }
 
+const getAllStimulis = async (req, res) => {
+    await services.getAllStimulis((error, results) => {
+        if (error) {
+            return res.status(500).send({ success: 0, data: error });
+        }
+        return res.status(200).send({ success: 1, data: results });
+    });
+}
+
 module.exports = {
     getIndividualData,
-    getReactAndExecTime
+    getReactAndExecTime,
+    getAllStimulis
 }
