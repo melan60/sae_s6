@@ -3,14 +3,15 @@ const cors = require("cors");
 const db = require("./db.init");
 const dotenv = require("dotenv");
 const express = require("express");
+const mongoose = require("mongoose");
+const swaggerJsdoc = require("swagger-jsdoc");
+const swaggerUI = require("swagger-ui-express");
 
 const routes_auth = require("./routers/front_auth.router");
 const routes_graphs = require("./routers/front_graphs.router");
 const routes_server_tcp_experience = require("./routers/server-tcp_experience.router");
 const routes_server_tcp_user = require("./routers/server-tcp_user.router");
 
-const swaggerJsdoc = require("swagger-jsdoc");
-const swaggerUI = require("swagger-ui-express");
 
 const server = express();
 
@@ -56,10 +57,17 @@ server.use("/user", routes_server_tcp_user);
 
 
 // initialisation de la base de donnees
-db.initBdD()
-  .then(() => {
+
+function initialisationBDD() {
+  const dev_db_url = `mongodb://127.0.0.1/${process.env.DATABASE_NAME}`;
+  mongoose.connect(dev_db_url)
+  .then(async () => {
+    await db.initBdD();
     server.listen(process.env.PORT_SERVER, () => {
       console.log(`Server is listening port ${process.env.PORT_SERVER}`);
-    })
+    });
   })
-  .catch(e => console.log(e));
+  .catch(e => console.error(e)); // server
+}
+
+initialisationBDD();

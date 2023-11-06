@@ -39,13 +39,14 @@ const router = express.Router();
  *              typeUser:
  *                type: string
  *            example:
- *              name: John
- *              firstName: Doe
- *              password: mypassword
- *              email: john@example.com
- *              age: 30
- *              gender: Masculin
- *              typeUser: cobaye
+ *              user:
+ *                name: John
+ *                firstName: Doe
+ *                password: mypassword
+ *                email: john@example.com
+ *                age: 30
+ *                gender: Masculin
+ *                typeUser: cobaye
  *      responses:
  *        '200':
  *          description: User created succeffuly

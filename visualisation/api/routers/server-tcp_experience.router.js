@@ -28,9 +28,10 @@ const router = express.Router();
  *              distraction:
  *                type: string
  *            example:
- *              name: Vitesse de la lumière
- *              typeStimulus: Visuel
- *              distraction: Sonore (musique)
+ *              experience:
+ *                name: Vitesse de la lumière
+ *                typeStimulus: Visuel
+ *                distraction: Sonore (musique)
  *      responses:
  *        '200':
  *          description: Experience created succeffuly

@@ -2,7 +2,7 @@ const errors = require('../errors_messages');
 const services = require('../services/server-tcp_experience.service');
 
 const createExperience = async (req, res) => {
-    const experience = req.body;
+    const experience = req.body.experience;
 
     await services.createExperience(experience, (error, result) => {
         if (error === errors.already_registered) {

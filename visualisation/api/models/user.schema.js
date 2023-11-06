@@ -38,8 +38,8 @@ let UserSchema = new Schema(
       required: false,
       enum: Config.genders,
     },
-    typeUser: [{ type: String, enum: Config.rights, required: true }],
-    results: [ResultSchema],
+    typeUser: { type: String, enum: Config.rights, required: true },
+    results: [ResultSchema]
   },
   { versionKey: false }
 );
