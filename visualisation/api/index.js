@@ -60,8 +60,10 @@ server.use("/user", routes_server_tcp_user);
 
 function initialisationBDD() {
   let dev_db_url;
-  if(process.env.PORT_SERVER)
+  if(process.env.DOCKER_MONGO){
     dev_db_url = `mongodb://mongodb:27017/${process.env.DATABASE_NAME}`
+    console.log("mongo")
+   }
   else
     dev_db_url = `mongodb://127.0.0.1/${process.env.DATABASE_NAME}`;
   mongoose.connect(dev_db_url)
