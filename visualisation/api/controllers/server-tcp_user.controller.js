@@ -1,4 +1,4 @@
-const errors = require('../errors_messages');
+const errors = require('../common_variables');
 const services = require('../services/server-tcp_user.service');
 
 const createUser = async (req, res) => {

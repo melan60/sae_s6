@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const Config = require("../config");
+const Config = require("../common_variables");
 
 let ExperienceSchema = new Schema(
   {

@@ -45,15 +45,25 @@ const getReactAndExecTime = async (callback) => {
         data: [0, 0, 0]
     };
     const resultExec = {
-        labels: ["Expérience 1", "Expérience 2", "Expérience 3", "Expérience 4"],
+        labels: [],
         titre: "Temps d'exécution",
         data: [0, 0, 0, 0]
     };
     const resultReact = {
-        labels: ["Expérience 1", "Expérience 2", "Expérience 3", "Expérience 4"],
+        labels: [],
         titre: "Temps de réaction",
-        data: [0, 0, 0, 0]
+        data: []
     };
+
+    Experience.find()
+        .exec()
+        .then(experience => {
+            resultExec.labels.push(experience.name);
+            resultExec.data.push(0);
+
+            resultReact.labels.push(experience.name);
+            resultReact.data.push(0);
+        });
 
     User.find()
         .exec()

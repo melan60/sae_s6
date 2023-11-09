@@ -1,4 +1,4 @@
-const errors = require('../errors_messages');
+const errors = require('../common_variables');
 const services = require('../services/server-tcp_experience.service');
 
 const createExperience = async (req, res) => {

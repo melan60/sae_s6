@@ -1,4 +1,4 @@
-const errors = require('../errors_messages');
+const errors = require('../common_variables');
 const { User } = require('../models/index.models');
 const { Result } =require('../models/index.models')
 

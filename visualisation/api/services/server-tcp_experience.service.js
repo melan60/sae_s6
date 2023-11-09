@@ -1,4 +1,4 @@
-const errors = require('../errors_messages');
+const errors = require('../common_variables');
 const { Experience } = require('../models/index.models');
 
 /**
