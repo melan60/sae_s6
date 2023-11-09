@@ -23,12 +23,6 @@ export default {
   }),
   methods: {
     submitFilter() {
-      if (this.stimulus == null) {
-        // popup erreur
-      }
-      else {
-        console.log("appel methode du composant parents");
-      }
     },
     resetFilter() {
       this.stimulus = null;

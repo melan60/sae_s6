@@ -99,8 +99,13 @@ const getAllStimulis = async (callback) => {
         }); // TODO message err ou juste e
 }
 
+const filterResultsGraph = async (data, callback) => {
+    console.log(data);
+}
+
 module.exports = {
     getIndividualData,
     getReactAndExecTime,
-    getAllStimulis
+    getAllStimulis,
+    filterResultsGraph
 }

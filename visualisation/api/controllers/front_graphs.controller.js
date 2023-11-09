@@ -29,8 +29,19 @@ const getAllStimulis = async (req, res) => {
     });
 }
 
+const filterResultsGraph = async (req, res) => {
+    const data = req.query.experiences;
+    await services.filterResultsGraph(data, (error, results) => {
+        if (error) {
+            return res.status(500).send({ success: 0, data: error });
+        }
+        return res.status(200).send({ success: 1, data: results });
+    });
+}
+
 module.exports = {
     getIndividualData,
     getReactAndExecTime,
-    getAllStimulis
+    getAllStimulis,
+    filterResultsGraph
 }

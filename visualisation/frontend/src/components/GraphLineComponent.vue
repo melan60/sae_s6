@@ -1,5 +1,6 @@
 <template>
     <div style="height: 400px;">
+        {{ data }}
         <FilterComponent :stimulis="stimulis" />
         <GraphLine :data="data" :options="options" /> <!-- Use the correct component name -->
     </div>
@@ -8,9 +9,9 @@
 
 <script>
 import axios from "axios";
-import { Chart, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js'
-import { Line } from 'vue-chartjs'
-import FilterComponent from './FilterComponent.vue'
+import { Chart, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
+import { Line } from 'vue-chartjs';
+import FilterComponent from './FilterComponent.vue';
 
 Chart.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend)
 
@@ -30,7 +31,6 @@ export default {
     created() {
         axios.get("http://localhost:5000/graphs/stimulis")
             .then(res => {
-                console.log("res.data", res.data.data)
                 this.stimulis = res.data.data
             })
             .catch((e) => {
