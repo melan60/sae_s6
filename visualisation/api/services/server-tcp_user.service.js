@@ -1,5 +1,6 @@
 const errors = require('../errors_messages');
 const { User } = require('../models/index.models');
+const { Result } =require('../models/index.models')
 
 /**
  * function to create a user
@@ -37,4 +38,36 @@ const createUser = async (user, callback) => {
         .catch();
 }
 
-module.exports = { createUser }
+/**
+ * function to add result
+ * @param {JSON} result
+ * @param {JSON} user
+ * @param {function(error: Error, result: any)} callback
+ * @return {Promise}
+ */
+const addResult = async(result, user, callback)=>{
+
+    Result.create({
+        experience: result.experience,
+        reactTime: result.reactTime,
+        execTime: result.execTime
+    })
+        .then(res => {
+            console.log("test1")
+            console.log(user.results);
+            user.results.push(res);
+            //user.results = res;
+            //user.results.append(res);
+            //user.results.add(res);
+            console.log(user.results);
+            return callback(null, res);
+        })
+        .catch(e => {
+            return callback(e)
+        });
+}
+
+module.exports = {
+    createUser,
+    addResult
+}
