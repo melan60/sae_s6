@@ -1,6 +1,5 @@
 <template>
     <div style="height: 400px;">
-        {{ data }}
         <FilterComponent :stimulis="stimulis" />
         <GraphLine :data="data" :options="options" /> <!-- Use the correct component name -->
     </div>

@@ -1,5 +1,5 @@
 <template>
-  <div class="graphs_page">
+  <div class="grid-container">
 
     <div v-for="(value, index) in values" :key="index">
       <GraphBarComponent v-if="index < 2" :data="value" :options="options" />
@@ -56,7 +56,10 @@ export default {
 
 
 <style scoped>
-.graphs_page {
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
   padding: 2%;
 }
 </style>

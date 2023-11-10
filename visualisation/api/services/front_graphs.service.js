@@ -97,6 +97,7 @@ const getReactAndExecTime = async (callback) => {
                 var index_1 = getCategoryAge(user.age);
                 var index_2 = results[1].labels.indexOf(user.gender);
 
+                // TODO améliorer pour + d'évolutivité
                 user.results.forEach((result, index) => {
                     results[0].data[index_1] += result.reactTime;
                     results[1].data[index_2] += result.reactTime;
