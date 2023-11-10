@@ -35,7 +35,9 @@ const createUser = async (user, callback) => {
                     return callback(e)
                 });
         })
-        .catch();
+        .catch(e => {
+            return callback(e)
+        });
 }
 
 /**

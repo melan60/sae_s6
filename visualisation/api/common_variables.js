@@ -14,10 +14,11 @@ const params_authentification = "Email ou mot de passe incorrect";
 
 
 // ================================================================================================ error server-tcp user
-const already_registered = "Champs déjà présent(s) dans la base de données";
+const already_registered = "Champs déjà enregistré(s)";
 
 // ================================================================================================ services
 const age_category = ["Enfants", "Adolescent", "Adulte", "Personnes Agées"];
+const not_found = "Élément introuvable";
 
 
 module.exports = {
@@ -33,5 +34,6 @@ module.exports = {
   params_authentification,
   already_registered,
 
-  age_category
+  age_category,
+  not_found
 };
