@@ -16,6 +16,9 @@ const params_authentification = "Email ou mot de passe incorrect";
 // ================================================================================================ error server-tcp user
 const already_registered = "Champs déjà présent(s) dans la base de données";
 
+// ================================================================================================ services
+const age_category = ["Enfants", "Adolescent", "Adulte", "Personnes Agées"];
+
 
 module.exports = {
   genders,
@@ -28,5 +31,7 @@ module.exports = {
   USER_EMAIL_MAX_SIZE,
 
   params_authentification,
-  already_registered
+  already_registered,
+
+  age_category
 };
