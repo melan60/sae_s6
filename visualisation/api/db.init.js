@@ -1,6 +1,5 @@
 const { User, Experience, Result, Module } = require("./models/index.models");
 const bcrypt = require("bcryptjs");
-const SALT_WORK_FACTOR = 10;
 
 async function initModules() {
   try {
@@ -76,7 +75,6 @@ async function initResults() {
 }
 
 function initUsers() {
-  const salt = bcrypt.genSaltSync(SALT_WORK_FACTOR);
 
   const users = [
     {
@@ -105,7 +103,7 @@ function initUsers() {
         const user_created = await User.create({
           name: user.name,
           firstName: user.firstName,
-          password: bcrypt.hashSync(user.name, salt),
+          password: bcrypt.hashSync(user.name),
           email: user.email,
           age: user.age,
           gender: user.gender,

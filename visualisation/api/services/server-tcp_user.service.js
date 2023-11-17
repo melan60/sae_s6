@@ -1,6 +1,8 @@
 const errors = require('../common_variables');
 const { User } = require('../models/index.models');
-const { Result } =require('../models/index.models')
+const { Result } =require('../models/index.models');
+
+const bcrypt = require("bcryptjs");
 
 /**
  * function to create a user
@@ -17,11 +19,11 @@ const createUser = async (user, callback) => {
             if (result) {
                 return callback(errors.already_registered);
             }
-
+            console.log(user.password)
             User.create({
                 name: user.name,
                 firstName: user.firstName,
-                password: user.password,
+                password: bcrypt.hashSync(user.password, 10),
                 email: user.email,
                 age: user.age,
                 gender: user.gender,
@@ -32,6 +34,7 @@ const createUser = async (user, callback) => {
                     return callback(null, user_created);
                 })
                 .catch(e => {
+                    console.log(e);
                     return callback(e)
                 });
         })
@@ -55,13 +58,12 @@ const addResult = async(result, user, callback)=>{
         execTime: result.execTime
     })
         .then(res => {
-            console.log("test1")
-            console.log(user.results);
-            user.results.push(res);
-            //user.results = res;
-            //user.results.append(res);
-            //user.results.add(res);
-            console.log(user.results);
+            User.findOne({email: user.email})
+                .exec()
+                .then(u=>{
+                    u.results.push(res);
+                    u.save();
+                });
             return callback(null, res);
         })
         .catch(e => {
