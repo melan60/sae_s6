@@ -1,4 +1,7 @@
+const errors = require('../common_variables');
 const { User } = require('../models/index.models');
+
+const bcrypt = require("bcryptjs");
 
 /**
  * function to get a user
@@ -8,10 +11,19 @@ const { User } = require('../models/index.models');
  * @return {Promise}
  */
 const connectToFront = async (email, password, callback) => {
-    User.findOne({ email: email, password: password })
+    const password_crypted = bcrypt.hashSync(password);
+
+    User.findOne({ email: email })
         .exec()
         .then(user => {
-            return callback(null, user);
+
+            bcrypt.compare(password, user.password, (err, result) => {
+                if (result) {
+                    return callback(null, user);
+                } else {
+                    return callback(errors.params_authentification);
+                }
+            })
         })
         .catch(e => {
             return callback(e)

@@ -1,6 +1,8 @@
 const errors = require('../common_variables');
 const { User } = require('../models/index.models');
-const { Result } =require('../models/index.models')
+const { Result } =require('../models/index.models');
+
+const bcrypt = require("bcryptjs");
 
 /**
  * function to create a user
@@ -17,11 +19,11 @@ const createUser = async (user, callback) => {
             if (result) {
                 return callback(errors.already_registered);
             }
-
+            console.log(user.password)
             User.create({
                 name: user.name,
                 firstName: user.firstName,
-                password: user.password,
+                password: bcrypt.hashSync(user.password, 10),
                 email: user.email,
                 age: user.age,
                 gender: user.gender,
