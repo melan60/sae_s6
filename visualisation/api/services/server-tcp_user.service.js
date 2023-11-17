@@ -28,8 +28,8 @@ const createUser = async (user, callback) => {
                 typeUser: user.typeUser,
                 results: []
             })
-                .then(user => {
-                    return callback(null, user);
+                .then(user_created => {
+                    return callback(null, user_created);
                 })
                 .catch(e => {
                     return callback(e)
