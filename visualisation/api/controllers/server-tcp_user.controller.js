@@ -1,8 +1,8 @@
-const errors = require('../errors_messages');
+const errors = require('../common_variables');
 const services = require('../services/server-tcp_user.service');
 
 const createUser = async (req, res) => {
-    const user = req.body;
+    const user = req.body.user;
     await services.createUser(user, (error, result) => {
         if (error === errors.already_registered) {
             return res.status(449).send({ success: 1, data: error });

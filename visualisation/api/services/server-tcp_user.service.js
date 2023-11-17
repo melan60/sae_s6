@@ -1,4 +1,4 @@
-const errors = require('../errors_messages');
+const errors = require('../common_variables');
 const { User } = require('../models/index.models');
 const { Result } =require('../models/index.models')
 
@@ -28,15 +28,17 @@ const createUser = async (user, callback) => {
                 typeUser: user.typeUser,
                 results: []
             })
-                .then(user => {
-                    return callback(null, user);
+                .then(user_created => {
+                    return callback(null, user_created);
                 })
                 .catch(e => {
                     console.log(e);
                     return callback(e)
                 });
         })
-        .catch();
+        .catch(e => {
+            return callback(e)
+        });
 }
 
 /**

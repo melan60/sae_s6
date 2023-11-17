@@ -68,9 +68,9 @@ router.post("/add", controller.createExperience);
  *                type: string
  *            example:
  *              module:
- *                name: Module1
- *                uc: esp32
- *                description: test
+ *                name: module n°2
+ *                uc: esp8266
+ *                description: Récolter les pulsasions cardiaques
  *      responses:
  *        '200':
  *          description: Module created succeffuly
@@ -80,5 +80,37 @@ router.post("/add", controller.createExperience);
  *          description: Internal server error
  */
 router.post("/module/add", controller.createModule);
+
+/**
+ *  @swagger
+ *  /experience/updateModule:
+ *    put:
+ *      tags:
+ *        - Experience
+ *      description: Add module to an experience.
+ *      parameters:
+ *        - in: query
+ *          name: name_module
+ *          type: string
+ *          required: true
+ *          description: Name of the module to add
+ *        - in: query
+ *          name: name_experience
+ *          type: string
+ *          required: true
+ *          description: Name of the relevant experience
+ *      responses:
+ *        '200':
+ *          description: Module added succeffuly
+ *        '404':
+ *          description: Module not found
+ *        '449':
+ *          description: Module is already registered
+ *        '500':
+ *          description: Internal server error
+ */
+router.put("/updateModule", controller.addModuleToAnExperience);
+
+
 
 module.exports = router;

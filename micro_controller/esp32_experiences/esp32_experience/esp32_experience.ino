@@ -1,26 +1,78 @@
-const int yellowPin = 5;      // Broche de la LED jaune
-const int buttonPin = 19;     // Broche du bouton
-const int greenLedPin = 23;   // Broche de la LED verte
-const int redLedPin = 18;     // Broche de la LED rouge
-const int buzzerPin = 13;     // Broche du buzzer
+// #include "pitches.h"
 
-unsigned long startTime = 0;   // Variable pour stocker le temps de démarrage du chronomètre
-boolean chronometerRunning = false; // Indique si le chronomètre est en cours d'exécution
+// int melody[] = {
+//   REST, NOTE_D4,
+//   NOTE_G4, NOTE_AS4, NOTE_A4,
+//   NOTE_G4, NOTE_D5,
+//   NOTE_C5,
+//   NOTE_A4,
+//   NOTE_G4, NOTE_AS4, NOTE_A4,
+//   NOTE_F4, NOTE_GS4,
+//   NOTE_D4,
+//   NOTE_D4,
 
-char test;
-int randomLedPin;
+//   NOTE_G4, NOTE_AS4, NOTE_A4,
+//   NOTE_G4, NOTE_D5,
+//   NOTE_F5, NOTE_E5,
+//   NOTE_DS5, NOTE_B4,
+//   NOTE_DS5, NOTE_D5, NOTE_CS5,
+//   NOTE_CS4, NOTE_B4,
+//   NOTE_G4,
+//   NOTE_AS4
+// };
+
+// int durations[] = {
+//   2, 4,
+//   4, 8, 4,
+//   2, 4,
+//   2,
+//   2,
+//   4, 8, 4,
+//   2, 4,
+//   1,
+//   4,
+
+//   4, 8, 4,
+//   2, 4,
+//   2, 4,
+//   2, 4,
+//   4, 8, 4,
+//   2, 4,
+//   1,
+//   4
+// };
+
+const int buzzerPin = 13;  // Broche du buzzer
+
+const int defaultBtnPin = 21;  // Broche du bouton associé à la led jaune
+const int greenLedPin = 23;    // Broche de la LED jaune
+
+const int redBtnPin = 22;
+const int redLedPin = 18;
+
+const int yellowBtnPin = 19;  // Broche du bouton
+const int yellowLedPin = 5;   // Broche de la LED jaune
+
+unsigned long startTime = 0;         // Variable pour stocker le temps de démarrage du chronomètre
+boolean chronometerRunning = false;  // Indique si le chronomètre est en cours d'exécution
 
 void setup() {
   Serial.begin(115200);
-  pinMode(yellowPin, OUTPUT);
-  pinMode(buttonPin, INPUT);
+
+  pinMode(defaultBtnPin, INPUT);
   pinMode(greenLedPin, OUTPUT);
+
+  pinMode(redBtnPin, INPUT);
   pinMode(redLedPin, OUTPUT);
+
+  pinMode(yellowBtnPin, INPUT);
+  pinMode(yellowLedPin, OUTPUT);
+
   pinMode(buzzerPin, OUTPUT);
-  noTone(buzzerPin); // Arrête le son du buzzer au démarrage
-  attachInterrupt(digitalPinToInterrupt(buttonPin), handleSwitch, CHANGE);
-  ledcSetup(0, 1000, 8); // Configure le canal 0 avec une fréquence de 1000 Hz et une résolution de 8 bits marche sans mais doit le faire sinon erreur dans java
-  ledcAttachPin(buzzerPin, 0); // Attache le buzzer à ce canal
+  noTone(buzzerPin);  // Arrête le son du buzzer au démarrage
+
+  ledcSetup(0, 1000, 8);        // Configure le canal 0 avec une fréquence de 1000 Hz et une résolution de 8 bits marche sans mais doit le faire sinon erreur dans java
+  ledcAttachPin(buzzerPin, 0);  // Attache le buzzer à ce canal
   Serial.println("Arduino prêt");
 }
 
@@ -30,12 +82,16 @@ void loop() {
     char test = Serial.read();
 
     if (test == '1') {
-      experienc1();
+      experience1();
     } else if (test == '2') {
-      experienc2();
+      experience2();
+    } else if (test == '3') {
+      experience3();
     }
   }
 }
+
+// =================================================== commun aux experiences
 
 void startChronometer() {
   chronometerRunning = true;
@@ -49,35 +105,97 @@ void stopChronometer() {
   Serial.println(elapsedTime);
 }
 
-void experienc1() {
-  int switchState = digitalRead(buttonPin);
-  unsigned long randomDelay = random(2000, 5000); 
+void goodBtnIsHigh(int btn, int led) {
+  if (digitalRead(led) == HIGH && aBtnIsHigh()) {
+    if (digitalRead(btn) == HIGH) {
+      Serial.println("Reussite");
+    } else {
+      Serial.println("Échec");
+    }
+    digitalWrite(led, LOW);
+    noTone(buzzerPin);
+    stopChronometer();
+  }
+}
+
+bool aBtnIsHigh() {
+  return (digitalRead(defaultBtnPin) == HIGH || digitalRead(redBtnPin) == HIGH || digitalRead(yellowBtnPin) == HIGH);
+}
+
+// =================================================== experience n°1
+
+void experience1() {
+  unsigned long randomDelay = random(2000, 5000);
   delay(randomDelay);
-  randomLedPin = random(3);
+  int randomLedPin = random(3);
 
   if (randomLedPin == 0) {
-    digitalWrite(yellowPin, HIGH);
-  } else if (randomLedPin == 1) {
     digitalWrite(greenLedPin, HIGH);
-  } else {
+  } else if (randomLedPin == 1) {
     digitalWrite(redLedPin, HIGH);
+  } else {
+    digitalWrite(yellowLedPin, HIGH);
   }
 
   startChronometer();
 
   while (chronometerRunning) {
-    if (digitalRead(buttonPin) == HIGH) {
-      digitalWrite(yellowPin, LOW);
-      digitalWrite(greenLedPin, LOW);
-      digitalWrite(redLedPin, LOW);
-      stopChronometer();
-    }
+    goodBtnIsHigh(defaultBtnPin, greenLedPin);
+    goodBtnIsHigh(redBtnPin, redLedPin);
+    goodBtnIsHigh(yellowBtnPin, yellowLedPin);
   }
 }
 
-void experienc2() {
-  int switchState = digitalRead(buttonPin);
-  unsigned long randomDelay = random(2000, 5000); 
+// =================================================== experience n°2
+
+// void experience2() {
+
+//   int size = sizeof(durations) / sizeof(int);
+
+//   for (int note = 0; note < size; note++) {
+//     //to calculate the note duration, take one second divided by the note type.
+//     //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
+//     int duration = 1000 / durations[note];
+//     tone(buzzerPin, melody[note], duration);
+
+//     //to distinguish the notes, set a minimum time between them.
+//     //the note's duration + 30% seems to work well:
+//     int pauseBetweenNotes = duration * 1.30;
+//     delay(pauseBetweenNotes);
+
+//     //stop the tone playing:
+//     noTone(buzzerPin);
+//   }
+// }
+
+void experience2() {
+
+  unsigned long randomDelay = random(2000, 5000);
+  delay(randomDelay);
+  int randomLedPin = random(3);
+  tone(buzzerPin, 1000);
+
+  if (randomLedPin == 0) {
+    digitalWrite(greenLedPin, HIGH);
+  } else if (randomLedPin == 1) {
+    digitalWrite(redLedPin, HIGH);
+  } else {
+    digitalWrite(yellowLedPin, HIGH);
+  }
+
+  startChronometer();
+
+  while (chronometerRunning) {
+    goodBtnIsHigh(defaultBtnPin, greenLedPin);
+    goodBtnIsHigh(redBtnPin, redLedPin);
+    goodBtnIsHigh(yellowBtnPin, yellowLedPin);
+  }
+}
+
+// =================================================== experience n°3
+
+void experience3() {
+  unsigned long randomDelay = random(2000, 5000);
   delay(randomDelay);
 
   tone(buzzerPin, 1000);
@@ -85,19 +203,9 @@ void experienc2() {
   startChronometer();
 
   while (chronometerRunning) {
-    if (digitalRead(buttonPin) == HIGH) {
+    if (digitalRead(defaultBtnPin) == HIGH) {
       noTone(buzzerPin);
       stopChronometer();
     }
-  }
-}
-
-void ICACHE_RAM_ATTR handleSwitch() {
-  if (digitalRead(buttonPin) == HIGH && chronometerRunning == true) {
-    digitalWrite(yellowPin, LOW);
-    digitalWrite(greenLedPin, LOW);
-    digitalWrite(redLedPin, LOW);
-    noTone(buzzerPin);
-    stopChronometer();
   }
 }
