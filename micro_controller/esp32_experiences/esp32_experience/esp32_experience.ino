@@ -1,46 +1,5 @@
-// #include "pitches.h"
-
-// int melody[] = {
-//   REST, NOTE_D4,
-//   NOTE_G4, NOTE_AS4, NOTE_A4,
-//   NOTE_G4, NOTE_D5,
-//   NOTE_C5,
-//   NOTE_A4,
-//   NOTE_G4, NOTE_AS4, NOTE_A4,
-//   NOTE_F4, NOTE_GS4,
-//   NOTE_D4,
-//   NOTE_D4,
-
-//   NOTE_G4, NOTE_AS4, NOTE_A4,
-//   NOTE_G4, NOTE_D5,
-//   NOTE_F5, NOTE_E5,
-//   NOTE_DS5, NOTE_B4,
-//   NOTE_DS5, NOTE_D5, NOTE_CS5,
-//   NOTE_CS4, NOTE_B4,
-//   NOTE_G4,
-//   NOTE_AS4
-// };
-
-// int durations[] = {
-//   2, 4,
-//   4, 8, 4,
-//   2, 4,
-//   2,
-//   2,
-//   4, 8, 4,
-//   2, 4,
-//   1,
-//   4,
-
-//   4, 8, 4,
-//   2, 4,
-//   2, 4,
-//   2, 4,
-//   4, 8, 4,
-//   2, 4,
-//   1,
-//   4
-// };
+#include "pitches.h"
+#include "TM1637.h"
 
 const int buzzerPin = 13;  // Broche du buzzer
 
@@ -53,8 +12,13 @@ const int redLedPin = 18;
 const int yellowBtnPin = 19;  // Broche du bouton
 const int yellowLedPin = 5;   // Broche de la LED jaune
 
+const int CLK = 33; // Broche de données
+const int DIO = 32; // Broche d'horloge
+
 unsigned long startTime = 0;         // Variable pour stocker le temps de démarrage du chronomètre
 boolean chronometerRunning = false;  // Indique si le chronomètre est en cours d'exécution
+int randomNumber = random(1, 4);
+TM1637 tm1637(CLK, DIO);
 
 void setup() {
   Serial.begin(115200);
@@ -87,6 +51,8 @@ void loop() {
       experience2();
     } else if (test == '3') {
       experience3();
+    } else if (test == '4') {
+      experience4();
     }
   }
 }
@@ -105,9 +71,9 @@ void stopChronometer() {
   Serial.println(elapsedTime);
 }
 
-void goodBtnIsHigh(int btn, int led) {
+void goodBtnIsHigh(int btn, int led, int targetNumber) {
   if (digitalRead(led) == HIGH && aBtnIsHigh()) {
-    if (digitalRead(btn) == HIGH) {
+    if (digitalRead(btn) == HIGH && targetNumber == 1) {
       Serial.println("Reussite");
     } else {
       Serial.println("Échec");
@@ -118,6 +84,7 @@ void goodBtnIsHigh(int btn, int led) {
   }
 }
 
+
 bool aBtnIsHigh() {
   return (digitalRead(defaultBtnPin) == HIGH || digitalRead(redBtnPin) == HIGH || digitalRead(yellowBtnPin) == HIGH);
 }
@@ -127,11 +94,11 @@ bool aBtnIsHigh() {
 void experience1() {
   unsigned long randomDelay = random(2000, 5000);
   delay(randomDelay);
-  int randomLedPin = random(3);
+  int randomNumber = random(1, 4);
 
-  if (randomLedPin == 0) {
+  if (randomNumber == 1) {
     digitalWrite(greenLedPin, HIGH);
-  } else if (randomLedPin == 1) {
+  } else if (randomNumber == 2) {
     digitalWrite(redLedPin, HIGH);
   } else {
     digitalWrite(yellowLedPin, HIGH);
@@ -140,44 +107,24 @@ void experience1() {
   startChronometer();
 
   while (chronometerRunning) {
-    goodBtnIsHigh(defaultBtnPin, greenLedPin);
-    goodBtnIsHigh(redBtnPin, redLedPin);
-    goodBtnIsHigh(yellowBtnPin, yellowLedPin);
+    goodBtnIsHigh(defaultBtnPin, greenLedPin, randomNumber);
+    goodBtnIsHigh(redBtnPin, redLedPin, randomNumber);
+    goodBtnIsHigh(yellowBtnPin, yellowLedPin, randomNumber);
   }
 }
 
 // =================================================== experience n°2
 
-// void experience2() {
-
-//   int size = sizeof(durations) / sizeof(int);
-
-//   for (int note = 0; note < size; note++) {
-//     //to calculate the note duration, take one second divided by the note type.
-//     //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
-//     int duration = 1000 / durations[note];
-//     tone(buzzerPin, melody[note], duration);
-
-//     //to distinguish the notes, set a minimum time between them.
-//     //the note's duration + 30% seems to work well:
-//     int pauseBetweenNotes = duration * 1.30;
-//     delay(pauseBetweenNotes);
-
-//     //stop the tone playing:
-//     noTone(buzzerPin);
-//   }
-// }
-
 void experience2() {
 
   unsigned long randomDelay = random(2000, 5000);
   delay(randomDelay);
-  int randomLedPin = random(3);
+ 
   tone(buzzerPin, 1000);
 
-  if (randomLedPin == 0) {
+  if (randomNumber == 1) {
     digitalWrite(greenLedPin, HIGH);
-  } else if (randomLedPin == 1) {
+  } else if (randomNumber == 2) {
     digitalWrite(redLedPin, HIGH);
   } else {
     digitalWrite(yellowLedPin, HIGH);
@@ -186,15 +133,40 @@ void experience2() {
   startChronometer();
 
   while (chronometerRunning) {
-    goodBtnIsHigh(defaultBtnPin, greenLedPin);
-    goodBtnIsHigh(redBtnPin, redLedPin);
-    goodBtnIsHigh(yellowBtnPin, yellowLedPin);
+    goodBtnIsHigh(defaultBtnPin, greenLedPin, randomNumber);
+    goodBtnIsHigh(redBtnPin, redLedPin, randomNumber);
+    goodBtnIsHigh(yellowBtnPin, yellowLedPin, randomNumber);
   }
 }
 
 // =================================================== experience n°3
 
 void experience3() {
+  tm1637.clearDisplay();
+  tm1637.display(0, 1);
+  startChronometer();
+
+  while (chronometerRunning) {
+    if (digitalRead(defaultBtnPin) == HIGH && randomNumber == 1) {
+      stopChronometer();
+    } else if (digitalRead(redBtnPin) == HIGH && randomNumber == 2) {
+      stopChronometer();
+    } else if (digitalRead(yellowBtnPin) == HIGH && randomNumber == 3) {
+      stopChronometer();
+    } else if (digitalRead(defaultBtnPin) == HIGH || digitalRead(redBtnPin) == HIGH || digitalRead(yellowBtnPin) == HIGH) {
+
+      goodBtnIsHigh(defaultBtnPin, greenLedPin, randomNumber);
+      goodBtnIsHigh(redBtnPin, redLedPin, randomNumber);
+      goodBtnIsHigh(yellowBtnPin, yellowLedPin, randomNumber);
+      stopChronometer();
+    }
+  }
+}
+
+
+// =================================================== experience n°3
+
+void experience4() {
   unsigned long randomDelay = random(2000, 5000);
   delay(randomDelay);
 
@@ -205,6 +177,9 @@ void experience3() {
   while (chronometerRunning) {
     if (digitalRead(defaultBtnPin) == HIGH) {
       noTone(buzzerPin);
+      goodBtnIsHigh(defaultBtnPin, greenLedPin, randomNumber);
+      goodBtnIsHigh(redBtnPin, redLedPin, randomNumber);
+      goodBtnIsHigh(yellowBtnPin, yellowLedPin, randomNumber);
       stopChronometer();
     }
   }

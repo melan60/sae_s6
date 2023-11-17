@@ -2,6 +2,8 @@ import jssc.SerialPort;
 import jssc.SerialPortException;
 import jssc.SerialPortEventListener;
 import jssc.SerialPortEvent;
+
+import java.sql.SQLOutput;
 import java.util.Scanner;
 
 public class ArduinoServer {
@@ -36,6 +38,8 @@ public class ArduinoServer {
                             System.out.println("Temps de réaction (ms) : " + data);
                         } else if (experience.equals("2")) {
                             System.out.println("Temps de réaction (ms) : " + data);
+                        } else if (experience.equals("3")) {
+                            System.out.println("Temps de réaction (ms) : " + data);
                         }
                         break;
                     }
@@ -46,3 +50,6 @@ public class ArduinoServer {
         }
     }
 }
+
+
+
