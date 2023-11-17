@@ -32,6 +32,7 @@ const createUser = async (user, callback) => {
                     return callback(null, user);
                 })
                 .catch(e => {
+                    console.log(e);
                     return callback(e)
                 });
         })
@@ -53,13 +54,12 @@ const addResult = async(result, user, callback)=>{
         execTime: result.execTime
     })
         .then(res => {
-            console.log("test1")
-            console.log(user.results);
-            user.results.push(res);
-            //user.results = res;
-            //user.results.append(res);
-            //user.results.add(res);
-            console.log(user.results);
+            User.findOne({email: user.email})
+                .exec()
+                .then(u=>{
+                    u.results.push(res);
+                    u.save();
+                });
             return callback(null, res);
         })
         .catch(e => {

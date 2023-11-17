@@ -98,8 +98,6 @@ router.post("/add", controller.createUser);
  *                    type: number
  *                  gender:
  *                    type: string
- *                  typeUser:
- *                    type: string
  *                  results:
  *                    type: array
  *            example:
@@ -114,7 +112,6 @@ router.post("/add", controller.createUser);
  *                email: john@example.com
  *                age: 30
  *                gender: Masculin
- *                typeUser: cobaye
  *                results: []
  *      responses:
  *        '200':

@@ -100,7 +100,14 @@ const getAllStimulis = async (callback) => {
 }
 
 const filterResultsGraph = async (data, callback) => {
-    console.log(data);
+    Experience.find({typeStimulus: data})
+        .exec()
+        .then( exp => {
+            return callback(null, exp);
+        })
+        .catch(e => {
+            return callback(e)
+        });
 }
 
 module.exports = {

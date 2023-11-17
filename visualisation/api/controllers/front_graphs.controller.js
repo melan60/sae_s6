@@ -30,7 +30,8 @@ const getAllStimulis = async (req, res) => {
 }
 
 const filterResultsGraph = async (req, res) => {
-    const data = req.query.experiences;
+    const data = req.query.data;
+
     await services.filterResultsGraph(data, (error, results) => {
         if (error) {
             return res.status(500).send({ success: 0, data: error });
