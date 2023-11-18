@@ -1,7 +1,7 @@
 <template>
     <div style="height: 400px;">
         <FilterComponent :stimulis="stimulis" />
-        <GraphLine :data="data" :options="options" /> <!-- Use the correct component name -->
+        <GraphLine :data="data" :options="options" />
     </div>
 </template>
 
@@ -25,7 +25,7 @@ export default {
         options: Object
     },
     data: () => ({
-        stimulis: null // TODO routes vers API pour récup tous les stimulis
+        stimulis: null
     }),
     created() {
         axios.get("http://localhost:5000/graphs/stimulis")

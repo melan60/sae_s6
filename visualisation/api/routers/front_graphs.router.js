@@ -53,33 +53,6 @@ router.get("/time", controller.getReactAndExecTime);
  */
 router.get("/stimulis", controller.getAllStimulis);
 
-// /**
-//  * @swagger
-//  * /graphs/filter:
-//  *   get:
-//  *      description: Filter react and exec time
-//  *      tags:
-//  *          - GRAPHS
-//  *      parameters:
-//  *        - in: query
-//  *          name: experiences
-//  *          description: The experiences to filter.
-//  *          schema:
-//  *            type: object
-//  *            required:
-//  *              - labels
-//  *            properties:
-//  *              labels:
-//  *                type: object
-//  *            example:
-//  *              experiences:
-//  *                labels: ["Expérience 1", "Expérience 2", "Expérience 3", "Expérience 4"]
-//  *      responses:
-//  *          '200':
-//  *              description: Results gotten successfully
-//  *          '500':
-//  *              description: Internal server error
-//  */
 /**
  * @swagger
  * /graphs/filter:

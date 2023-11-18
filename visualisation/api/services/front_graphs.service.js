@@ -8,24 +8,20 @@ const { User, Experience } = require('../models/index.models');
  * @return {Promise}
  */
 const getIndividualData = async (id_user, callback) => {
+    const experiences = await Experience.find().exec();
+    const nameOfAllExperiences = experiences.map(experience => experience.name);
+
     User.findOne({ _id: id_user })
         .exec()
         .then(user => {
-            const resultat = {
-                "nom": user.name,
-                "prenom": user.firstName,
-                "results": user.results.map((exp, index) => {
-                    return {
-                        num_exp: index + 1,
-                        reactTime: exp.reactTime,
-                        execTime: exp.execTime
-                    }
-                })
+            const graph = {
+                first: { labels: nameOfAllExperiences, title: "Temps d'exécution", data: user.results.map(exp => exp.execTime) },
+                second: { labels: nameOfAllExperiences, title: "Temps de réaction", data: user.results.map(exp => exp.reactTime) }
             }
-            return callback(null, resultat)
+            return callback(null, graph);
         })
         .catch(e => {
-            return callback(e)
+            return callback(e);
         }); // TODO message err ou juste e
 }
 
