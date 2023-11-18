@@ -11,7 +11,7 @@ const getIndividualData = async (id_user, callback) => {
     User.findOne({ _id: id_user })
         .exec()
         .then(user => {
-            let resultat = {
+            const resultat = {
                 "nom": user.name,
                 "prenom": user.firstName,
                 "results": user.results.map((exp, index) => {
@@ -39,8 +39,10 @@ const configureGraphs = (nameOfAllExperiences) => {
     return [
         { labels: variables.age_category, title: "Temps de réaction en fonction de l'âge" },
         { labels: variables.genders, title: "Temps de réaction en fonction du sexe" },
-        { labels: nameOfAllExperiences, title: "Temps d'exécution" },
-        { labels: nameOfAllExperiences, title: "Temps de réaction" }
+        {
+            first: { labels: nameOfAllExperiences, title: "Temps d'exécution" },
+            second: { labels: nameOfAllExperiences, title: "Temps de réaction" }
+        }
     ]
 }
 
@@ -50,16 +52,25 @@ const configureGraphs = (nameOfAllExperiences) => {
  * @return {Array} - An array of JSON elements representing initialized tables
  */
 const initializeTables = (configurations) => {
-    const results = [];
-
-    for (let config of configurations) {
-        results.push({
-            labels: config.labels,
-            titre: config.title,
-            data: config.labels.map(variable => 0)
-        });
-    }
-    return results;
+    return configurations.map(config => {
+        if (config.first) {
+            const results = {};
+            for (let key in config) {
+                results[key] = {
+                    labels: config[key].labels,
+                    title: config[key].title,
+                    data: config[key].labels.map(variable => 0)
+                }
+            }
+            return results;
+        } else {
+            return {
+                labels: config.labels,
+                title: config.title,
+                data: config.labels.map(variable => 0)
+            };
+        }
+    });
 }
 
 /**
@@ -76,6 +87,23 @@ const getCategoryAge = (age) => {
     else if (age < 20) return 1;
     else if (age < 60) return 2;
     return 3;
+}
+
+/**
+ * Determines an average time for each category
+ * @param {Array} results - Array with all results
+ * @param {Number} length - Number of all users
+ */
+const makeAnAverage = (results, length) => {
+    for (let result of results) {
+        if (result.first) {
+            for (let index in result) {
+                result[index].data = result[index].data.map(value => value / length);
+            }
+        } else {
+            result.data = result.data.map(value => value / length);
+        }
+    }
 }
 
 /**
@@ -101,10 +129,13 @@ const getReactAndExecTime = async (callback) => {
                 user.results.forEach((result, index) => {
                     results[0].data[index_1] += result.reactTime;
                     results[1].data[index_2] += result.reactTime;
-                    results[2].data[index] += result.execTime;
-                    results[3].data[index] += result.reactTime;
+
+                    results[2].first.data[index] += result.execTime;
+                    results[2].second.data[index] += result.reactTime;
                 });
             });
+
+            makeAnAverage(results, users.length);
             return callback(null, results);
         })
         .catch(e => {
@@ -133,9 +164,9 @@ const getAllStimulis = async (callback) => {
 
 // ============================================================================
 const filterResultsGraph = async (data, callback) => {
-    Experience.find({typeStimulus: data})
+    Experience.find({ typeStimulus: data })
         .exec()
-        .then( exp => {
+        .then(exp => {
             return callback(null, exp);
         })
         .catch(e => {

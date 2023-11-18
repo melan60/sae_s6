@@ -31,7 +31,7 @@ export default {
   created() {
     axios.get("http://localhost:5000/graphs/time")
       .then(res => {
-        for (let value of res.data.data) this.initGraph(value);
+        this.initGraph(res.data.data);
       })
       .catch((e) => {
         console.log(e)
@@ -39,16 +39,32 @@ export default {
   },
   methods: {
     initGraph(results) {
-      this.values.push({
-        labels: results.labels,
-        datasets: [
-          {
-            label: results.titre,
-            backgroundColor: '#35a9a0',
-            data: results.data
-          }
-        ]
-      })
+      for (let index = 0; index < results.length; index += 1) {
+        const value = results[index];
+        const labels = value.labels || (value.first && value.first.labels);
+
+        const datasets = value.first
+          ? Object.values(value).map(item => {
+            return ({
+              label: item.title,
+              backgroundColor: '#35a9a0',
+              borderColor: '#25355980',
+              data: item.data
+            })
+          }) : [
+            {
+              label: value.title,
+              backgroundColor: '#35a9a0',
+              borderColor: '#25355980',
+              data: value.data
+            }
+          ];
+
+        this.values.push({
+          labels: labels,
+          datasets: datasets
+        });
+      }
     }
   }
 }
