@@ -12,12 +12,12 @@ const int redLedPin = 18;
 const int yellowBtnPin = 19;  // Broche du bouton
 const int yellowLedPin = 5;   // Broche de la LED jaune
 
-const int CLK = 33; // Broche de données
-const int DIO = 32; // Broche d'horloge
+const int CLK = 33;  // Broche de données
+const int DIO = 32;  // Broche d'horloge
 
 unsigned long startTime = 0;         // Variable pour stocker le temps de démarrage du chronomètre
 boolean chronometerRunning = false;  // Indique si le chronomètre est en cours d'exécution
-int randomNumber = random(1, 4);
+
 TM1637 tm1637(CLK, DIO);
 
 void setup() {
@@ -37,11 +37,16 @@ void setup() {
 
   ledcSetup(0, 1000, 8);        // Configure le canal 0 avec une fréquence de 1000 Hz et une résolution de 8 bits marche sans mais doit le faire sinon erreur dans java
   ledcAttachPin(buzzerPin, 0);  // Attache le buzzer à ce canal
+
+  tm1637.init();
+  tm1637.set(BRIGHT_TYPICAL);
+
   Serial.println("Arduino prêt");
 }
 
 void loop() {
   while (!Serial.available()) {}
+
   if (Serial.available() > 0) {
     char test = Serial.read();
 
@@ -57,6 +62,7 @@ void loop() {
   }
 }
 
+
 // =================================================== commun aux experiences
 
 void startChronometer() {
@@ -71,9 +77,9 @@ void stopChronometer() {
   Serial.println(elapsedTime);
 }
 
-void goodBtnIsHigh(int btn, int led, int targetNumber) {
+void goodBtnIsHigh(int btn, int led) {
   if (digitalRead(led) == HIGH && aBtnIsHigh()) {
-    if (digitalRead(btn) == HIGH && targetNumber == 1) {
+    if (digitalRead(btn) == HIGH) {
       Serial.println("Reussite");
     } else {
       Serial.println("Échec");
@@ -84,10 +90,10 @@ void goodBtnIsHigh(int btn, int led, int targetNumber) {
   }
 }
 
-
 bool aBtnIsHigh() {
   return (digitalRead(defaultBtnPin) == HIGH || digitalRead(redBtnPin) == HIGH || digitalRead(yellowBtnPin) == HIGH);
 }
+
 
 // =================================================== experience n°1
 
@@ -107,19 +113,20 @@ void experience1() {
   startChronometer();
 
   while (chronometerRunning) {
-    goodBtnIsHigh(defaultBtnPin, greenLedPin, randomNumber);
-    goodBtnIsHigh(redBtnPin, redLedPin, randomNumber);
-    goodBtnIsHigh(yellowBtnPin, yellowLedPin, randomNumber);
+    goodBtnIsHigh(defaultBtnPin, greenLedPin);
+    goodBtnIsHigh(redBtnPin, redLedPin);
+    goodBtnIsHigh(yellowBtnPin, yellowLedPin);
   }
 }
+
 
 // =================================================== experience n°2
 
 void experience2() {
-
   unsigned long randomDelay = random(2000, 5000);
   delay(randomDelay);
- 
+  int randomNumber = random(1, 4);
+
   tone(buzzerPin, 1000);
 
   if (randomNumber == 1) {
@@ -133,38 +140,40 @@ void experience2() {
   startChronometer();
 
   while (chronometerRunning) {
-    goodBtnIsHigh(defaultBtnPin, greenLedPin, randomNumber);
-    goodBtnIsHigh(redBtnPin, redLedPin, randomNumber);
-    goodBtnIsHigh(yellowBtnPin, yellowLedPin, randomNumber);
+    goodBtnIsHigh(defaultBtnPin, greenLedPin);
+    goodBtnIsHigh(redBtnPin, redLedPin);
+    goodBtnIsHigh(yellowBtnPin, yellowLedPin);
   }
 }
 
+
 // =================================================== experience n°3
 
+bool btnIsHigh(int btn) {
+  return digitalRead(btn) == HIGH;
+}
+
 void experience3() {
+  int number = random(1, 4);
+
   tm1637.clearDisplay();
-  tm1637.display(0, 1);
+  tm1637.display(0, number);
   startChronometer();
 
   while (chronometerRunning) {
-    if (digitalRead(defaultBtnPin) == HIGH && randomNumber == 1) {
-      stopChronometer();
-    } else if (digitalRead(redBtnPin) == HIGH && randomNumber == 2) {
-      stopChronometer();
-    } else if (digitalRead(yellowBtnPin) == HIGH && randomNumber == 3) {
-      stopChronometer();
-    } else if (digitalRead(defaultBtnPin) == HIGH || digitalRead(redBtnPin) == HIGH || digitalRead(yellowBtnPin) == HIGH) {
-
-      goodBtnIsHigh(defaultBtnPin, greenLedPin, randomNumber);
-      goodBtnIsHigh(redBtnPin, redLedPin, randomNumber);
-      goodBtnIsHigh(yellowBtnPin, yellowLedPin, randomNumber);
+    if (aBtnIsHigh()) {
+      if (btnIsHigh(defaultBtnPin) && number == 1 || btnIsHigh(redBtnPin) && number == 2 || btnIsHigh(yellowBtnPin) && number == 3) {
+        Serial.println("Réussite");
+      } else {
+        Serial.println("Échec");
+      }
       stopChronometer();
     }
   }
 }
 
 
-// =================================================== experience n°3
+// =================================================== experience n°4 // peut pas faire d'erreur
 
 void experience4() {
   unsigned long randomDelay = random(2000, 5000);
@@ -177,9 +186,6 @@ void experience4() {
   while (chronometerRunning) {
     if (digitalRead(defaultBtnPin) == HIGH) {
       noTone(buzzerPin);
-      goodBtnIsHigh(defaultBtnPin, greenLedPin, randomNumber);
-      goodBtnIsHigh(redBtnPin, redLedPin, randomNumber);
-      goodBtnIsHigh(yellowBtnPin, yellowLedPin, randomNumber);
       stopChronometer();
     }
   }
