@@ -37,6 +37,8 @@ class MainClient  {
 	Socket sock;
 	BufferedReader consoleIn; // to read from keyboard
 
+	String nameUser;
+
 	public MainClient(String serverAddr, int port) throws IOException {
 
 		consoleIn = new BufferedReader(new InputStreamReader(System.in));
@@ -52,9 +54,13 @@ class MainClient  {
 		boolean stop = false;
 
 		try {
+			while(!stop) {
+				stop = createUser();
+			}
+			stop = false;
 			// reading requests from keyboard
 			while (!stop) {
-				System.out.print("WeatherClient [type request]> ");
+				System.out.print(nameUser + " [type request]> ");
 				req = consoleIn.readLine();
 				if (req == null) {
 					stop = true;
@@ -79,6 +85,30 @@ class MainClient  {
 		catch(IOException e) {
 			System.out.println("cannot communicated with server. Aborting");
 		}
+	}
+
+	protected boolean createUser() throws IOException{
+		String req = "";
+		String response = "";
+		System.out.println("Saisir les informations de l'utilisateur :");
+		String[] list = {"Nom de famille", "Prénom", "Mot de passe", "Email", "Age", "Sexe (Masculin, Féminin, Autre)", "Type (admin, cobaye)"};
+
+		for(String var : list){
+			System.out.print("\t * " + var + ": ");
+			req = req + " " + consoleIn.readLine();
+		}
+		System.out.println(req);
+
+		ps.println(req);
+		response = br.readLine();
+		if (response.startsWith("ERR")) {
+			System.out.println("error with request create user:"+response);
+			return false;
+		}
+		System.out.println(response);
+		String[] res = response.split(" ");
+		nameUser = res[1];
+		return true;
 	}
 
 	protected void requestAutoRegister(String[] params) throws IOException {

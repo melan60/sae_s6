@@ -37,6 +37,7 @@ class ThreadServer extends Thread {
 	}
 
 	public void requestLoop() {
+		boolean stop = false;
 		String req = "";
 		String[] reqParts;
 
@@ -44,7 +45,10 @@ class ThreadServer extends Thread {
 			System.out.println("Création de l'utilisateur");
 			req = br.readLine();
 			reqParts = req.split(" ");
-			requestAddUser(reqParts);
+
+			while(!stop) {
+				stop = requestAddUser(reqParts);
+			}
 
 			while(true) {
 				System.out.print("Saisir un numéro d'expérience : ");
@@ -71,7 +75,6 @@ class ThreadServer extends Thread {
 			while (true) {
 				if (this.arduinoConfig.getSerialPort().getInputBufferBytesCount() > 0) {
 					String data = this.arduinoConfig.getSerialPort().readString();
-					//System.out.println("Data received from Arduino: " + data);
 					// You can now process the data based on the chosen experience
 
 					System.out.println("Exp n°" + idExp + ", Temps de réaction (ms) : " + data);
@@ -103,24 +106,14 @@ class ThreadServer extends Thread {
 
 		//String response = exchanger.getMongoDriver().addUser(params[0], params[1], params[2], params[3], age, params[5], params[6]);
 		String response = exchanger.getHttpDriver().addUser(params[0], params[1], params[2], params[3], age, params[5], params[6]);
+		if (response.startsWith("ERR")) {
+			System.out.println("error with request create user:"+response);
+			return false;
+		}
 
 		System.out.println(response);
 		ps.println(response);
 		return true;
-	}
-
-	protected void requestStoreMeasure(String[] params) throws IOException {
-		System.out.println("processing request STORE MEASURE");
-
-		if (params.length != 5) {
-			ps.println("ERR invalid number of parameters");
-			return;
-		}
-		// (un)comment to choose direct mongo access or through the node API
-		//String answer = exchanger.getMongoDriver().saveMeasure(params[1], params[2], params[3], params[4]);
-		String answer = exchanger.getHttpDriver().saveMeasure(params[1], params[2], params[3], params[4]);
-		System.out.println(answer);
-		ps.println(answer);
 	}
 }
 

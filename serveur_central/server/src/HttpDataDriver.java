@@ -1,9 +1,13 @@
+import com.google.gson.Gson;
 import org.bson.Document;
+import org.bson.types.ObjectId;
+
 import java.net.*;
 import java.net.http.*;
 import java.net.http.HttpResponse.*;
 import java.io.*;
 import java.util.List;
+import java.util.UUID;
 
 
 public class HttpDataDriver implements DataDriver {
@@ -48,6 +52,40 @@ public class HttpDataDriver implements DataDriver {
             return null;
         }
         return doc;
+    }
+
+    public synchronized String addUser(String name, String firstname, String password, String email, int age, String gender, String typeUser){
+        if(!(gender.equals("Masculin") || gender.equals("Féminin") || gender.equals("Autre"))){
+            return "ERR gender doesn't exist";
+        }
+
+        if(!(typeUser.equals("cobaye") || typeUser.equals("admin"))){
+            return "ERR typeUser doesn't exist";
+        }
+
+        User user = new User(name, firstname, password, email, age, gender, typeUser);
+
+        // transform a Java class in a JSON
+        Gson gson = new Gson();
+        String jsonRequest = gson.toJson(user);
+        System.out.println(jsonRequest);
+
+        Document doc = postRequest("/user/add", jsonRequest);
+        if (doc == null) {
+            return "ERR cannot join the API";
+        }
+
+        // if error
+        String err = checkError(doc);
+        if (err != null) return err;
+        // if not, get desired field in data
+        Document data = (Document)doc.get("data");
+        name = data.getString("name");
+        return "OK" + name;
+    }
+
+    public String addResults(String idExp, int reactTime, int execTime, User user){
+        return "";
     }
 
     public synchronized String autoRegisterModule(String uc, List<String> chipsets) {

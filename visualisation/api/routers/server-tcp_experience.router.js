@@ -1,5 +1,5 @@
-const express = require('express');
-const controller = require('../controllers/server-tcp_experience.controller');
+const express = require("express");
+const controller = require("../controllers/server-tcp_experience.controller");
 const router = express.Router();
 
 /**
@@ -18,8 +18,6 @@ const router = express.Router();
  *            required:
  *              - name
  *              - typeStimulus
- *              - distraction
- *              - modules
  *            properties:
  *              name:
  *                type: string
@@ -110,7 +108,5 @@ router.post("/module/add", controller.createModule);
  *          description: Internal server error
  */
 router.put("/updateModule", controller.addModuleToAnExperience);
-
-
 
 module.exports = router;

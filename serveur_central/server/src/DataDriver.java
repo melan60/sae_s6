@@ -4,11 +4,22 @@ public interface DataDriver {
 
     // initialize the driver (if needed)
     public boolean init();
-    // store a measure in the DB
-    public String saveMeasure(String type, String date, String value, String moduleKey);
-    // store a measure in the DB but coming from the analysis server -> no module key
-    public String saveAnalysis(String type, String date, String value);
-    // register a module from its own request
-    public String autoRegisterModule(String uc, List<String> chipsets);
-
+    public String addUser(String name, String firstname, String password, String email, int age, String gender, String typeUser);
+    public String addResults(String idExp, int reactTime, int execTime, User user);
+    //{
+    //  "result": {
+    //    "experience": "457870657269656e63652031",
+    //    "reactTime": 10,
+    //    "execTime": 5
+    //  },
+    //  "user": {
+    //    "name": "John",
+    //    "firstName": "Doe",
+    //    "password": "mypassword",
+    //    "email": "john@example.com",
+    //    "age": 30,
+    //    "gender": "Masculin",
+    //    "results": []
+    //  }
+    //}
 }
