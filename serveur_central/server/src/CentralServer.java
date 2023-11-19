@@ -1,8 +1,6 @@
 import java.io.*;
-import java.net.*;
-import java.util.*;
 
-class WeatherCentralServer {
+class CentralServer {
 
   public static void main(String []args) {
 
