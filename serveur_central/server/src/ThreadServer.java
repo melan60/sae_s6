@@ -42,11 +42,10 @@ class ThreadServer extends Thread {
 		String[] reqParts;
 
 		try {
-			System.out.println("Création de l'utilisateur");
-			req = br.readLine();
-			reqParts = req.split(" ");
-
 			while(!stop) {
+				System.out.println("Création de l'utilisateur");
+				req = br.readLine();
+				reqParts = req.split(" ");
 				stop = requestAddUser(reqParts);
 			}
 
@@ -91,23 +90,24 @@ class ThreadServer extends Thread {
 	public boolean requestAddUser(String[] params) throws IOException{
 		System.out.println("processing request ADD USER");
 
-		if (params.length != 7) {
+		if (params.length != 8) {
 			ps.println("ERR invalid number of parameters");
 			return false;
 		}
 
 		int age = -1;
 		try{
-			age = Integer.parseInt(params[4]);
+			age = Integer.parseInt(params[5]);
 		} catch (NumberFormatException e){
 			System.out.println(e);
 			return false;
 		}
 
 		//String response = exchanger.getMongoDriver().addUser(params[0], params[1], params[2], params[3], age, params[5], params[6]);
-		String response = exchanger.getHttpDriver().addUser(params[0], params[1], params[2], params[3], age, params[5], params[6]);
+		String response = exchanger.getHttpDriver().addUser(params[1], params[2], params[3], params[4], age, params[6], params[7]);
 		if (response.startsWith("ERR")) {
 			System.out.println("error with request create user:"+response);
+			ps.println(response);
 			return false;
 		}
 

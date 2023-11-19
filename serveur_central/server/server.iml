@@ -12,5 +12,6 @@
     <orderEntry type="library" name="github.robert2411.platform.components.serialport.api" level="project" />
     <orderEntry type="library" name="google.code.gson" level="project" />
     <orderEntry type="library" name="fasterxml.jackson.dataformat.xml" level="project" />
+    <orderEntry type="library" name="io.github.cdimascio.dotenv.java" level="application" />
   </component>
 </module>

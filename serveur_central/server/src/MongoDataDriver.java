@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import org.bson.Document;
 
 import com.mongodb.client.FindIterable;
@@ -50,7 +51,8 @@ public class MongoDataDriver implements DataDriver {
 
     public boolean init()  {
         mongoClient = MongoClients.create(mongoURL);
-        String name_db = System.getenv("DATABASE_NAME");
+        Dotenv dotenv = Dotenv.configure().load();
+        String name_db = dotenv.get("DATABASE_NAME");
         try {
             database = mongoClient.getDatabase(name_db).withCodecRegistry(pojoCodecRegistry);
             experiences = database.getCollection("experiences", Experience.class);

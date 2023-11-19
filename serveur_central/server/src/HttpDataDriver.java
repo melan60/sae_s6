@@ -64,10 +64,12 @@ public class HttpDataDriver implements DataDriver {
         }
 
         User user = new User(name, firstname, password, email, age, gender, typeUser);
+        ResultsModel resultsModel = new ResultsModel();
+        resultsModel.setUser(user);
 
         // transform a Java class in a JSON
         Gson gson = new Gson();
-        String jsonRequest = gson.toJson(user);
+        String jsonRequest = gson.toJson(resultsModel);
         System.out.println(jsonRequest);
 
         Document doc = postRequest("/user/add", jsonRequest);
@@ -76,8 +78,8 @@ public class HttpDataDriver implements DataDriver {
         }
 
         // if error
-        String err = checkError(doc);
-        if (err != null) return err;
+//        String err = checkError(doc);
+//        if (err != null) return err;
         // if not, get desired field in data
         Document data = (Document)doc.get("data");
         name = data.getString("name");

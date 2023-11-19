@@ -5,7 +5,7 @@ import java.util.List;
 public class User {
     private ObjectId id;
     private String name;
-    private String firstname;
+    private String firstName;
     private String password;
     private String email;
     private int age;
@@ -16,7 +16,7 @@ public class User {
     public User(ObjectId id, String name, String firstname, String password, String email, int age, String gender, String typeUser, List<Result> results) {
         this.id = id;
         this.name = name;
-        this.firstname = firstname;
+        this.firstName = firstname;
         this.password = password;
         this.email = email;
         this.age = age;
@@ -27,7 +27,7 @@ public class User {
 
     public User(String name, String firstname, String password, String email, int age, String gender, String typeUser) {
         this.name = name;
-        this.firstname = firstname;
+        this.firstName = firstname;
         this.password = password;
         this.email = email;
         this.age = age;
@@ -53,11 +53,11 @@ public class User {
     }
 
     public String getFirstname() {
-        return firstname;
+        return firstName;
     }
 
     public void setFirstname(String firstname) {
-        this.firstname = firstname;
+        this.firstName = firstname;
     }
 
     public String getPassword() {
