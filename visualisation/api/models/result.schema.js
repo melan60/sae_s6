@@ -9,7 +9,7 @@ let ResultSchema = new Schema(
       ref: "Experience",
     },
     reactTime: {
-      type: Number, // TODO
+      type: Number,
       required: false,
     },
     execTime: {

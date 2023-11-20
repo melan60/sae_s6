@@ -1,6 +1,6 @@
 const errors = require('../common_variables');
 const { User } = require('../models/index.models');
-const { Result } =require('../models/index.models');
+const { Result } = require('../models/index.models');
 
 const bcrypt = require("bcryptjs");
 
@@ -50,7 +50,7 @@ const createUser = async (user, callback) => {
  * @param {function(error: Error, result: any)} callback
  * @return {Promise}
  */
-const addResult = async(result, user, callback)=>{
+const addResult = async (result, user, callback) => {
 
     Result.create({
         experience: result.experience,
@@ -58,13 +58,16 @@ const addResult = async(result, user, callback)=>{
         execTime: result.execTime
     })
         .then(res => {
-            User.findOne({email: user.email})
+            User.findOne({ email: user.email })
                 .exec()
-                .then(u=>{
+                .then(u => {
+                    if (!u) {
+                        return callback(errors.not_found);
+                    }
                     u.results.push(res);
                     u.save();
+                    return callback(null, res);
                 });
-            return callback(null, res);
         })
         .catch(e => {
             return callback(e)
