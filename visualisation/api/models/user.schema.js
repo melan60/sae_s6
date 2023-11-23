@@ -30,8 +30,9 @@ let UserSchema = new Schema(
       maxLength: Config.USER_EMAIL_MAX_SIZE,
     },
     age: {
-      type: Number,
-      required: false,
+      type: String,
+      enum: Config.age_category,
+      required: true
     },
     gender: {
       type: String,

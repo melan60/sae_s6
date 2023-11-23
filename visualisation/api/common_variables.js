@@ -1,5 +1,5 @@
 // ================================================================================================ models
-const genders = ["Masculin", "Féminin", "Autre"];
+const genders = ["Masculin", "Féminin"];
 const NAME_MIN_SIZE = 3;
 const NAME_MAX_SIZE = 50;
 const rights = ["admin", "cobaye"];

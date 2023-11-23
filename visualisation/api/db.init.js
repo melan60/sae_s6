@@ -81,14 +81,14 @@ function initUsers() {
       name: "Johnson",
       firstName: "Emily",
       email: "johnEmily@gmail.com",
-      age: 25,
+      age: "Adulte",
       gender: "Féminin",
       typeUser: "admin",
     }, {
       name: "Patel",
       firstName: "Aiden",
       email: "patelaiden@gmail.com",
-      age: 31,
+      age: "Adulte",
       gender: "Masculin",
       typeUser: "cobaye",
     }

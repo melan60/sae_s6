@@ -33,7 +33,7 @@ const router = express.Router();
  *              email:
  *                type: string
  *              age:
- *                type: number
+ *                type: string
  *              gender:
  *                type: string
  *              typeUser:
@@ -44,7 +44,7 @@ const router = express.Router();
  *                firstName: Doe
  *                password: mypassword
  *                email: john@example.com
- *                age: 30
+ *                age: Adulte
  *                gender: Masculin
  *                typeUser: cobaye
  *      responses:
@@ -95,7 +95,7 @@ router.post("/add", controller.createUser);
  *                  email:
  *                    type: string
  *                  age:
- *                    type: number
+ *                    type: string
  *                  gender:
  *                    type: string
  *                  results:
@@ -110,7 +110,7 @@ router.post("/add", controller.createUser);
  *                firstName: Doe
  *                password: mypassword
  *                email: john@example.com
- *                age: 30
+ *                age: Adulte
  *                gender: Masculin
  *                results: []
  *      responses:

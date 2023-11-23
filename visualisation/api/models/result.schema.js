@@ -8,6 +8,10 @@ let ResultSchema = new Schema(
       required: true,
       ref: "Experience",
     },
+    error: { // TOTO
+      type: Number,
+      required: false
+    },
     reactTime: {
       type: Number,
       required: false,

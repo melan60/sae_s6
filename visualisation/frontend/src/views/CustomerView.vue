@@ -30,7 +30,7 @@ export default {
     },
     methods: {
         initGraph(value) {
-            const colors = ["#CF0071", "#830090"]
+            const colors = ["#CF0071", "#830090", "#3EE1A1"]
             const labels = value.first.labels;
 
             const datasets = Object.values(value).map((item, index) => {
@@ -53,4 +53,3 @@ export default {
 
 
 <style scoped></style>
-  
