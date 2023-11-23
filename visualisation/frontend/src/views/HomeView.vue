@@ -1,8 +1,8 @@
 <template>
   <div class="grid-container">
     <div v-for="(value, index) in values" :key="index">
-      <GraphBarComponent v-if="index < 2" :data="value" :options="options" />
-      <GraphLineComponent v-if="index > 1" :data="value" :options="options" />
+      <GraphBarComponent v-if="index < 3" :data="value" :options="options" />
+      <GraphLineComponent v-else :data="value" :options="options" />
     </div>
   </div>
 </template>
@@ -36,7 +36,7 @@ export default {
       });
   },
   methods: {
-    initGraph(results) {
+    initGraph(results) { // TODO duplication de code
       const colors = ["#CF0071", "#830090"];
 
       for (let index = 0; index < results.length; index += 1) {

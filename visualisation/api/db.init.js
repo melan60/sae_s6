@@ -61,6 +61,7 @@ async function initResults() {
     try {
       const result_created = await Result.create({
         experience: experience._id,
+        error: 2,
         reactTime: 5 + 2 * cpt,
         execTime: 8 + 3 * cpt
       });

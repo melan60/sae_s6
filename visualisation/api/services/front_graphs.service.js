@@ -14,11 +14,13 @@ const getIndividualData = async (id_user, callback) => {
     User.findOne({ _id: id_user })
         .exec()
         .then(user => {
-            const graph = {
-                first: { labels: nameOfAllExperiences, title: "Temps d'exécution", data: user.results.map(exp => exp.execTime) },
-                second: { labels: nameOfAllExperiences, title: "Temps de réaction", data: user.results.map(exp => exp.reactTime) },
-                third: { labels: nameOfAllExperiences, title: "Taux d'erreurs réalisées", data: user.results.map(exp => exp.error) }
-            }
+            const graph = [
+                {
+                    first: { labels: nameOfAllExperiences, title: "Temps d'exécution", data: user.results.map(exp => exp.execTime) },
+                    second: { labels: nameOfAllExperiences, title: "Temps de réaction", data: user.results.map(exp => exp.reactTime) },
+                },
+                { labels: nameOfAllExperiences, title: "Nombre d'erreurs réalisées", data: user.results.map(exp => exp.error) }
+            ]
             return callback(null, graph);
         })
         .catch(e => {
@@ -36,6 +38,7 @@ const configureGraphs = (nameOfAllExperiences) => {
     return [
         { labels: variables.age_category, title: "Temps de réaction en fonction de l'âge" },
         { labels: variables.genders, title: "Temps de réaction en fonction du sexe" },
+        { labels: nameOfAllExperiences, title: "Nombres d'erreurs réalisées" },
         {
             first: { labels: nameOfAllExperiences, title: "Temps d'exécution" },
             second: { labels: nameOfAllExperiences, title: "Temps de réaction" }
@@ -69,22 +72,6 @@ const initializeTables = (configurations) => {
         }
     });
 }
-
-// /**
-//  * Determines a user's age category based on his age
-//  * @param {Number} age - The age of the user
-//  * @return {Number} - An integer representing the age category:
-//  *                    - 0: Below 12 years old
-//  *                    - 1: Between 12 and 19 years old
-//  *                    - 2: Between 20 and 59 years old
-//  *                    - 3: 60 years old and above
-//  */
-// const getCategoryAge = (age) => {
-//     if (age < 12) return 0;
-//     else if (age < 20) return 1;
-//     else if (age < 60) return 2;
-//     return 3;
-// }
 
 /**
  * Determines an average time for each category
@@ -127,8 +114,10 @@ const getReactAndExecTime = async (callback) => {
                     results[0].data[index_1] += result.reactTime;
                     results[1].data[index_2] += result.reactTime;
 
-                    results[2].first.data[index] += result.execTime;
-                    results[2].second.data[index] += result.reactTime;
+                    results[2].data[index] += result.error;
+
+                    results[3].first.data[index] += result.execTime;
+                    results[3].second.data[index] += result.reactTime;
                 });
             });
 
