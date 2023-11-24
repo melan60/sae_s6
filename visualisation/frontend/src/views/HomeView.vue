@@ -1,29 +1,18 @@
 <template>
-  <div class="main-container">
-    <div class="container-graph">
-      <div class="graph-container">
-        <GraphBarComponent :data="value" :options="options" class="graphique" />
+    <div class="main-container">
+      <div class="container-graph" v-for="(value, index) in values" :key="index">
+        <div class="graph-container">
+          <GraphBarComponent v-if="index < 2" :data="value" :options="options" />
+          <GraphLineComponent v-if="index > 1" :data="value" :options="options" />
+        </div>
       </div>
-      <div class="graph-container">
-        <GraphBarComponent :data="value" :options="options" class="graphique" />
-      </div>
-    </div>
-
-    <div class="container-graph">
-      <div class="graph-container">
-        <GraphLineComponent :data="value" :options="options" class="graphique" />
-      </div>
-      <div class="graph-container">
-        <GraphLineComponent :data="chartData" :options="options" class="graphique" />
-      </div>
-    </div>
-
   </div>
 </template>
 
 <script>
-import GraphBarComponent from '@/components/GraphBarComponent.vue'
-import GraphLineComponent from '@/components/GraphLineComponent.vue'
+import axios from "axios";
+import GraphBarComponent from '@/components/GraphBarComponent.vue';
+import GraphLineComponent from '@/components/GraphLineComponent.vue';
 
 export default {
   name: 'HomeView',
@@ -32,16 +21,6 @@ export default {
     GraphLineComponent
   },
   data: () => ({
-    value: {
-      labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-      datasets: [
-        {
-          label: 'Data One',
-          backgroundColor: ['#7fdbe8', '#35a9a0', '#294f40', '#62e07f', '#2c3e50', '#6bc2e0', '#308bf4'],
-          data: [40, 39, 10, 40, 39, 80, 40]
-        }
-      ]
-    },
     chartData: {
       labels: ['January', 'February', 'March', 'April', 'May'],
       datasets: [
@@ -49,7 +28,7 @@ export default {
           label: 'Scatter Dataset 1',
           fill: false,
           borderColor: '#308bf4',
-          backgroundColor: ['#308bf4', '#7fdbe8'],
+          backgroundColor:  ['#7fdbe8', '#35a9a0', '#294f40', '#62e07f', '#2c3e50', '#6bc2e0', '#308bf4'],
           data: [
             {
               x: -2,
@@ -103,11 +82,35 @@ export default {
         }
       ]
     },
+    values: [],
     options: {
       responsive: true,
-      maintainAspectRatio: true
+      maintainAspectRatio: false,
     }
-  })
+  }),
+  created() {
+    axios.get("http://localhost:5000/graphs/time")
+      .then(res => {
+        for (let value of res.data.data) this.initGraph(value);
+      })
+      .catch((e) => {
+        console.log(e)
+      });
+  },
+  methods: {
+    initGraph(results) {
+      this.values.push({
+        labels: results.labels,
+        datasets: [
+          {
+            label: results.titre,
+            backgroundColor: '#35a9a0',
+            data: results.data
+          }
+        ]
+      })
+    }
+  }
 }
 </script>
 
@@ -116,6 +119,8 @@ export default {
 .main-container {
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-content: center;
   align-items: center;
 }
 
@@ -123,10 +128,8 @@ export default {
   display: flex;
   width: 100%;
   justify-content: center;
-}
-
-.graphique {
-  width: 100%;
+  align-content: center;
+  align-items: center;
 }
 
 .graph-container {
@@ -134,7 +137,7 @@ export default {
   border-radius: 8px;
   padding: 20px;
   margin: 10px;
-  width: 45%;
+  width: calc(50% - 20px);
   box-sizing: border-box;
 }
 </style>

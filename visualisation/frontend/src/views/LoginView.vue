@@ -59,21 +59,24 @@
     </div>
 
     <div class="container">
-      <div class="justify-content-center"><h1 class="card-title text-center p-3" >LOGIN</h1></div>
+      <div class="justify-content-center"><h1 class="card-title text-center p-3">LOGIN</h1></div>
       <div class="d-flex justify-content-center align-items-center">
         <div class="col-md-4">
           <div class="card" :class="{ 'animate-on-load': animateCard }">
             <div class="card-body">
-              <form @submit.prevent="handleLogin">
+              <form @submit.prevent="login">
                 <div class="form-group p-1">
                   <label class="justify-content-center label" for="email">Email</label>
-                  <input type="email" class="form-control" id="email" placeholder="Entrez votre email" v-model="email" required>
+                  <input type="email" class="form-control" id="email" placeholder="Entrez votre email"
+                         v-model="email" required>
                 </div>
                 <div class="form-group">
                   <label class="justify-content-center label" for="password">Password</label>
-                  <input type="password" class="form-control" id="password" placeholder="Entrez votre mot de passe" v-model="password" required>
+                  <input type="password" class="form-control" id="password"
+                         placeholder="Entrez votre mot de passe" v-model="password" required>
                 </div>
                 <button type="submit" class="btn btn-block button">SE CONNECTER</button>
+                {{ error }}
               </form>
             </div>
           </div>
@@ -85,20 +88,48 @@
 
 <script>
 
+import axios from "axios";
+
 export default {
   name: "LoginView",
   data() {
     return {
-      email: '',
-      password: '',
+      email: null,
+      password: null,
+      error: '',
       animateCard: false,
-
     };
   },
   methods: {
-    handleLogin() {
-      console.log('Email:', this.email, 'Password:', this.password);
+    async login() {
+      try {
+        const response = await axios.post('/api/login', {
+          email: this.email,
+          password: this.password,
+        });
+
+        // Store the token and the user's name
+        localStorage.setItem('token', response.data.token);
+
+        localStorage.setItem('userName', response.data.name); // Store the user's name
+
+        await this.$router.push({name: 'scientifique', params: {nomScientifique: response.data.name}});
+
+        // Reset any previous error messages
+        this.error = '';
+
+      } catch (error) {
+        if (error.response && error.response.data) {
+          // Display the server's error message
+          this.error = error.response.data.message;
+        } else {
+          // Generic error if no specific message
+          this.error = "Error during login. Please try again.";
+        }
+        console.error("Error in login() LoginView:", error);
+      }
     }
+
   },
   mounted() {
     this.animateCard = true;

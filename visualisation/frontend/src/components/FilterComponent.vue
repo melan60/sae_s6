@@ -13,6 +13,7 @@
       <button class="btn btn-block button-validate" @click="validate">Valider</button>
       <button class="btn btn-block button" @click="clear">Effacer</button>
     </div>
+
   </div>
 </template>
 
@@ -25,6 +26,7 @@ export default {
   data: () => ({
     selectedStimulus: {}
   }),
+
   created() {
     // Initialize selectedStimulus with false for all stimulus types
     this.stimulis.forEach(stimulus => {
@@ -34,14 +36,19 @@ export default {
   methods: {
     validate() {
       // Logic for validation when the button is clicked
-      console.log('Validated:', this.stimulus);
+      if (this.selectedStimulus == null) {
+        // popup erreur
+      }
+      else {
+        console.log("appel methode du composant parents");
+      }
     },
     clear() {
       // Set all switches to false
       for (let stimulus in this.selectedStimulus) {
         this.selectedStimulus[stimulus] = false;
       }
-    }
+    },
   }
 }
 </script>
@@ -81,7 +88,5 @@ export default {
   color: white !important;
   transition: background-color 0.3s ease;
 }
-
-
-
 </style>
+

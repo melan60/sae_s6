@@ -4,7 +4,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /users:
+ * /graphs/users:
  *   get:
  *      description: Get results for one people
  *      tags:
@@ -12,7 +12,7 @@ const router = express.Router();
  *      parameters:
  *          - in: query
  *            name: id_user
- *            type: integer
+ *            type: string
  *            required: true
  *            description: ID of the user
  *      responses:
@@ -25,7 +25,7 @@ router.get("/users", controller.getIndividualData);
 
 /**
  * @swagger
- * /time:
+ * /graphs/time:
  *   get:
  *      description: Get react and exec time depends on age and gender
  *      tags:
@@ -37,5 +37,20 @@ router.get("/users", controller.getIndividualData);
  *              description: Internal server error
  */
 router.get("/time", controller.getReactAndExecTime);
+
+/**
+ * @swagger
+ * /graphs/stimulis:
+ *   get:
+ *      description: Get all stimulis
+ *      tags:
+ *          - GRAPHS
+ *      responses:
+ *          '200':
+ *              description: Results gotten successfully
+ *          '500':
+ *              description: Internal server error
+ */
+router.get("/stimulis", controller.getAllStimulis);
 
 module.exports = router;
