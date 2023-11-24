@@ -8,12 +8,12 @@ public class User {
     private String firstName;
     private String password;
     private String email;
-    private int age;
+    private String age;
     private String gender;
     private String typeUser;
     private List<Result> results;
 
-    public User(ObjectId id, String name, String firstname, String password, String email, int age, String gender, String typeUser, List<Result> results) {
+    public User(ObjectId id, String name, String firstname, String password, String email, String age, String gender, String typeUser, List<Result> results) {
         this.id = id;
         this.name = name;
         this.firstName = firstname;
@@ -25,7 +25,7 @@ public class User {
         this.results = results;
     }
 
-    public User(String name, String firstname, String password, String email, int age, String gender, String typeUser) {
+    public User(String name, String firstname, String password, String email, String age, String gender, String typeUser) {
         this.name = name;
         this.firstName = firstname;
         this.password = password;
@@ -76,11 +76,11 @@ public class User {
         this.email = email;
     }
 
-    public int getAge() {
+    public String getAge() {
         return age;
     }
 
-    public void setAge(int age) {
+    public void setAge(String age) {
         this.age = age;
     }
 

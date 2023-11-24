@@ -87,7 +87,7 @@ public class MongoDataDriver implements DataDriver {
         return null;
     }
 
-    public String addUser(String name, String firstname, String password, String email, int age, String gender, String typeUser){
+    public String addUser(String name, String firstname, String password, String email, String age, String gender, String typeUser){
         return "";
     }
 

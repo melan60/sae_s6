@@ -98,15 +98,32 @@ class ThreadServer extends Thread {
 		int age = -1;
 		try{
 			age = Integer.parseInt(params[5]);
+			switch (age) {
+				case 1:
+					params[5] = "Enfant";
+					break;
+				case 2:
+					params[5] = "Adolescent";
+					break;
+				case 3:
+					params[5] = "Adulte";
+					break;
+				case 4:
+					params[5] = "Personne Agée";
+					break;
+				default:
+					ps.println("ERR invalid age");
+					return false;
+			}
 		} catch (NumberFormatException e){
 			System.out.println(e);
 			return false;
 		}
 
-		//String response = exchanger.getMongoDriver().addUser(params[0], params[1], params[2], params[3], age, params[5], params[6]);
-		String response = exchanger.getHttpDriver().addUser(params[1], params[2], params[3], params[4], age, params[6], params[7]);
+		//String response = exchanger.getMongoDriver().addUser(params[1], params[2], params[3], params[4], params[5], params[6], params[7]);
+		String response = exchanger.getHttpDriver().addUser(params[1], params[2], params[3], params[4], params[5], params[6], params[7]);
 		if (response.startsWith("ERR")) {
-			System.out.println("error with request create user:"+response);
+			System.out.println("error with request create user: "+response);
 			ps.println(response);
 			return false;
 		}

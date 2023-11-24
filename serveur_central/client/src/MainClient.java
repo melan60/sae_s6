@@ -91,7 +91,7 @@ class MainClient  {
 		String req = "";
 		String response = "";
 		System.out.println("Saisir les informations de l'utilisateur :");
-		String[] list = {"Nom de famille", "Prénom", "Mot de passe", "Email", "Age", "Sexe (Masculin, Féminin, Autre)", "Type (admin, cobaye)"};
+		String[] list = {"Nom de famille", "Prénom", "Mot de passe", "Email", "Age \n\t\t- Enfant = 1, \n\t\t- Adolescent = 2, \n\t\t- Adulte = 3, \n\t\t- Personne Agée = 4 \n\t", "Sexe (Masculin, Féminin)", "Type (admin, cobaye)"};
 
 		for(String var : list){
 			System.out.print("\t * " + var + ": ");

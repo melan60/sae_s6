@@ -8,18 +8,15 @@ const USER_PASSWORD_MAX_SIZE = 100;
 const USER_EMAIL_MIN_SIZE = 3;
 const USER_EMAIL_MAX_SIZE = 60;
 
-
 // ================================================================================================ error authentification
 const params_authentification = "Email ou mot de passe incorrect";
-
 
 // ================================================================================================ error server-tcp user
 const already_registered = "Champs déjà enregistré(s)";
 
 // ================================================================================================ services
-const age_category = ["Enfants", "Adolescent", "Adulte", "Personnes Agées"];
+const age_category = ["Enfant", "Adolescent", "Adulte", "Personne Agée"];
 const not_found = "Élément introuvable";
-
 
 module.exports = {
   genders,
@@ -35,5 +32,5 @@ module.exports = {
   already_registered,
 
   age_category,
-  not_found
+  not_found,
 };

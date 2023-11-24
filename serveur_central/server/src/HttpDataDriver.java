@@ -6,6 +6,7 @@ import java.net.*;
 import java.net.http.*;
 import java.net.http.HttpResponse.*;
 import java.io.*;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -54,13 +55,17 @@ public class HttpDataDriver implements DataDriver {
         return doc;
     }
 
-    public synchronized String addUser(String name, String firstname, String password, String email, int age, String gender, String typeUser){
-        if(!(gender.equals("Masculin") || gender.equals("Féminin") || gender.equals("Autre"))){
+    public synchronized String addUser(String name, String firstname, String password, String email, String age, String gender, String typeUser){
+        if(!(gender.equals("Masculin") || gender.equals("Féminin"))){
             return "ERR gender doesn't exist";
         }
 
         if(!(typeUser.equals("cobaye") || typeUser.equals("admin"))){
             return "ERR typeUser doesn't exist";
+        }
+
+        if(!Arrays.asList("Enfant", "Adolescent", "Adulte", "Personne Agée").contains(age)){
+            return "ERR age doesn't exist";
         }
 
         User user = new User(name, firstname, password, email, age, gender, typeUser);
@@ -83,7 +88,7 @@ public class HttpDataDriver implements DataDriver {
         // if not, get desired field in data
         Document data = (Document)doc.get("data");
         name = data.getString("name");
-        return "OK" + name;
+        return "OK " + name;
     }
 
     public String addResults(String idExp, int reactTime, int execTime, User user){
