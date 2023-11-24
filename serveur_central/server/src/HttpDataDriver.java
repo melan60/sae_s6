@@ -26,7 +26,7 @@ public class HttpDataDriver implements DataDriver {
     }
 
     private String checkError(Document answer) {
-        int error = answer.getInteger("error");
+        int error = answer.getInteger("success");
         if (error != 0) {
             return answer.getString("data");
         }
@@ -55,20 +55,7 @@ public class HttpDataDriver implements DataDriver {
         return doc;
     }
 
-    public synchronized String addUser(String name, String firstname, String password, String email, String age, String gender, String typeUser){
-        if(!(gender.equals("Masculin") || gender.equals("Féminin"))){
-            return "ERR gender doesn't exist";
-        }
-
-        if(!(typeUser.equals("cobaye") || typeUser.equals("admin"))){
-            return "ERR typeUser doesn't exist";
-        }
-
-        if(!Arrays.asList("Enfant", "Adolescent", "Adulte", "Personne Agée").contains(age)){
-            return "ERR age doesn't exist";
-        }
-
-        User user = new User(name, firstname, password, email, age, gender, typeUser);
+    public synchronized String addUser(User user){
         ResultsModel resultsModel = new ResultsModel();
         resultsModel.setUser(user);
 
@@ -83,11 +70,11 @@ public class HttpDataDriver implements DataDriver {
         }
 
         // if error
-//        String err = checkError(doc);
-//        if (err != null) return err;
+        String err = checkError(doc);
+        if (err != null) return err;
         // if not, get desired field in data
         Document data = (Document)doc.get("data");
-        name = data.getString("name");
+        String name = data.getString("name");
         return "OK " + name;
     }
 

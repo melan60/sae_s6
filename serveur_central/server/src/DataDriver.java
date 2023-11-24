@@ -4,7 +4,7 @@ public interface DataDriver {
 
     // initialize the driver (if needed)
     public boolean init();
-    public String addUser(String name, String firstname, String password, String email, String age, String gender, String typeUser);
+    public String addUser(User user);
     public String addResults(String idExp, int reactTime, int execTime, User user);
     //{
     //  "result": {

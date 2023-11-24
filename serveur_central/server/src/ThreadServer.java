@@ -4,6 +4,7 @@ import org.bson.types.ObjectId;
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 class ThreadServer extends Thread {
@@ -14,6 +15,7 @@ class ThreadServer extends Thread {
 	DataExchanger exchanger;
 	ArduinoConfig arduinoConfig;
 	int idThread;
+	User currentUser;
 
 	public ThreadServer(int idThread, Socket sock, DataExchanger data) {
 		this.sock = sock;
@@ -50,7 +52,6 @@ class ThreadServer extends Thread {
 			}
 
 			while(true) {
-				System.out.print("Saisir un numéro d'expérience : ");
 				req = br.readLine();
 				if ((req == null) || (req.isEmpty())) {
 					break;
@@ -95,42 +96,71 @@ class ThreadServer extends Thread {
 			return false;
 		}
 
-		int age = -1;
-		try{
-			age = Integer.parseInt(params[5]);
-			switch (age) {
-				case 1:
-					params[5] = "Enfant";
-					break;
-				case 2:
-					params[5] = "Adolescent";
-					break;
-				case 3:
-					params[5] = "Adulte";
-					break;
-				case 4:
-					params[5] = "Personne Agée";
-					break;
-				default:
-					ps.println("ERR invalid age");
-					return false;
-			}
-		} catch (NumberFormatException e){
-			System.out.println(e);
+		String[] resCheck = checkValuesAddUser(params[5], params[6], params[7]);
+		if(resCheck[0].startsWith("ERR")){
+			System.out.println("error with request create user: "+ resCheck);
+			ps.println(resCheck);
 			return false;
 		}
 
-		//String response = exchanger.getMongoDriver().addUser(params[1], params[2], params[3], params[4], params[5], params[6], params[7]);
-		String response = exchanger.getHttpDriver().addUser(params[1], params[2], params[3], params[4], params[5], params[6], params[7]);
+		User user = new User(params[1], params[2], params[3], params[4], resCheck[1], params[6], params[7]);
+		String response = exchanger.getMongoDriver().addUser(user);
+//		String response = exchanger.getHttpDriver().addUser(user);
+		System.out.println(response);
+		String[] res = response.split(" ");
+		System.out.println(res[res.length-1]);
 		if (response.startsWith("ERR")) {
 			System.out.println("error with request create user: "+response);
 			ps.println(response);
 			return false;
 		}
 
+		this.currentUser = user;
 		System.out.println(response);
 		ps.println(response);
 		return true;
+	}
+
+	public String[] checkValuesAddUser(String age, String gender, String typeUser){
+		String[] returnTab = new String[2];
+		returnTab[0] = "";
+
+		int ageInt = -1;
+		try{
+			ageInt = Integer.parseInt(age);
+			switch (ageInt) {
+				case 1:
+					returnTab[1] = "Enfant";
+					break;
+				case 2:
+					returnTab[1] = "Adolescent";
+					break;
+				case 3:
+					returnTab[1] = "Adulte";
+					break;
+				case 4:
+					returnTab[1] = "Personne Agée";
+					break;
+				default:
+					returnTab[0] = "ERR invalid age";
+					return returnTab;
+			}
+		} catch (NumberFormatException e){
+			returnTab[0] = e.toString();
+			return returnTab;
+		}
+
+		if(!Arrays.asList("Masculin", "Féminin").contains(gender)) {
+			returnTab[0] = "ERR gender doesn't exist";
+			return returnTab;
+		}
+
+		if(!Arrays.asList("cobaye", "admin").contains(typeUser)) {
+			returnTab[0] = "ERR typeUser doesn't exist";
+			return returnTab;
+		}
+
+		return returnTab;
 	}
 }
 

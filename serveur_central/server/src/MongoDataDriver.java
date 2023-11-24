@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import at.favre.lib.crypto.bcrypt.BCrypt;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.bson.Document;
 
@@ -87,12 +88,35 @@ public class MongoDataDriver implements DataDriver {
         return null;
     }
 
-    public String addUser(String name, String firstname, String password, String email, String age, String gender, String typeUser){
-        return "";
+    public String addUser(User user){
+        ObjectId key = generateUniqueKey();
+        user.setId(key);
+        String password = user.getPassword();
+        String bcryptHashString = BCrypt.withDefaults().hashToString(10, password.toCharArray());
+        user.setPassword(bcryptHashString);
+        users.insertOne(user);
+        return "OK " + user.getName();
     }
 
     public String addResults(String idExp, int reactTime, int execTime, User user){
         return "";
+    }
+
+    public ObjectId generateUniqueKey(){
+        // must generate an unique key
+        UUID key = UUID.randomUUID();
+        ObjectId id = null;
+        boolean stop = false;
+        while(!stop) {
+            id = getModuleId(key.toString());
+            if (id == null) {
+                stop = true;
+            }
+            else {
+                key = UUID.randomUUID();
+            }
+        }
+        return id;
     }
 
     public synchronized  String autoRegisterModule(String uc, List<String> chipsets) {
@@ -103,18 +127,7 @@ public class MongoDataDriver implements DataDriver {
                 lst.add(id);
             }
         }
-        // must generate an unique key
-        UUID key = UUID.randomUUID();
-        boolean stop = false;
-        while(!stop) {
-            ObjectId id = getModuleId(key.toString());
-            if (id == null) {
-                stop = true;
-            }
-            else {
-                key = UUID.randomUUID();
-            }
-        }
+        ObjectId key = generateUniqueKey();
         long nb = modules.estimatedDocumentCount()+1;
         String name = "module "+nb;
         String shortName = "mod"+nb;

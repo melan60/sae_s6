@@ -1,5 +1,6 @@
 import org.bson.types.ObjectId;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class User {
@@ -33,6 +34,7 @@ public class User {
         this.age = age;
         this.gender = gender;
         this.typeUser = typeUser;
+        this.results = new ArrayList<>();
     }
 
 
