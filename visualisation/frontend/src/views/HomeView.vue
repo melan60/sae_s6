@@ -24,26 +24,29 @@ export default {
       responsive: true,
       maintainAspectRatio: false
     },
+    user: null,
     values: [],
   }),
-  created() {
-    axios.get("http://localhost:5000/graphs/time")
-      .then(res => {
-        this.initGraph(res.data.data);
-      })
-      .catch((e) => {
-        console.log(e)
-      });
+  async created() {
+    this.user = this.$store.getters.getUser;
+    try {
+      const res = this.user ? await axios.get(`http://localhost:5000/graphs/users?id_user=${this.user._id}`) :
+        await axios.get("http://localhost:5000/graphs/time");
+      this.initGraph(res.data.data);
+    } catch (e) {
+      console.log(e);
+    }
   },
   methods: {
-    initGraph(results) { // TODO duplication de code
+    initGraph(results) {
       const colors = ["#CF0071", "#830090"];
+      let value, labels, datasets;
 
       for (let index = 0; index < results.length; index += 1) {
-        const value = results[index];
-        const labels = value.labels || (value.first && value.first.labels);
+        value = results[index];
+        labels = value.labels || (value.first && value.first.labels);
 
-        const datasets = value.first
+        datasets = value.first
           ? Object.values(value).map((item, id) => {
             return ({
               label: item.title,
