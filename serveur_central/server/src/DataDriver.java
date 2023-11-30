@@ -5,7 +5,8 @@ public interface DataDriver {
     // initialize the driver (if needed)
     public boolean init();
     public String addUser(User user);
-    public String addResults(String idExp, int reactTime, int execTime, User user);
+    public String addResults(String idExp, float reactTime, float execTime, int nbErrors, User user);
+    public int getLastExperience();
     //{
     //  "result": {
     //    "experience": "457870657269656e63652031",

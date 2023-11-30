@@ -25,6 +25,7 @@ import org.bson.codecs.pojo.annotations.BsonProperty;
 import org.bson.types.ObjectId;
 
 import static com.mongodb.MongoClientSettings.getDefaultCodecRegistry;
+import static com.mongodb.client.model.Sorts.descending;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
@@ -88,6 +89,12 @@ public class MongoDataDriver implements DataDriver {
         return null;
     }
 
+    public int getLastExperience(){
+        Experience experience = experiences.find().sort(descending("numero")).first();
+        System.out.println(experience.getNumero());
+        return experience.getNumero();
+    }
+
     public String addUser(User user){
         ObjectId key = generateUniqueKey();
         user.setId(key);
@@ -97,9 +104,12 @@ public class MongoDataDriver implements DataDriver {
         users.insertOne(user);
         return "OK " + user.getName();
     }
-
-    public String addResults(String idExp, int reactTime, int execTime, User user){
-        return "";
+    public String addResults(String idExp, float reactTime, float execTime, int nbErrors, User user){
+        Experience experience = experiences.find(eq("numero", idExp)).first();
+        ObjectId _id = generateUniqueKey();
+        Result result = new Result(_id, experience.getId(), reactTime, execTime, nbErrors);
+        results.insertOne(result);
+        return "OK";
     }
 
     public ObjectId generateUniqueKey(){

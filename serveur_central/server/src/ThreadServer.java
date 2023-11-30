@@ -16,6 +16,7 @@ class ThreadServer extends Thread {
 	ArduinoConfig arduinoConfig;
 	int idThread;
 	User currentUser;
+	int lastExpNumero;
 
 	public ThreadServer(int idThread, Socket sock, DataExchanger data) {
 		this.sock = sock;
@@ -42,24 +43,43 @@ class ThreadServer extends Thread {
 		boolean stop = false;
 		String req = "";
 		String[] reqParts;
+		int idExp = -1;
 
 		try {
 			while(!stop) {
 				System.out.println("Création de l'utilisateur");
 				req = br.readLine();
+				if(req == null || req.isEmpty()) {
+					ps.println("ERR no arguments received from client");
+					break;
+				}
 				reqParts = req.split(" ");
 				stop = requestAddUser(reqParts);
 			}
 
+			// Used to know the number of experience currently created in the database
+			lastExpNumero = exchanger.getMongoDriver().getLastExperience();
+
 			while(true) {
+				System.out.println(lastExpNumero);
 				req = br.readLine();
 				if ((req == null) || (req.isEmpty())) {
 					break;
 				}
 
-				reqParts = req.split(" ");
+				try{
+					idExp = Integer.parseInt(req);
+				} catch (NumberFormatException e){
+					ps.print("ERR experience numero is not an int");
+					break;
+				}
 
-				launchExperience(reqParts[0]);
+				if(idExp < 0 || idExp > lastExpNumero){
+					ps.println("ERR experience numero doesn't exist");
+					break;
+				}
+
+				launchExperience(req);
 			}
 			System.out.println("end of request loop");
 		}
@@ -69,23 +89,31 @@ class ThreadServer extends Thread {
 	}
 
 	public void launchExperience(String idExp){
+		String react = "", exec = "", errors = "";
 		try {
 			this.arduinoConfig.getSerialPort().writeString(idExp);
 
 			while (true) {
 				if (this.arduinoConfig.getSerialPort().getInputBufferBytesCount() > 0) {
-					String data = this.arduinoConfig.getSerialPort().readString();
-					// You can now process the data based on the chosen experience
-
-					System.out.println("Exp n°" + idExp + ", Temps de réaction (ms) : " + data);
-					//String response = exchanger.getHttpDriver().addResults(idExp, idUser, data);
-					//String response = exchanger.getMongoDriver().addResults(idExp, idUser, data);
+					react = this.arduinoConfig.getSerialPort().readString();
+					System.out.println("Exp n°" + idExp + ", Temps de réaction (ms) : " + react);
+					exec = this.arduinoConfig.getSerialPort().readString();
+					System.out.println("Exp n°" + idExp + ", Temps d'exécution (ms) : " + exec);
+					errors = this.arduinoConfig.getSerialPort().readString();
+					System.out.println("Exp n°" + idExp + ", Nombre d'erreurs : " + errors);
 					break;
 				}
 			}
 		} catch (SerialPortException e) {
 			System.out.println("Error writing to the serial port");
 		}
+		float[] res = checkValuesAddResults(react, exec, errors);
+		if(res[0] == 1){
+			ps.println("ERR invalid parameters");
+			return;
+		}
+		String response = exchanger.getHttpDriver().addResults(idExp, res[1], res[2], (int) res[3], currentUser);
+//		String response = exchanger.getMongoDriver().addResults(idExp, res[1], res[2], (int) res[3], currentUser);
 	}
 
 	public boolean requestAddUser(String[] params) throws IOException{
@@ -98,14 +126,14 @@ class ThreadServer extends Thread {
 
 		String[] resCheck = checkValuesAddUser(params[5], params[6], params[7]);
 		if(resCheck[0].startsWith("ERR")){
-			System.out.println("error with request create user: "+ resCheck);
-			ps.println(resCheck);
+			System.out.println("Error checkValuesAddUser: "+ resCheck[0]);
+			ps.println(resCheck[0]);
 			return false;
 		}
 
 		User user = new User(params[1], params[2], params[3], params[4], resCheck[1], params[6], params[7]);
-		String response = exchanger.getMongoDriver().addUser(user);
-//		String response = exchanger.getHttpDriver().addUser(user);
+//		String response = exchanger.getMongoDriver().addUser(user);
+		String response = exchanger.getHttpDriver().addUser(user);
 		System.out.println(response);
 		String[] res = response.split(" ");
 		System.out.println(res[res.length-1]);
@@ -121,9 +149,27 @@ class ThreadServer extends Thread {
 		return true;
 	}
 
+	public float[] checkValuesAddResults(String react, String exec, String errors){
+		float[] res = new float[4];
+		// 0 = success
+		res[0] = 0;
+		try{
+			res[1] = Float.parseFloat(react);
+			res[2] = Float.parseFloat(exec);
+			res[3] = Integer.parseInt(errors);
+		} catch (NumberFormatException e){
+			// 1 = error
+			res[0] = 1;
+			return res;
+		}
+		if(res[3] < 0 || res[3] > 5)
+			res[0] = 1;
+		return res;
+	}
+
 	public String[] checkValuesAddUser(String age, String gender, String typeUser){
 		String[] returnTab = new String[2];
-		returnTab[0] = "";
+		returnTab[0] = "OK";
 
 		int ageInt = -1;
 		try{
