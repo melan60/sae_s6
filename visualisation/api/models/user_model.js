@@ -1,7 +1,4 @@
-const mongoose = require("mongoose");
-const UserSchema = require("./user_schema"); // Make sure the path is correct
+const mongoose = require('mongoose');
+const UserSchema = require('./user_schema');
 
-// Create the model from the schema and export it.
-const User = mongoose.model("User", UserSchema);
-
-module.exports = User;
+module.exports = mongoose.model('User',UserSchema);

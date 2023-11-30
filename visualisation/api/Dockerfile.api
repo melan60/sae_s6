@@ -1,0 +1,13 @@
+# COMMANDS
+# docker compose up -d : lance le docker-compose.yml
+# docker compose down : stop et delete tous les containers
+# docker exec -it {mongodb ou api} bash : pour exécuter un des containers
+
+FROM node
+WORKDIR /app
+COPY . .
+RUN npm install
+
+
+EXPOSE 5000
+CMD npm run start

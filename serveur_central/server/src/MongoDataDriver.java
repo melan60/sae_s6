@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import at.favre.lib.crypto.bcrypt.BCrypt;
+import io.github.cdimascio.dotenv.Dotenv;
 import org.bson.Document;
 
 import com.mongodb.client.FindIterable;
@@ -35,23 +37,29 @@ public class MongoDataDriver implements DataDriver {
     private CodecRegistry pojoCodecRegistry;
     private MongoClient mongoClient;
     private MongoDatabase database;
-    MongoCollection<Measure> measures;
+    MongoCollection<Experience> experiences;
     MongoCollection<Module> modules;
-    MongoCollection<Chipset> chipsets;
+    MongoCollection<User> users;
+    MongoCollection<Result> results;
 
     public MongoDataDriver(String mongoURL) {
         this.mongoURL = mongoURL;
+        // create a PojoCodecProvider used to serialize and deserialize POJO object
         pojoCodecProvider = PojoCodecProvider.builder().automatic(true).build();
+        // create a CodecRegistry used to define the way of serializing & deserializing
         pojoCodecRegistry = fromRegistries(getDefaultCodecRegistry(), fromProviders(pojoCodecProvider));
     }
 
     public boolean init()  {
         mongoClient = MongoClients.create(mongoURL);
+        Dotenv dotenv = Dotenv.configure().load();
+        String name_db = dotenv.get("DATABASE_NAME");
         try {
-            database = mongoClient.getDatabase("weatherapi").withCodecRegistry(pojoCodecRegistry);
-            measures = database.getCollection("measures", Measure.class);
+            database = mongoClient.getDatabase(name_db).withCodecRegistry(pojoCodecRegistry);
+            experiences = database.getCollection("experiences", Experience.class);
             modules = database.getCollection("modules", Module.class);
-            chipsets = database.getCollection("chipsets", Chipset.class);
+            users = database.getCollection("users", User.class);
+            results = database.getCollection("results", Result.class);
         }
         catch(IllegalArgumentException e) {
             return false;
@@ -62,7 +70,7 @@ public class MongoDataDriver implements DataDriver {
     private ObjectId getModuleId(String moduleKey) {
         Module module = modules.find(eq("key",moduleKey)).first();
         if (module != null) {
-            System.out.println(module.getKey()+ " -> "+module.getId());
+//            System.out.println(module.getKey()+ " -> "+module.getId());
 
             return module.getId();
         }
@@ -70,13 +78,45 @@ public class MongoDataDriver implements DataDriver {
     }
 
     private ObjectId getChipsetId(String chipsetName) {
-        Chipset chipset = chipsets.find(eq("name",chipsetName)).first();
+//        Chipset chipset = chipsets.find(eq("name",chipsetName)).first();
+        Chipset chipset = null;
         if (chipset != null) {
             System.out.println(chipset.getName()+ " -> "+chipset.getId());
 
             return chipset.getId();
         }
         return null;
+    }
+
+    public String addUser(User user){
+        ObjectId key = generateUniqueKey();
+        user.setId(key);
+        String password = user.getPassword();
+        String bcryptHashString = BCrypt.withDefaults().hashToString(10, password.toCharArray());
+        user.setPassword(bcryptHashString);
+        users.insertOne(user);
+        return "OK " + user.getName();
+    }
+
+    public String addResults(String idExp, int reactTime, int execTime, User user){
+        return "";
+    }
+
+    public ObjectId generateUniqueKey(){
+        // must generate an unique key
+        UUID key = UUID.randomUUID();
+        ObjectId id = null;
+        boolean stop = false;
+        while(!stop) {
+            id = getModuleId(key.toString());
+            if (id == null) {
+                stop = true;
+            }
+            else {
+                key = UUID.randomUUID();
+            }
+        }
+        return id;
     }
 
     public synchronized  String autoRegisterModule(String uc, List<String> chipsets) {
@@ -87,24 +127,14 @@ public class MongoDataDriver implements DataDriver {
                 lst.add(id);
             }
         }
-        // must generate an unique key
-        UUID key = UUID.randomUUID();
-        boolean stop = false;
-        while(!stop) {
-            ObjectId id = getModuleId(key.toString());
-            if (id == null) {
-                stop = true;
-            }
-            else {
-                key = UUID.randomUUID();
-            }
-        }
+        ObjectId key = generateUniqueKey();
         long nb = modules.estimatedDocumentCount()+1;
         String name = "module "+nb;
         String shortName = "mod"+nb;
-        Module m = new Module(name, shortName, key.toString(), uc, lst);
-        modules.insertOne(m);
-        return "OK "+m.getName()+","+m.getShortName()+","+m.getKey();
+//        Module m = new Module(name, shortName, key.toString(), uc, lst);
+//        modules.insertOne(m);
+//        return "OK "+m.getName()+","+m.getShortName()+","+m.getKey();
+        return "";
     }
 
     public synchronized String saveMeasure(String type, String date, String value, String moduleKey) {
@@ -114,13 +144,13 @@ public class MongoDataDriver implements DataDriver {
             return "ERR invalid module key";
         }
         Measure m = new Measure(type, LocalDateTime.parse(date), value, idModule);
-        measures.insertOne(m);
+//        measures.insertOne(m);
         return "OK";
     }
 
     public synchronized String saveAnalysis(String type, String date, String value) {
         Measure m = new Measure(type, LocalDateTime.parse(date), value, null);
-        measures.insertOne(m);
+//        measures.insertOne(m);
         return "OK";
     }
 }

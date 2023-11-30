@@ -1,0 +1,61 @@
+version: "1.0"
+
+services:
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    # build: 
+    #   dockerfile: Dockerfile.mongo
+    networks:
+      - multi-architecture
+    volumes:
+      - mongo-db:/var/lib/mongodb
+      - ./visualisation/api/db.init.js:/db/db.init.js
+      - ./visualisation/api/models:/db/models
+    ports:
+      - 127.0.0.1:27017:27017
+
+  api:
+    container_name: api
+    command: bash -c "cd /app && npm run start"
+    build: 
+      context: ./visualisation/api
+      dockerfile: Dockerfile.api
+    depends_on:
+      - mongodb
+    networks:
+      - multi-architecture
+    environment:
+      DOCKER_MONGO: mongo
+    volumes:
+      - ./visualisation/api:/app
+    ports:
+      - 127.0.0.1:5000:5000
+
+  server_central:
+    image: amazoncorretto
+    container_name: server_central
+    # build: 
+    #   dockerfile: Dockerfile.java.central
+    networks:
+      - multi-architecture
+    volumes:
+      - ./serveur_central:/app
+    # ports:
+    #   - 127.0.0.1:5000:5000
+
+  server_mobile:
+    image: amazoncorretto
+    container_name: server_mobile
+    networks:
+      - multi-architecture
+    volumes:
+      - ./serveur_image:/app
+    # ports:
+    #   - 127.0.0.1:5000:5000
+
+networks:
+  multi-architecture:
+
+volumes:
+  mongo-db:

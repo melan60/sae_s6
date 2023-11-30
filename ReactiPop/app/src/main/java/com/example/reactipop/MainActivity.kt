@@ -36,6 +36,21 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var cameraExecutor: ExecutorService
 
+    companion object {
+        private const val TAG = "CameraXApp"
+        private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
+        private const val REQUEST_CODE_PERMISSIONS = 10
+        private val REQUIRED_PERMISSIONS =
+            mutableListOf(
+                Manifest.permission.CAMERA,
+                Manifest.permission.RECORD_AUDIO
+            ).apply {
+                if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
+                    add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                }
+            }.toTypedArray()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewBinding = ActivityMainBinding.inflate(layoutInflater)
@@ -46,7 +61,8 @@ class MainActivity : AppCompatActivity() {
             startCamera()
         } else {
             ActivityCompat.requestPermissions(
-                this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
+                this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS
+            )
         }
 
         // Set up listeners for photo and video capture buttons
@@ -55,30 +71,45 @@ class MainActivity : AppCompatActivity() {
         cameraExecutor = Executors.newSingleThreadExecutor()
     }
 
+    @SuppressLint("MissingSuperCall")
+    override fun onRequestPermissionsResult(
+        requestCode: Int, permissions: Array<String>, grantResults:
+        IntArray
+    ) {
+        if (requestCode == REQUEST_CODE_PERMISSIONS) {
+            if (allPermissionsGranted()) {
+                startCamera()
+            } else {
+                makeToast(getString(R.string.permissions_denied))
+                finish()
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        cameraExecutor.shutdown()
+    }
+
+    private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
+        ContextCompat.checkSelfPermission(
+            baseContext, it
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
     // Implements video capture and starting/stopping the capture session.
+    @SuppressLint("MissingPermission")
     private fun captureVideo() {
         val videoCapture = this.videoCapture ?: return
 
-        viewBinding.videoCaptureButton.isEnabled = false
-
-        val curRecording = recording
-        if (curRecording != null) {
+        if (recording != null) {
             // Stop the ongoing recording session.
-            curRecording.stop()
+            recording?.stop()
             recording = null
             return
         }
 
-        // Create and start a new recording session
-        val name = SimpleDateFormat(FILENAME_FORMAT, Locale.FRANCE)
-            .format(System.currentTimeMillis())
-        val contentValues = ContentValues().apply {
-            put(MediaStore.MediaColumns.DISPLAY_NAME, name)
-            put(MediaStore.MediaColumns.MIME_TYPE, "video/mp4")
-            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
-                put(MediaStore.Video.Media.RELATIVE_PATH, "Movies/CameraX-Video")
-            }
-        }
+        var contentValues = generateVideoContentValues()
 
         val mediaStoreOutputOptions = MediaStoreOutputOptions
             .Builder(contentResolver, MediaStore.Video.Media.EXTERNAL_CONTENT_URI)
@@ -86,42 +117,50 @@ class MainActivity : AppCompatActivity() {
             .build()
         recording = videoCapture.output
             .prepareRecording(this, mediaStoreOutputOptions)
-            .apply {
-                if (PermissionChecker.checkSelfPermission(this@MainActivity,
-                        Manifest.permission.RECORD_AUDIO) ==
-                    PermissionChecker.PERMISSION_GRANTED)
-                {
-                    withAudioEnabled()
-                }
-            }
+            .apply { withAudioEnabled() }
             .start(ContextCompat.getMainExecutor(this)) { recordEvent ->
-                when(recordEvent) {
+                when (recordEvent) {
                     is VideoRecordEvent.Start -> {
-                        viewBinding.videoCaptureButton.apply {
-                            text = getString(R.string.stop_capture)
-                            isEnabled = true
-                        }
+                        updateVideoCaptureBtn(R.string.stop_capture)
                     }
+
                     is VideoRecordEvent.Finalize -> {
                         if (!recordEvent.hasError()) {
-                            val msg = "La capture vidéo a réussi : " +
+                            val msg = getString(R.string.video_recording_success) +
                                     "${recordEvent.outputResults.outputUri}"
-                            Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT)
-                                .show()
+                            makeToast(msg)
                             Log.d(TAG, msg)
                         } else {
                             recording?.close()
                             recording = null
-                            Log.e(TAG, "La capture vidéo s'est terminée avec une erreur : " +
-                                    "${recordEvent.error}")
+                            Log.e(
+                                TAG, getString(R.string.error_video_recording) +
+                                        "${recordEvent.error}"
+                            )
                         }
-                        viewBinding.videoCaptureButton.apply {
-                            text = getString(R.string.start_capture)
-                            isEnabled = true
-                        }
+                        updateVideoCaptureBtn(R.string.start_capture)
                     }
                 }
             }
+    }
+
+    private fun generateVideoContentValues(): ContentValues {
+        val name = SimpleDateFormat(FILENAME_FORMAT, Locale.FRANCE)
+            .format(System.currentTimeMillis())
+
+        return ContentValues().apply {
+            put(MediaStore.MediaColumns.DISPLAY_NAME, name)
+            put(MediaStore.MediaColumns.MIME_TYPE, "video/mp4")
+            // TODO à décommenter ?
+            // if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
+            //    put(MediaStore.Video.Media.RELATIVE_PATH, "Movies/CameraX-Video")
+            // }
+        }
+    }
+
+    private fun makeToast(msg: String) {
+        Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT)
+            .show()
     }
 
     private fun startCamera() {
@@ -146,56 +185,20 @@ class MainActivity : AppCompatActivity() {
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
             try {
-                // Unbind all use cases before rebinding
-                cameraProvider.unbindAll()
-
                 // Bind use cases to the camera
                 cameraProvider.bindToLifecycle(this, cameraSelector, preview, videoCapture)
 
-            } catch(exc: Exception) {
-                Log.e(TAG, "La liaison des cas d'utilisation a échoué", exc)
+            } catch (exc: Exception) {
+                Log.e(TAG, getString(R.string.use_case_bindings_error), exc)
             }
 
         }, ContextCompat.getMainExecutor(this))
     }
 
-    private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
-        ContextCompat.checkSelfPermission(
-            baseContext, it) == PackageManager.PERMISSION_GRANTED
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        cameraExecutor.shutdown()
-    }
-
-    companion object {
-        private const val TAG = "CameraXApp"
-        private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
-        private const val REQUEST_CODE_PERMISSIONS = 10
-        private val REQUIRED_PERMISSIONS =
-            mutableListOf (
-                Manifest.permission.CAMERA,
-                Manifest.permission.RECORD_AUDIO
-            ).apply {
-                if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
-                    add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                }
-            }.toTypedArray()
-    }
-    @SuppressLint("MissingSuperCall")
-    override fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<String>, grantResults:
-        IntArray) {
-        if (requestCode == REQUEST_CODE_PERMISSIONS) {
-            if (allPermissionsGranted()) {
-                startCamera()
-            } else {
-                Toast.makeText(this,
-                    "Les autorisations n'ont pas été accordées par l'utilisateur.",
-                    Toast.LENGTH_SHORT).show()
-                finish()
-            }
+    private fun updateVideoCaptureBtn(msg: Int) {
+        viewBinding.videoCaptureButton.apply {
+            text = getString(msg)
+            isEnabled = true
         }
     }
 }

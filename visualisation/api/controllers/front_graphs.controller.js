@@ -1,4 +1,4 @@
-const services = require('../services/front_graphs.service');
+const services = require('../services/front_graphs_service');
 
 const getIndividualData = async (req, res) => {
     const id_user = req.query.id_user;
@@ -29,8 +29,20 @@ const getAllStimulis = async (req, res) => {
     });
 }
 
+const filterResultsGraph = async (req, res) => {
+    const data = req.query.type;
+
+    await services.filterResultsGraph(data, (error, results) => {
+        if (error) {
+            return res.status(500).send({ success: 0, data: error });
+        }
+        return res.status(200).send({ success: 1, data: results });
+    });
+}
+
 module.exports = {
     getIndividualData,
     getReactAndExecTime,
-    getAllStimulis
+    getAllStimulis,
+    filterResultsGraph
 }

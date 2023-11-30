@@ -3,7 +3,6 @@ const bcrypt = require('bcrypt');
 const cors = require('cors');
 const User = require('../models/user_model');
 
-const services = require('../services/front_auth.service');
 
 function generateAccessToken(user) {
     return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1800s' });
@@ -20,11 +19,11 @@ exports.login = async (req, res) => {
 
         const isMatch = await bcrypt.compare(password, user.password);
 
+        console.log('Email: ' + email);
         console.log(`Password match: ${isMatch}`); // This should log true if the password is correct
-        console.log('The password : ' + password + ' user.password : ' + user.password);
         console.log('The user type :' + user.typeUser); // Ensure it logs an array containing 'admin'
 
-        if (isMatch && user.typeUser[0] === 'admin') {
+        if (isMatch && user.typeUser === 'admin') {
             const token = generateAccessToken({ userId: user._id });
             res.json({
                 token: token,

@@ -1,9 +1,14 @@
+import com.google.gson.Gson;
 import org.bson.Document;
+import org.bson.types.ObjectId;
+
 import java.net.*;
 import java.net.http.*;
 import java.net.http.HttpResponse.*;
 import java.io.*;
+import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 
 public class HttpDataDriver implements DataDriver {
@@ -21,7 +26,7 @@ public class HttpDataDriver implements DataDriver {
     }
 
     private String checkError(Document answer) {
-        int error = answer.getInteger("error");
+        int error = answer.getInteger("success");
         if (error != 0) {
             return answer.getString("data");
         }
@@ -48,6 +53,33 @@ public class HttpDataDriver implements DataDriver {
             return null;
         }
         return doc;
+    }
+
+    public synchronized String addUser(User user){
+        ResultsModel resultsModel = new ResultsModel();
+        resultsModel.setUser(user);
+
+        // transform a Java class in a JSON
+        Gson gson = new Gson();
+        String jsonRequest = gson.toJson(resultsModel);
+        System.out.println(jsonRequest);
+
+        Document doc = postRequest("/user/add", jsonRequest);
+        if (doc == null) {
+            return "ERR cannot join the API";
+        }
+
+        // if error
+        String err = checkError(doc);
+        if (err != null) return err;
+        // if not, get desired field in data
+        Document data = (Document)doc.get("data");
+        String name = data.getString("name");
+        return "OK " + name;
+    }
+
+    public String addResults(String idExp, int reactTime, int execTime, User user){
+        return "";
     }
 
     public synchronized String autoRegisterModule(String uc, List<String> chipsets) {

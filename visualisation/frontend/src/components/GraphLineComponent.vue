@@ -10,9 +10,9 @@
 
 <script>
 import axios from "axios";
-import { Chart, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js'
-import { Line } from 'vue-chartjs'
-import FilterComponent from './FilterComponent.vue'
+import { Chart, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
+import { Line } from 'vue-chartjs';
+import FilterComponent from './FilterComponent.vue';
 
 Chart.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend)
 
@@ -28,12 +28,11 @@ export default {
     },
 
     data: () => ({
-        stimulis: null // TODO routes vers API pour récup tous les stimulis
+        stimulis: null
     }),
     created() {
         axios.get("http://localhost:5000/graphs/stimulis")
             .then(res => {
-                console.log("res.data", res.data.data)
                 this.stimulis = res.data.data
             })
             .catch((e) => {
