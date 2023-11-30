@@ -63,13 +63,22 @@ export default {
                       if (this.dataGraph.labels[i] == experience.name) {
                         list_experience_a_afficher.push(i)
                       }
-                      if (this.dataGraph.labels[i] != experience.name && !list_experience_a_afficher.includes(i)) {
-                        this.dataGraph.labels.splice(i, 1)
-                        this.dataGraph.datasets[0].data.splice(i, 1) //Pour le temps d'éxecution
-                        this.dataGraph.datasets[1].data.splice(i, 1) //Pour le temps de réaction
-                      }
                     });
                   }
+
+                  var copy_datatGraph = _.cloneDeep(this.dataInit);
+
+                  for (let i = 0; i < copy_datatGraph.labels.length; i++) {
+                    experiences.forEach(experience => {
+                    if (copy_datatGraph.labels[i] != experience.name && !list_experience_a_afficher.includes(i)) {
+                      console.log("test3")
+                      this.dataGraph.labels.splice(i, 1)
+                      this.dataGraph.datasets[0].data.splice(i, 1) //Pour le temps d'éxecution
+                      this.dataGraph.datasets[1].data.splice(i, 1) //Pour le temps de réaction
+                    }
+                    });
+                  }
+
                   var modif = _.cloneDeep(this.dataGraph);
 
                   this.dataGraph = modif;
