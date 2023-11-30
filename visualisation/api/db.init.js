@@ -31,7 +31,7 @@ async function initExperiences() {
       typeStimulus: "Sonore",
       distraction: "",
       modules: modules
-    },{
+    }, {
       name: "Chaise musicale",
       typeStimulus: "Sonore",
       distraction: "",
@@ -62,7 +62,6 @@ async function initResults() {
   let results = [];
   const experiences = await Experience.find().exec();
   for (let experience of experiences) {
-    console.log(experience)
     try {
       const result_created = await Result.create({
         experience: experience._id,
