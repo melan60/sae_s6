@@ -56,9 +56,25 @@ const getExperience = async (req, res) => {
   });
 };
 
+const getAllExperiences = async (req, res) => {
+  await services.getAllExperiences((err, result) => {
+    if (err) return res.status(400).send({ success: 0, data: err });
+    return res.status(200).send({ success: 1, data: result });
+  });
+};
+
+const getLastExperience = async (req, res) => {
+  await services.getLastExperience((err, result) => {
+    if (err) return res.status(400).send({ success: 0, data: err });
+    return res.status(200).send({ success: 1, data: result });
+  });
+};
+
 module.exports = {
   createExperience,
   createModule,
   addModuleToAnExperience,
   getExperience,
+  getAllExperiences,
+  getLastExperience,
 };
