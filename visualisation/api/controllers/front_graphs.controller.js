@@ -30,7 +30,7 @@ const getAllStimulis = async (req, res) => {
 }
 
 const filterResultsGraph = async (req, res) => {
-    const data = req.query.data;
+    const data = req.query.type;
 
     await services.filterResultsGraph(data, (error, results) => {
         if (error) {

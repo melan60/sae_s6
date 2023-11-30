@@ -31,6 +31,11 @@ async function initExperiences() {
       typeStimulus: "Sonore",
       distraction: "",
       modules: modules
+    },{
+      name: "Chaise musicale",
+      typeStimulus: "Sonore",
+      distraction: "",
+      modules: modules
     }
   ]
 

@@ -2,11 +2,10 @@
   <div>
     <p>Sélectionner le type de stimulus</p>
     <div v-for="(elem, index) in stimulis" :key="index">
-      <input type="radio" :value="elem" v-model="stimulus">
+      <input type="radio" :value="elem" v-model="$store.state.stimuli"> <!-- TODO -->
       <label>{{ elem }}</label>
       <br>
     </div>
-    <b-button type="submit" class="btn-submit" @click=submitFilter>Valider</b-button>
     <b-button type="reset" class="btn-reset" @click=resetFilter>Effacer</b-button>
   </div>
 </template>
@@ -18,30 +17,15 @@ export default {
   props: {
     stimulis: Array
   },
-  data: () => ({
-    stimulus: null
-  }),
   methods: {
-    submitFilter() {
-    },
     resetFilter() {
-      this.stimulus = null;
+      this.$store.commit("setStimuli",  null)
     }
   }
 }
 </script>
 
-
 <style scoped>
-.btn-submit {
-  background-color: #4CD078;
-  margin: 5px;
-}
-
-.btn-submit:hover {
-  background-color: #4CD078;
-  margin: 5px;
-}
 
 .btn-reset {
   background-color: #900000;

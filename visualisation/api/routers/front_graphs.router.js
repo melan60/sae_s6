@@ -62,7 +62,7 @@ router.get("/stimulis", controller.getAllStimulis);
  *          - GRAPHS
  *      parameters:
  *        - in: query
- *          name: data
+ *          name: type
  *          type: string
  *          required: true
  *          description: The type of stimuli to filter
