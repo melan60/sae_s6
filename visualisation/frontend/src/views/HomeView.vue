@@ -24,13 +24,12 @@ export default {
       responsive: true,
       maintainAspectRatio: false
     },
-    user: null,
     values: [],
   }),
   async created() {
-    this.user = this.$store.getters.getUser;
+    const user = this.$store.getters.getUser;
     try {
-      const res = this.user ? await axios.get(`http://localhost:5000/graphs/users?id_user=${this.user._id}`) :
+      const res = user ? await axios.get(`http://localhost:5000/graphs/users?id_user=${user._id}`) :
         await axios.get("http://localhost:5000/graphs/time");
       this.initGraph(res.data.data);
     } catch (e) {
