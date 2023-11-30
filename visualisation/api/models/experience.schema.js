@@ -10,6 +10,10 @@ let ExperienceSchema = new Schema(
       minLength: Config.NAME_MIN_SIZE,
       maxLength: Config.NAME_MAX_SIZE,
     },
+    numero: {
+      type: Number,
+      required: true,
+    },
     typeStimulus: {
       type: String,
       required: true,

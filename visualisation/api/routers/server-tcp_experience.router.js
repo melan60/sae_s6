@@ -32,7 +32,7 @@ const router = express.Router();
  *                distraction: Sonore (musique)
  *      responses:
  *        '200':
- *          description: Experience created succeffuly
+ *          description: Experience created successful
  *        '449':
  *          description: Experience is already registered
  *        '500':
@@ -108,5 +108,28 @@ router.post("/module/add", controller.createModule);
  *          description: Internal server error
  */
 router.put("/updateModule", controller.addModuleToAnExperience);
+
+/**
+ *  @swagger
+ *  /experience:
+ *    get:
+ *      tags:
+ *        - Experience
+ *      description: Get an experience by numero
+ *      parameters:
+ *        - in: query
+ *          name: numero
+ *          type: string
+ *          required: true
+ *          description: Numero of the experience
+ *      responses:
+ *        '200':
+ *          description: Get experience successful
+ *        '400':
+ *          description: Bad request
+ *        '500':
+ *          description: Internal server error
+ */
+router.get("/", controller.getExperience);
 
 module.exports = router;
