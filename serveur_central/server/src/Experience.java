@@ -7,14 +7,34 @@ public class Experience {
     private String name;
     private String typeStimulus;
     private String distraction;
+    private int numero;
     private List<ObjectId> modules;
 
-    public Experience(ObjectId id, String name, String typeStimulus, String distraction, List<ObjectId> modules) {
+    public Experience() {}
+
+    public Experience(ObjectId id, String name, String typeStimulus, String distraction, int numero, List<ObjectId> modules) {
         this.id = id;
         this.name = name;
         this.typeStimulus = typeStimulus;
         this.distraction = distraction;
+        this.numero = numero;
         this.modules = modules;
+    }
+
+    public ObjectId getId() {
+        return id;
+    }
+
+    public void setId(ObjectId id) {
+        this.id = id;
+    }
+
+    public int getNumero() {
+        return numero;
+    }
+
+    public void setNumero(int numero) {
+        this.numero = numero;
     }
 
     public String getName() {

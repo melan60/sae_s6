@@ -27,10 +27,31 @@ public class HttpDataDriver implements DataDriver {
 
     private String checkError(Document answer) {
         int error = answer.getInteger("success");
-        if (error != 0) {
-            return answer.getString("data");
+        if (error == 0) {
+            return "ERR";
         }
         return null;
+    }
+
+    private Document getRequest(String route, String req){
+        Document doc = null;
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(apiURL+route+req))
+                .header("Content-Type", "application/json")
+                .build();
+        try {
+            HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
+            System.out.println(response.body());
+            // parse received JSON
+            doc = Document.parse(response.body());
+        }
+        catch(InterruptedException e) {
+            return null;
+        }
+        catch(IOException e) {
+            return null;
+        }
+        return doc;
     }
 
     private Document postRequest(String route, String payload) {
@@ -71,15 +92,48 @@ public class HttpDataDriver implements DataDriver {
 
         // if error
         String err = checkError(doc);
-        if (err != null) return err;
+        if (err != null) return "ERR wrong response from API";
         // if not, get desired field in data
         Document data = (Document)doc.get("data");
         String name = data.getString("name");
         return "OK " + name;
     }
 
-    public String addResults(String idExp, int reactTime, int execTime, User user){
-        return "";
+    public int getLastExperience(){
+        Document doc = getRequest("/experience/last", "");
+        Document data = (Document)doc.get("data");
+        int numero = data.getInteger("numero");
+        return numero;
+    }
+
+    public String addResults(String idExp, float reactTime, float execTime, int nbErrors, User user){
+        Document doc = getRequest("/experience", "?numero="+idExp);
+        Document data = (Document)doc.get("data");
+        ObjectId id = data.getObjectId("_id");
+
+        ResultsModel resultsModel = new ResultsModel();
+        resultsModel.setUser(user);
+        Result result = new Result(id, reactTime, execTime, nbErrors);
+        resultsModel.setResult(result);
+
+        // transform a Java class in a JSON
+        Gson gson = new Gson();
+        String jsonRequest = gson.toJson(resultsModel);
+        System.out.println(jsonRequest);
+
+        Document requestResponse = postRequest("/result/add", jsonRequest);
+        if (requestResponse == null) {
+            return "ERR cannot join the API";
+        }
+
+        // if error
+        String err = checkError(requestResponse);
+        if (err != null) return "ERR wrong response from API";
+        // if not, get desired field in data
+        Document dataResponse = (Document)requestResponse.get("data");
+//        String name = dataResponse.getString("name");
+//        return "OK " + name;
+        return "OK";
     }
 
     public synchronized String autoRegisterModule(String uc, List<String> chipsets) {
