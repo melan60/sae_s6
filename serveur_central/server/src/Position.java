@@ -2,7 +2,9 @@ import java.io.*;
 
 public class Position {
 
-    private double x,y,z;
+    private final double x;
+    private final double y;
+    private final double z;
 
     public Position() {
         x = 0; y = 0; z = 0;
@@ -35,8 +37,7 @@ public class Position {
     }
 
     public boolean equals(Position p, double eps) {
-        if ( (Math.abs(p.x-x)>eps)||(Math.abs(p.y-y)>eps)||(Math.abs(p.z-z)>eps) ) return false;
-        return true;
+        return (!(Math.abs(p.x - x) > eps)) && (!(Math.abs(p.y - y) > eps)) && (!(Math.abs(p.z - z) > eps));
     }
 
     public double distance(Position p) {

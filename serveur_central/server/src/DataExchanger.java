@@ -1,7 +1,7 @@
 class DataExchanger {
 
-	private DataDriver httpDriver;
-	private DataDriver mongoDriver;
+	private final DataDriver httpDriver;
+	private final DataDriver mongoDriver;
 
 	public DataExchanger(String apiURL, String mongoURL ) {
 		httpDriver = new HttpDataDriver(apiURL);

@@ -1,30 +1,20 @@
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
+import com.mongodb.MongoException;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
 import io.github.cdimascio.dotenv.Dotenv;
-import org.bson.Document;
 
-import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 
 import org.bson.codecs.configuration.CodecProvider;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
-import org.bson.codecs.pojo.annotations.BsonProperty;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
@@ -37,15 +27,15 @@ import static com.mongodb.client.model.Filters.eq;
 
 public class MongoDataDriver implements DataDriver {
 
-    private String mongoURL;
-    private CodecProvider pojoCodecProvider;
-    private CodecRegistry pojoCodecRegistry;
-    private MongoClient mongoClient;
-    private MongoDatabase database;
+    private final String mongoURL;
+    private final CodecProvider pojoCodecProvider;
+    private final CodecRegistry pojoCodecRegistry;
     MongoCollection<Experience> experiences;
     MongoCollection<Module> modules;
     MongoCollection<User> users;
     MongoCollection<Result> results;
+    private MongoClient mongoClient;
+    private MongoDatabase database;
 
     public MongoDataDriver(String mongoURL) {
         this.mongoURL = mongoURL;
@@ -72,70 +62,60 @@ public class MongoDataDriver implements DataDriver {
         return true;
     }
 
-    private ObjectId getModuleId(String moduleKey) {
-        Module module = modules.find(eq("key",moduleKey)).first();
-        if (module != null) {
-//            System.out.println(module.getKey()+ " -> "+module.getId());
-
-            return module.getId();
-        }
-        return null;
-    }
-
-    private ObjectId getChipsetId(String chipsetName) {
-//        Chipset chipset = chipsets.find(eq("name",chipsetName)).first();
-        Chipset chipset = null;
-        if (chipset != null) {
-            System.out.println(chipset.getName()+ " -> "+chipset.getId());
-
-            return chipset.getId();
-        }
-        return null;
-    }
-
-    public int getLastExperience(){
+    public synchronized int getLastExperience(){
         Experience experience = experiences.find().sort(descending("numero")).first();
-        System.out.println(experience.getNumero());
         return experience.getNumero();
     }
 
-    public String addUser(User user){
-        ObjectId key = generateUniqueKey();
+    public synchronized String addUser(User user){
+        ObjectId key = generateUniqueKey("user");
         user.setId(key);
         String password = user.getPassword();
         String bcryptHashString = BCrypt.withDefaults().hashToString(10, password.toCharArray());
         user.setPassword(bcryptHashString);
-        users.insertOne(user);
+        try {
+            users.insertOne(user);
+        } catch (MongoException me) {
+            System.err.println("Unable to insert due to an error: " + me);
+            return "ERR unable to create the user";
+        }
         return "OK " + user.getName() + " " + user.getId();
     }
-    public String addResults(String numero, float reactTime, float execTime, int nbErrors, User user){
-        System.out.println("id : " + user.getId());
+    public synchronized String addResults(String numero, float reactTime, float execTime, int nbErrors, User user){
         int num = Integer.parseInt(numero);
+        // Request to get the experience _id using its numero
         Experience experience = experiences.find(eq("numero", num)).first();
-        ObjectId _id = generateUniqueKey();
+        ObjectId _id = generateUniqueKey("result");
         Result result = new Result(_id, experience.getId(), reactTime, execTime, nbErrors);
-        results.insertOne(result);
+        try {
+            results.insertOne(result);
+        } catch (MongoException me) {
+            System.err.println("Unable to insert due to an error: " + me);
+            return "ERR unable to create the result";
+        }
 
+        // Update a user's results tab by adding the new result
         Bson update = Updates.addToSet("results", result);
-//        Document query = new Document().append("_id",  user.getId());
         Bson query = Filters.eq("_id", user.getId());
-        // Updates the first document that has a "title" value of "Cool Runnings 2"
         UpdateResult updateResult = users.updateOne(query, update);
         // Prints the number of updated documents and the upserted document ID, if an upsert was performed
-        System.out.println("Modified document count: " + updateResult.getModifiedCount());
-        System.out.println("Upserted id: " + updateResult.getUpsertedId());
-        User test = users.find(eq("_id", user.getId())).first();
-        System.out.println("name : " + test.getName() + ", " + test.getResults());
+//        System.out.println("Modified document count: " + updateResult.getModifiedCount());
         return "OK";
     }
 
-    public ObjectId generateUniqueKey(){
-        // must generate an unique key
+    public ObjectId generateUniqueKey(String collection){
+        // must generate a unique key
         UUID key = UUID.randomUUID();
         ObjectId id = null;
         boolean stop = false;
         while(!stop) {
-            id = getModuleId(key.toString()); // TODO
+            if(collection.equals("result")){
+                id = getResultId(key.toString());
+            }
+            else if(collection.equals("user")){
+                id = getUserId(key.toString());
+            }
+
             if (id == null) {
                 stop = true;
             }
@@ -146,38 +126,19 @@ public class MongoDataDriver implements DataDriver {
         return id;
     }
 
-    public synchronized  String autoRegisterModule(String uc, List<String> chipsets) {
-        List<ObjectId> lst = new ArrayList<>();
-        for(String chipset : chipsets) {
-            ObjectId id = getChipsetId(chipset);
-            if (id != null) {
-                lst.add(id);
-            }
+    private ObjectId getResultId(String moduleKey) {
+        Result result = results.find(eq("_id",moduleKey)).first();
+        if (result != null) {
+            return result.getId();
         }
-        ObjectId key = generateUniqueKey();
-        long nb = modules.estimatedDocumentCount()+1;
-        String name = "module "+nb;
-        String shortName = "mod"+nb;
-//        Module m = new Module(name, shortName, key.toString(), uc, lst);
-//        modules.insertOne(m);
-//        return "OK "+m.getName()+","+m.getShortName()+","+m.getKey();
-        return "";
+        return null;
     }
 
-    public synchronized String saveMeasure(String type, String date, String value, String moduleKey) {
-
-        ObjectId idModule = getModuleId(moduleKey);
-        if (idModule == null) {
-            return "ERR invalid module key";
+    private ObjectId getUserId(String moduleKey) {
+        User user = users.find(eq("_id",moduleKey)).first();
+        if (user != null) {
+            return user.getId();
         }
-        Measure m = new Measure(type, LocalDateTime.parse(date), value, idModule);
-//        measures.insertOne(m);
-        return "OK";
-    }
-
-    public synchronized String saveAnalysis(String type, String date, String value) {
-        Measure m = new Measure(type, LocalDateTime.parse(date), value, null);
-//        measures.insertOne(m);
-        return "OK";
+        return null;
     }
 }

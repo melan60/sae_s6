@@ -45,6 +45,9 @@ class ThreadServer extends Thread {
 		String[] reqParts;
 		int idExp = -1;
 
+		// Used to know the number of experience currently created in the database
+		lastExpNumero = exchanger.getMongoDriver().getLastExperience();
+
 		try {
 			while(!stop) {
 				System.out.println("Création de l'utilisateur");
@@ -57,10 +60,7 @@ class ThreadServer extends Thread {
 				stop = requestAddUser(reqParts);
 			}
 
-			// Used to know the number of experience currently created in the database
-			lastExpNumero = exchanger.getHttpDriver().getLastExperience();
-
-			String response = exchanger.getMongoDriver().addResults("2", 12, 15, 10, currentUser);
+			String response = exchanger.getHttpDriver().addResults("2", 12, 15, 10, currentUser);
 //			while(true) {
 //				System.out.println(lastExpNumero);
 //				req = br.readLine();
@@ -118,8 +118,6 @@ class ThreadServer extends Thread {
 	}
 
 	public boolean requestAddUser(String[] params) throws IOException{
-		System.out.println("processing request ADD USER");
-
 		if (params.length != 8) {
 			ps.println("ERR invalid number of parameters");
 			return false;
@@ -132,9 +130,9 @@ class ThreadServer extends Thread {
 			return false;
 		}
 
-		User user = new User(params[1], params[2], params[3], params[4], resCheck[1], params[6], params[7]);
-		String response = exchanger.getMongoDriver().addUser(user);
-//		String response = exchanger.getHttpDriver().addUser(user);
+		User user = new User(params[1], params[2], params[3], params[4], resCheck[1], resCheck[2], resCheck[3]);
+//		String response = exchanger.getMongoDriver().addUser(user);
+		String response = exchanger.getHttpDriver().addUser(user);
 		System.out.println(response);
 		String[] res = response.split(" ");
 		if (response.startsWith("ERR")) {
@@ -146,8 +144,7 @@ class ThreadServer extends Thread {
 		ObjectId _id = new ObjectId(res[2]);
 		user.setId(_id);
 		this.currentUser = user;
-		System.out.println(response);
-		ps.println(response);
+		ps.println(res[0] + " " + res[1] + " " + lastExpNumero);
 		return true;
 	}
 
@@ -170,46 +167,50 @@ class ThreadServer extends Thread {
 	}
 
 	public String[] checkValuesAddUser(String age, String gender, String typeUser){
-		String[] returnTab = new String[2];
+		String[] returnTab = new String[4];
 		returnTab[0] = "OK";
 
-		int ageInt = -1;
-		try{
-			ageInt = Integer.parseInt(age);
-			switch (ageInt) {
-				case 1:
-					returnTab[1] = "Enfant";
-					break;
-				case 2:
-					returnTab[1] = "Adolescent";
-					break;
-				case 3:
-					returnTab[1] = "Adulte";
-					break;
-				case 4:
-					returnTab[1] = "Personne Agée";
-					break;
-				default:
-					returnTab[0] = "ERR invalid age";
-					return returnTab;
-			}
-		} catch (NumberFormatException e){
-			returnTab[0] = e.toString();
+		String response = isValueCorrect(age, Arrays.asList("Enfant", "Adolescent", "Adulte", "Personne Agée"), "ERR invalid age");
+		if(response.startsWith("ERR")){
+			returnTab[0] = response;
 			return returnTab;
 		}
-
-		if(!Arrays.asList("Masculin", "Féminin").contains(gender)) {
-			returnTab[0] = "ERR gender doesn't exist";
-			return returnTab;
+		else {
+			returnTab[1] = response;
 		}
 
-		if(!Arrays.asList("cobaye", "admin").contains(typeUser)) {
-			returnTab[0] = "ERR typeUser doesn't exist";
+		response = isValueCorrect(gender, Arrays.asList("Masculin", "Féminin"), "ERR gender doesn't exist");
+		if(response.startsWith("ERR")){
+			returnTab[0] = response;
 			return returnTab;
+		}
+		else {
+			returnTab[2] = response;
+		}
+
+		response = isValueCorrect(typeUser, Arrays.asList("admin", "cobaye"), "ERR typeUser doesn't exist");
+		if(response.startsWith("ERR")){
+			returnTab[0] = response;
+			return returnTab;
+		}
+		else {
+			returnTab[3] = response;
 		}
 
 		return returnTab;
 	}
-}
 
-		
+	public String isValueCorrect(String value, List<String> choices, String error){
+		int valueInt = -1;
+		try{
+			valueInt = Integer.parseInt(value);
+		} catch (NumberFormatException e){
+			return "ERR" + e.toString();
+		}
+
+		if(valueInt > 0 && valueInt < choices.size()+1){
+			return choices.get(valueInt-1);
+		}
+		return error;
+	}
+}
