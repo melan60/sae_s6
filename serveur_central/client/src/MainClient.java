@@ -46,6 +46,11 @@ class MainClient  {
 		}
 	}
 
+	/**
+	 * Create a user
+	 * @return true if the user is created, false otherwise
+	 * @throws IOException if an error occurs while reading the keyboard
+	 */
 	protected boolean createUser() throws IOException{
 		String req = "";
 		String response = "";
@@ -57,7 +62,7 @@ class MainClient  {
 			req = req + " " + consoleIn.readLine();
 		}
 		ps.println(req);
-		
+
 		response = br.readLine();
 		if (response.startsWith("ERR")) {
 			System.out.println("error with request create user:" + response);

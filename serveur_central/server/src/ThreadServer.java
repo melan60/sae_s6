@@ -43,7 +43,7 @@ class ThreadServer extends Thread {
 		boolean stop = false;
 		String req = "";
 		String[] reqParts;
-		int idExp = -1;
+		int numExp = -1;
 
 		// Used to know the number of experience currently created in the database
 		lastExpNumero = exchanger.getMongoDriver().getLastExperience();
@@ -69,13 +69,13 @@ class ThreadServer extends Thread {
 //				}
 //
 //				try{
-//					idExp = Integer.parseInt(req);
+//					numExp = Integer.parseInt(req);
 //				} catch (NumberFormatException e){
 //					ps.print("ERR experience numero is not an int");
 //					break;
 //				}
 //
-//				if(idExp < 0 || idExp > lastExpNumero){
+//				if(numExp < 0 || numExp > lastExpNumero){
 //					ps.println("ERR experience numero doesn't exist");
 //					break;
 //				}
@@ -89,19 +89,23 @@ class ThreadServer extends Thread {
 		}
 	}
 
-	public void launchExperience(String idExp){
+	/**
+	 * Launch the experience with the numero given in parameter
+	 * @param numExp numero of the experience to launch
+	 */
+	public void launchExperience(String numExp){
 		String react = "", exec = "", errors = "";
 		try {
-			this.arduinoConfig.getSerialPort().writeString(idExp);
+			this.arduinoConfig.getSerialPort().writeString(numExp);
 
 			while (true) {
 				if (this.arduinoConfig.getSerialPort().getInputBufferBytesCount() > 0) {
 					react = this.arduinoConfig.getSerialPort().readString();
-					System.out.println("Exp n°" + idExp + ", Temps de réaction (ms) : " + react);
+					System.out.println("Exp n°" + numExp + ", Temps de réaction (ms) : " + react);
 					exec = this.arduinoConfig.getSerialPort().readString();
-					System.out.println("Exp n°" + idExp + ", Temps d'exécution (ms) : " + exec);
+					System.out.println("Exp n°" + numExp + ", Temps d'exécution (ms) : " + exec);
 					errors = this.arduinoConfig.getSerialPort().readString();
-					System.out.println("Exp n°" + idExp + ", Nombre d'erreurs : " + errors);
+					System.out.println("Exp n°" + numExp + ", Nombre d'erreurs : " + errors);
 					break;
 				}
 			}
@@ -113,10 +117,16 @@ class ThreadServer extends Thread {
 			ps.println("ERR invalid parameters");
 			return;
 		}
-		String response = exchanger.getHttpDriver().addResults(idExp, res[1], res[2], (int) res[3], currentUser);
-//		String response = exchanger.getMongoDriver().addResults(idExp, res[1], res[2], (int) res[3], currentUser);
+		String response = exchanger.getHttpDriver().addResults(numExp, res[1], res[2], (int) res[3], currentUser);
+//		String response = exchanger.getMongoDriver().addResults(numExp, res[1], res[2], (int) res[3], currentUser);
 	}
 
+	/**
+	 * Check the values of the parameters and create the user
+	 * @param params parameters of the request
+	 * @return true if the user is created, false otherwise
+	 * @throws IOException if the request is not correct
+	 */
 	public boolean requestAddUser(String[] params) throws IOException{
 		if (params.length != 8) {
 			ps.println("ERR invalid number of parameters");
@@ -148,6 +158,13 @@ class ThreadServer extends Thread {
 		return true;
 	}
 
+	/**
+	 * Check the values of the parameters for the addResults request
+	 * @param react reaction time
+	 * @param exec execution time
+	 * @param errors number of errors
+	 * @return an array with the result of the check
+	 */
 	public float[] checkValuesAddResults(String react, String exec, String errors){
 		float[] res = new float[4];
 		// 0 = success
@@ -166,6 +183,13 @@ class ThreadServer extends Thread {
 		return res;
 	}
 
+	/**
+	 * Check the values of the parameters for the addUser request
+	 * @param age age of the user
+	 * @param gender gender of the user
+	 * @param typeUser type of the user
+	 * @return an array with the result of the check
+	 */
 	public String[] checkValuesAddUser(String age, String gender, String typeUser){
 		String[] returnTab = new String[4];
 		returnTab[0] = "OK";
@@ -200,6 +224,13 @@ class ThreadServer extends Thread {
 		return returnTab;
 	}
 
+	/**
+	 * Check if the values are corrects
+	 * @param value value to check
+	 * @param choices list of the possible values
+	 * @param error error to return if the value is not correct
+	 * @return the value if it is correct, the error otherwise
+	 */
 	public String isValueCorrect(String value, List<String> choices, String error){
 		int valueInt = -1;
 		try{

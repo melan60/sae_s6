@@ -45,6 +45,10 @@ public class MongoDataDriver implements DataDriver {
         pojoCodecRegistry = fromRegistries(getDefaultCodecRegistry(), fromProviders(pojoCodecProvider));
     }
 
+    /**
+     * Initialize the connection to the database
+     * @return true if the connection is successful, false otherwise
+     */
     public boolean init()  {
         mongoClient = MongoClients.create(mongoURL);
         Dotenv dotenv = Dotenv.configure().load();
@@ -62,11 +66,20 @@ public class MongoDataDriver implements DataDriver {
         return true;
     }
 
+    /**
+     * Get the last experience's number
+     * @return the last experience's number
+     */
     public synchronized int getLastExperience(){
         Experience experience = experiences.find().sort(descending("numero")).first();
         return experience.getNumero();
     }
 
+    /**
+     * Request to add a new user in the database
+     * @param user the user to add
+     * @return a string containing the result of the request
+     */
     public synchronized String addUser(User user){
         ObjectId key = generateUniqueKey("user");
         user.setId(key);
@@ -81,6 +94,16 @@ public class MongoDataDriver implements DataDriver {
         }
         return "OK " + user.getName() + " " + user.getId();
     }
+
+    /**
+     * Request to add a new result in the database
+     * @param numero the experience's number
+     * @param reactTime the reaction time
+     * @param execTime the execution time
+     * @param nbErrors the number of errors
+     * @param user the user who did the experience
+     * @return a string containing the result of the request
+     */
     public synchronized String addResults(String numero, float reactTime, float execTime, int nbErrors, User user){
         int num = Integer.parseInt(numero);
         // Request to get the experience _id using its numero
@@ -103,6 +126,11 @@ public class MongoDataDriver implements DataDriver {
         return "OK";
     }
 
+    /**
+     * Generate a unique key for a new document
+     * @param collection the collection where the document will be added
+     * @return the unique key
+     */
     public ObjectId generateUniqueKey(String collection){
         // must generate a unique key
         UUID key = UUID.randomUUID();
@@ -126,6 +154,11 @@ public class MongoDataDriver implements DataDriver {
         return id;
     }
 
+    /**
+     * Get the result's id using its key
+     * @param moduleKey the result's key
+     * @return the result's id or null if the result doesn't exist
+     */
     private ObjectId getResultId(String moduleKey) {
         Result result = results.find(eq("_id",moduleKey)).first();
         if (result != null) {
@@ -134,6 +167,11 @@ public class MongoDataDriver implements DataDriver {
         return null;
     }
 
+    /**
+     * Get the user's id using its key
+     * @param moduleKey the user's key
+     * @return the user's id or null if the user doesn't exist
+     */
     private ObjectId getUserId(String moduleKey) {
         User user = users.find(eq("_id",moduleKey)).first();
         if (user != null) {
