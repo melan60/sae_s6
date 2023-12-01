@@ -143,7 +143,7 @@ const getLastExperience = async (callback) => {
     .limit(1)
     .exec();
   if (!experience) return callback(errors.not_found);
-  return callback(null, experience);
+  return callback(null, experience[0]);
 };
 
 module.exports = {

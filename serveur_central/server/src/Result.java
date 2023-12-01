@@ -4,21 +4,26 @@ import java.util.List;
 
 public class Result {
     private ObjectId id;
-    private ObjectId idExperience;
+    private ObjectId experience;
     private float reactTime;
     private float execTime;
     private int error;
 
+    // Necessary to decode the class using a POJO (MongoDriver)
+    public Result() {
+
+    }
+
     public Result(ObjectId id, ObjectId experience, float reactTime, float execTime, int error) {
         this.id = id;
-        this.idExperience = experience;
+        this.experience = experience;
         this.reactTime = reactTime;
         this.execTime = execTime;
         this.error = error;
     }
 
     public Result(ObjectId experience, float reactTime, float execTime, int error) {
-        this.idExperience = experience;
+        this.experience = experience;
         this.reactTime = reactTime;
         this.execTime = execTime;
         this.error = error;
@@ -40,12 +45,12 @@ public class Result {
         this.id = id;
     }
 
-    public ObjectId getIdExperience() {
-        return idExperience;
+    public ObjectId getExperience() {
+        return experience;
     }
 
     public void setExperience(ObjectId experience) {
-        this.idExperience = experience;
+        this.experience = experience;
     }
 
     public float getReactTime() {

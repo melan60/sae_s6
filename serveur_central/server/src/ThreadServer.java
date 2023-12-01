@@ -58,29 +58,30 @@ class ThreadServer extends Thread {
 			}
 
 			// Used to know the number of experience currently created in the database
-			lastExpNumero = exchanger.getMongoDriver().getLastExperience();
+			lastExpNumero = exchanger.getHttpDriver().getLastExperience();
 
-			while(true) {
-				System.out.println(lastExpNumero);
-				req = br.readLine();
-				if ((req == null) || (req.isEmpty())) {
-					break;
-				}
-
-				try{
-					idExp = Integer.parseInt(req);
-				} catch (NumberFormatException e){
-					ps.print("ERR experience numero is not an int");
-					break;
-				}
-
-				if(idExp < 0 || idExp > lastExpNumero){
-					ps.println("ERR experience numero doesn't exist");
-					break;
-				}
-
-				launchExperience(req);
-			}
+			String response = exchanger.getMongoDriver().addResults("2", 12, 15, 10, currentUser);
+//			while(true) {
+//				System.out.println(lastExpNumero);
+//				req = br.readLine();
+//				if ((req == null) || (req.isEmpty())) {
+//					break;
+//				}
+//
+//				try{
+//					idExp = Integer.parseInt(req);
+//				} catch (NumberFormatException e){
+//					ps.print("ERR experience numero is not an int");
+//					break;
+//				}
+//
+//				if(idExp < 0 || idExp > lastExpNumero){
+//					ps.println("ERR experience numero doesn't exist");
+//					break;
+//				}
+//
+//				launchExperience(req);
+//			}
 			System.out.println("end of request loop");
 		}
 		catch(IOException e) {
@@ -132,17 +133,18 @@ class ThreadServer extends Thread {
 		}
 
 		User user = new User(params[1], params[2], params[3], params[4], resCheck[1], params[6], params[7]);
-//		String response = exchanger.getMongoDriver().addUser(user);
-		String response = exchanger.getHttpDriver().addUser(user);
+		String response = exchanger.getMongoDriver().addUser(user);
+//		String response = exchanger.getHttpDriver().addUser(user);
 		System.out.println(response);
 		String[] res = response.split(" ");
-		System.out.println(res[res.length-1]);
 		if (response.startsWith("ERR")) {
 			System.out.println("error with request create user: "+response);
 			ps.println(response);
 			return false;
 		}
 
+		ObjectId _id = new ObjectId(res[2]);
+		user.setId(_id);
 		this.currentUser = user;
 		System.out.println(response);
 		ps.println(response);

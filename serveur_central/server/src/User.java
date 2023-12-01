@@ -14,6 +14,11 @@ public class User {
     private String typeUser;
     private List<Result> results;
 
+    // Necessary to decode the class using a POJO (MongoDriver)
+    public User() {
+
+    }
+
     public User(ObjectId id, String name, String firstname, String password, String email, String age, String gender, String typeUser, List<Result> results) {
         this.id = id;
         this.name = name;

@@ -96,7 +96,8 @@ public class HttpDataDriver implements DataDriver {
         // if not, get desired field in data
         Document data = (Document)doc.get("data");
         String name = data.getString("name");
-        return "OK " + name;
+        String _id = data.getString("_id");
+        return "OK " + name + " " + _id;
     }
 
     public int getLastExperience(){
@@ -107,21 +108,31 @@ public class HttpDataDriver implements DataDriver {
     }
 
     public String addResults(String idExp, float reactTime, float execTime, int nbErrors, User user){
+        // used to get the _id of the experience
         Document doc = getRequest("/experience", "?numero="+idExp);
         Document data = (Document)doc.get("data");
-        ObjectId id = data.getObjectId("_id");
+        String id = data.getString("_id");
+        ObjectId _id = new ObjectId(id);
 
+        // initialize a Java class depending on the arguments required for the request
         ResultsModel resultsModel = new ResultsModel();
         resultsModel.setUser(user);
-        Result result = new Result(id, reactTime, execTime, nbErrors);
+        Result result = new Result(_id, reactTime, execTime, nbErrors);
         resultsModel.setResult(result);
 
         // transform a Java class in a JSON
         Gson gson = new Gson();
         String jsonRequest = gson.toJson(resultsModel);
-        System.out.println(jsonRequest);
 
-        Document requestResponse = postRequest("/result/add", jsonRequest);
+        // the ObjectId experience for Result is currently in the wrong format
+        Document requestDoc = Document.parse(jsonRequest);
+        Document resultDoc = (Document)requestDoc.get("result");
+        // Replace the experience in the wrong format with the variable in the String id
+        resultDoc.replace("experience", id);
+        requestDoc.replace("result", resultDoc);
+        jsonRequest = requestDoc.toJson();
+
+        Document requestResponse = postRequest("/user/result/add", jsonRequest);
         if (requestResponse == null) {
             return "ERR cannot join the API";
         }

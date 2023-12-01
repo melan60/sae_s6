@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.UUID;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Updates;
+import com.mongodb.client.result.UpdateResult;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.bson.Document;
 
@@ -22,6 +25,7 @@ import org.bson.codecs.configuration.CodecProvider;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 import org.bson.codecs.pojo.annotations.BsonProperty;
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
 import static com.mongodb.MongoClientSettings.getDefaultCodecRegistry;
@@ -102,13 +106,26 @@ public class MongoDataDriver implements DataDriver {
         String bcryptHashString = BCrypt.withDefaults().hashToString(10, password.toCharArray());
         user.setPassword(bcryptHashString);
         users.insertOne(user);
-        return "OK " + user.getName();
+        return "OK " + user.getName() + " " + user.getId();
     }
-    public String addResults(String idExp, float reactTime, float execTime, int nbErrors, User user){
-        Experience experience = experiences.find(eq("numero", idExp)).first();
+    public String addResults(String numero, float reactTime, float execTime, int nbErrors, User user){
+        System.out.println("id : " + user.getId());
+        int num = Integer.parseInt(numero);
+        Experience experience = experiences.find(eq("numero", num)).first();
         ObjectId _id = generateUniqueKey();
         Result result = new Result(_id, experience.getId(), reactTime, execTime, nbErrors);
         results.insertOne(result);
+
+        Bson update = Updates.addToSet("results", result);
+//        Document query = new Document().append("_id",  user.getId());
+        Bson query = Filters.eq("_id", user.getId());
+        // Updates the first document that has a "title" value of "Cool Runnings 2"
+        UpdateResult updateResult = users.updateOne(query, update);
+        // Prints the number of updated documents and the upserted document ID, if an upsert was performed
+        System.out.println("Modified document count: " + updateResult.getModifiedCount());
+        System.out.println("Upserted id: " + updateResult.getUpsertedId());
+        User test = users.find(eq("_id", user.getId())).first();
+        System.out.println("name : " + test.getName() + ", " + test.getResults());
         return "OK";
     }
 
@@ -118,7 +135,7 @@ public class MongoDataDriver implements DataDriver {
         ObjectId id = null;
         boolean stop = false;
         while(!stop) {
-            id = getModuleId(key.toString());
+            id = getModuleId(key.toString()); // TODO
             if (id == null) {
                 stop = true;
             }
