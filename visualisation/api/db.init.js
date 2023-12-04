@@ -23,22 +23,40 @@ async function initExperiences() {
 
     const experiences = [
         {
-            name: "Expérience n°1",
+            name: "Vitesse de la lumière",
+            numero: 1,
+            typeStimulus: "Visuel",
+            distraction: "",
+            modules: modules,
+        },
+        {
+            name: "Vitesse de la lumière bis",
+            numero: 2,
             typeStimulus: "Visuel",
             distraction: "Sonore",
-            modules: modules
-        }, {
-            name: "Expérience n°2",
+            modules: modules,
+        },
+        {
+            name: "Vitesse de réflexion",
+            numero: 3,
+            typeStimulus: "Visuel",
+            distraction: "",
+            modules: modules,
+        },
+        {
+            name: "Vitesse du son ",
+            numero: 4,
             typeStimulus: "Sonore",
             distraction: "",
             modules: modules
         }, {
             name: "Chaise musicale",
+            numero: 5,
             typeStimulus: "Sonore",
             distraction: "",
-            modules: modules
+            modules: modules,
         }
-    ]
+    ];
 
     try {
         for (const experience of experiences) {
@@ -46,6 +64,7 @@ async function initExperiences() {
             if (experience_found === null) {
                 const experience_created = await Experience.create({
                     name: experience.name,
+                    numero: experience.numero,
                     typeStimulus: experience.typeStimulus,
                     distraction: experience.distraction,
                     modules: experience.modules
@@ -55,7 +74,6 @@ async function initExperiences() {
         }
     } catch (err) {
         console.error(chalk.bgRed(`Cannot add experience :`) + err);
-
     }
 }
 
@@ -125,6 +143,7 @@ function initUsers() {
         }
     });
 }
+
 
 async function initBdD() {
     await initModules();

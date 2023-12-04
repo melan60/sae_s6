@@ -7,13 +7,7 @@
         </div>
       </div>-->
   <div>
-    <div v-if="user" class="grid-container">
-      <div v-for="(value, index) in values" :key="index">
-        <GraphBarComponent v-if="index < 3" :data="value" :options="options"/>
-        <GraphLineComponent v-else :data="value" :options="options"/>
-      </div>
-    </div>
-    <div v-else class="grid-container">
+    <div class="grid-container">
       <div v-for="(value, index) in values" :key="index">
         <GraphBarComponent v-if="index < 3" :data="value" :options="options"/>
         <GraphLineComponent v-else :data="value" :options="options"/>

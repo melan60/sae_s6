@@ -3,18 +3,39 @@ import org.bson.types.ObjectId;
 import java.util.List;
 
 public class Experience {
-    private ObjectId id;
+    private ObjectId _id;
     private String name;
     private String typeStimulus;
     private String distraction;
+    private int numero;
     private List<ObjectId> modules;
 
-    public Experience(ObjectId id, String name, String typeStimulus, String distraction, List<ObjectId> modules) {
-        this.id = id;
+    // Necessary to decode the class using a POJO (MongoDriver)
+    public Experience() {}
+
+    public Experience(ObjectId id, String name, String typeStimulus, String distraction, int numero, List<ObjectId> modules) {
+        this._id = id;
         this.name = name;
         this.typeStimulus = typeStimulus;
         this.distraction = distraction;
+        this.numero = numero;
         this.modules = modules;
+    }
+
+    public ObjectId getId() {
+        return _id;
+    }
+
+    public void setId(ObjectId id) {
+        this._id = id;
+    }
+
+    public int getNumero() {
+        return numero;
+    }
+
+    public void setNumero(int numero) {
+        this.numero = numero;
     }
 
     public String getName() {

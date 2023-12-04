@@ -16,6 +16,7 @@ class ThreadServer extends Thread {
 	ArduinoConfig arduinoConfig;
 	int idThread;
 	User currentUser;
+	int lastExpNumero;
 
 	public ThreadServer(int idThread, Socket sock, DataExchanger data) {
 		this.sock = sock;
@@ -42,24 +43,44 @@ class ThreadServer extends Thread {
 		boolean stop = false;
 		String req = "";
 		String[] reqParts;
+		int numExp = -1;
+
+		// Used to know the number of experience currently created in the database
+		lastExpNumero = exchanger.getMongoDriver().getLastExperience();
 
 		try {
 			while(!stop) {
 				System.out.println("Création de l'utilisateur");
 				req = br.readLine();
+				if(req == null || req.isEmpty()) {
+					ps.println("ERR no arguments received from client");
+					break;
+				}
 				reqParts = req.split(" ");
 				stop = requestAddUser(reqParts);
 			}
 
+//			String response = exchanger.getHttpDriver().addResults("2", 12, 15, 10, currentUser);
 			while(true) {
+				System.out.println(lastExpNumero);
 				req = br.readLine();
 				if ((req == null) || (req.isEmpty())) {
 					break;
 				}
 
-				reqParts = req.split(" ");
+				try{
+					numExp = Integer.parseInt(req);
+				} catch (NumberFormatException e){
+					ps.print("ERR experience numero is not an int");
+					break;
+				}
 
-				launchExperience(reqParts[0]);
+				if(numExp < 0 || numExp > lastExpNumero){
+					ps.println("ERR experience numero doesn't exist");
+					break;
+				}
+
+				launchExperience(req);
 			}
 			System.out.println("end of request loop");
 		}
@@ -68,29 +89,44 @@ class ThreadServer extends Thread {
 		}
 	}
 
-	public void launchExperience(String idExp){
+	/**
+	 * Launch the experience with the numero given in parameter
+	 * @param numExp numero of the experience to launch
+	 */
+	public void launchExperience(String numExp){
+		String arduinoResponse = "";
+		String[] results = new String[3];
 		try {
-			this.arduinoConfig.getSerialPort().writeString(idExp);
+			this.arduinoConfig.getSerialPort().writeString(numExp);
 
 			while (true) {
 				if (this.arduinoConfig.getSerialPort().getInputBufferBytesCount() > 0) {
-					String data = this.arduinoConfig.getSerialPort().readString();
-					// You can now process the data based on the chosen experience
-
-					System.out.println("Exp n°" + idExp + ", Temps de réaction (ms) : " + data);
-					//String response = exchanger.getHttpDriver().addResults(idExp, idUser, data);
-					//String response = exchanger.getMongoDriver().addResults(idExp, idUser, data);
+					arduinoResponse = this.arduinoConfig.getSerialPort().readString();
+					results = arduinoResponse.split("\n");
+//					System.out.println("Exp n°" + numExp + ", React : " + results[0] + ", Exec : " + results[1] + ", Errors : " + results[2]);
 					break;
 				}
 			}
 		} catch (SerialPortException e) {
 			System.out.println("Error writing to the serial port");
 		}
+		float[] res = checkValuesAddResults(results[0], results[1], results[2]);
+		if(res[0] == 1){
+			ps.println("ERR invalid parameters");
+			return;
+		}
+//		String response = exchanger.getHttpDriver().addResults(numExp, res[1], res[2], (int) res[3], currentUser);
+		String response = exchanger.getMongoDriver().addResults(numExp, res[1], res[2], (int) res[3], currentUser);
+		System.out.println(response);
 	}
 
+	/**
+	 * Check the values of the parameters and create the user
+	 * @param params parameters of the request
+	 * @return true if the user is created, false otherwise
+	 * @throws IOException if the request is not correct
+	 */
 	public boolean requestAddUser(String[] params) throws IOException{
-		System.out.println("processing request ADD USER");
-
 		if (params.length != 8) {
 			ps.println("ERR invalid number of parameters");
 			return false;
@@ -98,70 +134,113 @@ class ThreadServer extends Thread {
 
 		String[] resCheck = checkValuesAddUser(params[5], params[6], params[7]);
 		if(resCheck[0].startsWith("ERR")){
-			System.out.println("error with request create user: "+ resCheck);
-			ps.println(resCheck);
+			System.out.println("Error checkValuesAddUser: "+ resCheck[0]);
+			ps.println(resCheck[0]);
 			return false;
 		}
 
-		User user = new User(params[1], params[2], params[3], params[4], resCheck[1], params[6], params[7]);
-		String response = exchanger.getMongoDriver().addUser(user);
-//		String response = exchanger.getHttpDriver().addUser(user);
+		User user = new User(params[1], params[2], params[3], params[4], resCheck[1], resCheck[2], resCheck[3]);
+//		String response = exchanger.getMongoDriver().addUser(user);
+		String response = exchanger.getHttpDriver().addUser(user);
 		System.out.println(response);
 		String[] res = response.split(" ");
-		System.out.println(res[res.length-1]);
 		if (response.startsWith("ERR")) {
 			System.out.println("error with request create user: "+response);
 			ps.println(response);
 			return false;
 		}
 
+		ObjectId _id = new ObjectId(res[2]);
+		user.setId(_id);
 		this.currentUser = user;
-		System.out.println(response);
-		ps.println(response);
+		ps.println(res[0] + " " + res[1] + " " + lastExpNumero);
 		return true;
 	}
 
-	public String[] checkValuesAddUser(String age, String gender, String typeUser){
-		String[] returnTab = new String[2];
-		returnTab[0] = "";
-
-		int ageInt = -1;
+	/**
+	 * Check the values of the parameters for the addResults request
+	 * @param react reaction time
+	 * @param exec execution time
+	 * @param errors number of errors
+	 * @return an array with the result of the check
+	 */
+	public float[] checkValuesAddResults(String react, String exec, String errors){
+		float[] res = new float[4];
+		// 0 = success
+		res[0] = 0;
 		try{
-			ageInt = Integer.parseInt(age);
-			switch (ageInt) {
-				case 1:
-					returnTab[1] = "Enfant";
-					break;
-				case 2:
-					returnTab[1] = "Adolescent";
-					break;
-				case 3:
-					returnTab[1] = "Adulte";
-					break;
-				case 4:
-					returnTab[1] = "Personne Agée";
-					break;
-				default:
-					returnTab[0] = "ERR invalid age";
-					return returnTab;
-			}
+			res[1] = Float.parseFloat(react);
+			res[2] = Float.parseFloat(exec);
+			res[3] = Float.parseFloat(errors);
 		} catch (NumberFormatException e){
-			returnTab[0] = e.toString();
+			// 1 = error
+			res[0] = 1;
+			return res;
+		}
+		if(res[3] < 0 || res[3] > 5)
+			res[0] = 1;
+		return res;
+	}
+
+	/**
+	 * Check the values of the parameters for the addUser request
+	 * @param age age of the user
+	 * @param gender gender of the user
+	 * @param typeUser type of the user
+	 * @return an array with the result of the check
+	 */
+	public String[] checkValuesAddUser(String age, String gender, String typeUser){
+		String[] returnTab = new String[4];
+		returnTab[0] = "OK";
+
+		String response = isValueCorrect(age, Arrays.asList("Enfant", "Adolescent", "Adulte", "Personne Agée"), "ERR invalid age");
+		if(response.startsWith("ERR")){
+			returnTab[0] = response;
 			return returnTab;
 		}
-
-		if(!Arrays.asList("Masculin", "Féminin").contains(gender)) {
-			returnTab[0] = "ERR gender doesn't exist";
-			return returnTab;
+		else {
+			returnTab[1] = response;
 		}
 
-		if(!Arrays.asList("cobaye", "admin").contains(typeUser)) {
-			returnTab[0] = "ERR typeUser doesn't exist";
+		response = isValueCorrect(gender, Arrays.asList("Masculin", "Féminin"), "ERR gender doesn't exist");
+		if(response.startsWith("ERR")){
+			returnTab[0] = response;
 			return returnTab;
+		}
+		else {
+			returnTab[2] = response;
+		}
+
+		response = isValueCorrect(typeUser, Arrays.asList("admin", "cobaye"), "ERR typeUser doesn't exist");
+		if(response.startsWith("ERR")){
+			returnTab[0] = response;
+			return returnTab;
+		}
+		else {
+			returnTab[3] = response;
 		}
 
 		return returnTab;
 	}
-}
 
-		
+	/**
+	 * Check if the values are corrects
+	 * @param value value to check
+	 * @param choices list of the possible values
+	 * @param error error to return if the value is not correct
+	 * @return the value if it is correct, the error otherwise
+	 */
+	public String isValueCorrect(String value, List<String> choices, String error){
+		int valueInt = -1;
+		try{
+			valueInt = Integer.parseInt(value);
+		} catch (NumberFormatException e){
+			return "ERR" + e.toString();
+		}
+
+		if(valueInt > 0 && valueInt < choices.size()+1){
+			return choices.get(valueInt-1);
+		}
+		return error;
+	}
+}
