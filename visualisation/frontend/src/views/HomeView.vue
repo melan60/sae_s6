@@ -1,19 +1,25 @@
 <template>
-
-<!--  <div class="main-container">
-    <div class="container-graph" v-for="(value, index) in values" :key="index">
-      <div class="graph-container">
-        <GraphBarComponent v-if="index < 2" :data="value" :options="options"/>
-        <GraphLineComponent v-if="index > 1" :data="value" :options="options"/>
-      </div>
-    </div>-->
-
-    <div class="grid-container">
+  <!--  <div class="main-container">
+      <div class="container-graph" v-for="(value, index) in values" :key="index">
+        <div class="graph-container">
+          <GraphBarComponent v-if="index < 2" :data="value" :options="options"/>
+          <GraphLineComponent v-if="index > 1" :data="value" :options="options"/>
+        </div>
+      </div>-->
+  <div>
+    <div v-if="user" class="grid-container">
       <div v-for="(value, index) in values" :key="index">
         <GraphBarComponent v-if="index < 3" :data="value" :options="options"/>
         <GraphLineComponent v-else :data="value" :options="options"/>
       </div>
     </div>
+    <div v-else class="grid-container">
+      <div v-for="(value, index) in values" :key="index">
+        <GraphBarComponent v-if="index < 3" :data="value" :options="options"/>
+        <GraphLineComponent v-else :data="value" :options="options"/>
+      </div>
+    </div>
+  </div>
 
 </template>
 
@@ -96,24 +102,27 @@ export default {
       maintainAspectRatio: false,
     }
   }),
-  created() {
-    axios.get("http://localhost:5000/graphs/time")
-        .then(res => {
-          this.initGraph(res.data.data);
-        })
-        .catch((e) => {
-          console.log(e)
-        });
+
+  async created() {
+    const user = this.$store.getters.getUser;
+    try {
+      const res = user ? await axios.get(`http://localhost:5000/graphs/users?id_user=${user._id}`) :
+          await axios.get("http://localhost:5000/graphs/time");
+      this.initGraph(res.data.data);
+    } catch (e) {
+      console.log(e);
+    }
   },
   methods: {
-    initGraph(results) { // TODO duplication de code
-      const colors = ["#CF0071", "#830090"];
+    initGraph(results) {
+      const colors = ["#35a9a0", "#7fdbe8"];
+      let value, labels, datasets;
 
       for (let index = 0; index < results.length; index += 1) {
-        const value = results[index];
-        const labels = value.labels || (value.first && value.first.labels);
+        value = results[index];
+        labels = value.labels || (value.first && value.first.labels);
 
-        const datasets = value.first
+        datasets = value.first
             ? Object.values(value).map((item, id) => {
               return ({
                 label: item.title,
@@ -134,7 +143,12 @@ export default {
         });
       }
     }
-  }
+  },
+  computed: {
+    user() {
+      return this.$store.getters.getUser;
+    }
+  },
 }
 </script>
 

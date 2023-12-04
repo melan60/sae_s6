@@ -1,5 +1,5 @@
 const express = require('express');
-const controller = require('../controllers/front_auth.controller');
+const controller = require('../controllers/front_auth_controller');
 const router = express.Router();
 
 

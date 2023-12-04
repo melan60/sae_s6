@@ -88,8 +88,6 @@
 
 <script>
 
-import axios from "axios";
-
 export default {
   name: "LoginView",
   data() {
@@ -103,33 +101,23 @@ export default {
   methods: {
     async login() {
       try {
-        const response = await axios.post('/api/login', {
+        const userData = await this.$store.dispatch('login', {
           email: this.email,
-          password: this.password,
+          password: this.password
         });
 
-        // Store the token and the user's name
-        localStorage.setItem('token', response.data.token);
-
-        localStorage.setItem('userName', response.data.name); // Store the user's name
-
-        await this.$router.push({name: 'scientifique', params: {nomScientifique: response.data.name}});
-
-        // Reset any previous error messages
+        await this.$router.push({ name: 'cobaye', params: { nomCobaye: userData.user.name } });
         this.error = '';
 
       } catch (error) {
         if (error.response && error.response.data) {
-          // Display the server's error message
           this.error = error.response.data.message;
         } else {
-          // Generic error if no specific message
           this.error = "Error during login. Please try again.";
         }
         console.error("Error in login() LoginView:", error);
       }
     }
-
   },
   mounted() {
     this.animateCard = true;

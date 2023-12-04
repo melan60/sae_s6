@@ -1,10 +1,10 @@
-const { User, Experience, Result, Module } = require("./models/index_models");
+const {User, Experience, Result, Module} = require("./models/index_models");
 const bcrypt = require("bcryptjs");
 const chalk = require("chalk");
 
 async function initModules() {
     try {
-        const module = await Module.findOne({ name: "module1" }).exec();
+        const module = await Module.findOne({name: "module1"}).exec();
         if (module === null) {
             const module_created = await Module.create({
                 name: "module1",
@@ -19,7 +19,7 @@ async function initModules() {
 }
 
 async function initExperiences() {
-    const modules = await Module.findOne({ name: "module1" }).exec();
+    const modules = await Module.findOne({name: "module1"}).exec();
 
     const experiences = [
         {
@@ -32,12 +32,17 @@ async function initExperiences() {
             typeStimulus: "Sonore",
             distraction: "",
             modules: modules
+        }, {
+            name: "Chaise musicale",
+            typeStimulus: "Sonore",
+            distraction: "",
+            modules: modules
         }
     ]
 
     try {
         for (const experience of experiences) {
-            const experience_found = await Experience.findOne({ name: experience.name }).exec();
+            const experience_found = await Experience.findOne({name: experience.name}).exec();
             if (experience_found === null) {
                 const experience_created = await Experience.create({
                     name: experience.name,
@@ -50,6 +55,7 @@ async function initExperiences() {
         }
     } catch (err) {
         console.error(chalk.bgRed(`Cannot add experience :`) + err);
+
     }
 }
 
@@ -72,8 +78,8 @@ async function initResults() {
         } catch (err) {
             console.error(chalk.bgRed(`Cannot add result :`) + err);
         }
+        return results;
     }
-    return results;
 }
 
 function initUsers() {
@@ -98,7 +104,7 @@ function initUsers() {
 
     users.forEach(async (user) => {
         try {
-            const user_found = await User.findOne({ email: user.email }).exec();
+            const user_found = await User.findOne({email: user.email}).exec();
             if (!user_found) {
                 const results_users = await initResults();
 

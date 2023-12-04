@@ -1,5 +1,5 @@
 const express = require('express');
-const controller = require('../controllers/front_graphs.controller');
+const controller = require('../controllers/front_graphs_controller');
 const router = express.Router();
 
 /**
@@ -62,7 +62,7 @@ router.get("/stimulis", controller.getAllStimulis);
  *          - GRAPHS
  *      parameters:
  *        - in: query
- *          name: data
+ *          name: type
  *          type: string
  *          required: true
  *          description: The type of stimuli to filter

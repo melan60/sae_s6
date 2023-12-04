@@ -2,7 +2,6 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import LoginView from "@/views/LoginView.vue";
-import ScientifiqueHomeView from "../views/ScientifiqueHomeView.vue";
 
 Vue.use(VueRouter)
 
@@ -18,9 +17,9 @@ const routes = [
     component: LoginView
   },
   {
-    path: '/scientifique/:nomScientifique',
-    name: 'scientifique',
-    component: ScientifiqueHomeView,
+    path: '/cobaye/:nomCobaye',
+    name: 'cobaye',
+    component: HomeView,
   }
 ]
 

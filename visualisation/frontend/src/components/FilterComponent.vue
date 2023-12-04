@@ -1,20 +1,26 @@
 <template>
   <div class="filter-wrapper">
-    <p>Sélectionner le type de stimulus:</p>
-
-    <!-- Switches -->
+    <p>Sélectionner le type de stimulus</p>
+<!--    Switches -->
     <div v-for="(stimulus, index) in stimulis" :key="index" class="form-check form-switch">
-      <input class="form-check-input me-3" type="checkbox" :id="'flexSwitchCheck' + index" v-model="selectedStimulus[stimulus]">
-      <label class="form-check-label" :for="'flexSwitchCheck' + index">{{ stimulus }}</label>
+      <input class="form-check-input me-3" type="radio" :value="stimulus" v-model="$store.state.stimuli">
+      <label class="form-check-label" >{{ stimulus }}</label>
     </div>
 
-    <!-- Validate and Clear buttons -->
+  <!--  Clear buttons-->
     <div class="button-group">
-      <button class="btn btn-block button-validate" @click="validate">Valider</button>
-      <button class="btn btn-block button" @click="clear">Effacer</button>
+      <button class="btn btn-block button" @click="resetFilter">Effacer</button>
     </div>
-
   </div>
+<!--  <div>
+    <p>Sélectionner le type de stimulus</p>
+    <div v-for="(elem, index) in stimulis" :key="index">
+      <input type="radio" :value="elem" v-model="$store.state.stimuli">
+      <label>{{ elem }}</label>
+      <br>
+    </div>
+    <b-button type="reset" class="btn-reset" @click=resetFilter>Effacer</b-button>
+  </div>-->
 </template>
 
 <script>
@@ -38,16 +44,12 @@ export default {
       // Logic for validation when the button is clicked
       if (this.selectedStimulus == null) {
         // popup erreur
-      }
-      else {
+      } else {
         console.log("appel methode du composant parents");
       }
     },
-    clear() {
-      // Set all switches to false
-      for (let stimulus in this.selectedStimulus) {
-        this.selectedStimulus[stimulus] = false;
-      }
+    resetFilter() {
+      this.$store.commit("setStimuli", null)
     },
   }
 }
@@ -71,6 +73,7 @@ export default {
   border: 0 !important;
   background-color: #35a9a0 !important;
 }
+
 
 .button-validate {
   border: 0 !important;

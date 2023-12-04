@@ -10,9 +10,8 @@ const swaggerUI = require("swagger-ui-express");
 
 const routes_auth = require("./routers/front_auth.router");
 const routes_graphs = require("./routers/front_graphs_router");
-const routes_server_tcp_experience = require("./routers/server-tcp_experience.router");
-const routes_server_tcp_user = require("./routers/server-tcp_user.router");
-
+const routes_server_tcp_experience = require("./routers/server-tcp_experience_router");
+const routes_server_tcp_user = require("./routers/server-tcp_user_router");
 
 const server = express();
 
@@ -80,3 +79,11 @@ function initialisationBDD() {
 
 initialisationBDD();
 
+/**
+ * If path not found before then an error sent
+ */
+server.use("*", (req, res, next) => {
+    const err = new Error("Not found !");
+    err.status = 404;
+    next(err);
+});

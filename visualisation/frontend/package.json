@@ -13,12 +13,14 @@
     "bootstrap-vue": "^2.23.1",
     "chart.js": "^4.4.0",
     "core-js": "^3.8.3",
+    "lodash": "^4.17.21",
     "vue": "^2.6.14",
     "vue-chartjs": "^5.2.0",
     "vue-router": "^3.5.1",
     "vuex": "^3.6.2"
   },
   "devDependencies": {
+    "@babel/code-frame": "^7.23.5",
     "@babel/core": "^7.12.16",
     "@babel/eslint-parser": "^7.12.16",
     "@vue/cli-plugin-babel": "~5.0.0",

@@ -3,20 +3,19 @@ const router = express.Router();
 const middleware = require('../middlewares/auth_middleware');
 const User = require('../models/user_schema');
 
-router.get('/scientifique/:nomScientifique', middleware.authenticateJWT, async (req, res) => {
-    if(req.user.typeUser && req.user.typeUser.includes('admin')) {
+router.get('/cobaye/:nomCobaye', middleware.authenticateJWT, async (req, res) => {
+    if(req.user.typeUser && req.user.typeUser.includes('cobaye')) {
         try {
-            const nomScientifique = req.params.nomScientifique;
-            const user = await User.findOne({ name: nomScientifique });
+            const nomCobaye = req.params.nomCobaye;
+            const user = await User.findOne({ name: nomCobaye });
 
             if (!user) {
                 return res.status(404).json({ message: 'User not found' });
             }
-            res.json({ user: user });
+            res.status(200).json({ user: user, });
 
-            res.status(200).json(scientifiqueData);
         } catch (error) {
-            console.error('Error fetching scientifique data:', error);
+            console.error('Error fetching cobaye data:', error);
             res.status(500).json({ message: "Internal server error" });
         }
     } else {
