@@ -1,4 +1,3 @@
-#include "pitches.h"
 #include "TM1637.h"
 
 // temps de réaction : temps entre le moment ou la lampe s'est allumée et le moment ou on a laché le capteur
@@ -56,7 +55,7 @@ void setup() {
   tm1637.init();
   tm1637.set(BRIGHT_TYPICAL);
 
-  Serial.println("Arduino prêt");
+  // Serial.println("Arduino prêt");
 }
 
 void loop() {
@@ -65,6 +64,7 @@ void loop() {
   if (Serial.available() > 0) {
     char test = Serial.read();
 
+    errors = 0;
     reactTime = 0;
     execTime = 0;
 
@@ -122,11 +122,11 @@ void goodBtnIsHigh(int btn, int led) {
     digitalWrite(led, LOW);
     noTone(buzzerPin);
     const long toto = stopChronometer();
-    Serial.print("stopChronometer() : ");
-    Serial.println(toto);
+    // Serial.print("stopChronometer() : ");
+    // Serial.println(toto);
     execTime += toto - reactTimeIteration;
-    Serial.print("execTime : ");
-    Serial.println(execTime);
+    // Serial.print("execTime : ");
+    // Serial.println(execTime);
   }
 }
 
@@ -137,11 +137,11 @@ bool aBtnIsHigh() {
 void detectMovement() {
   if (digitalRead(pinCapteurVibration) == HIGH && reactMovement == 0) {  //TODO
     reactTimeIteration = millis() - startTime;
-    Serial.print("reactTimeIteration : ");
-    Serial.println(reactTimeIteration);
+    // Serial.print("reactTimeIteration : ");
+    // Serial.println(reactTimeIteration);
     reactTime += reactTimeIteration;
-    Serial.print("reactTime : ");
-    Serial.println(reactTime);
+    // Serial.print("reactTime : ");
+    // Serial.println(reactTime);
     reactMovement = 1;
   }
 }

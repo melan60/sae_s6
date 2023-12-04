@@ -2,9 +2,6 @@ import jssc.SerialPort;
 import jssc.SerialPortException;
 
 
-import java.sql.SQLOutput;
-import java.util.Scanner;
-
 public class ArduinoConfig {
     private SerialPort serialPort;
 

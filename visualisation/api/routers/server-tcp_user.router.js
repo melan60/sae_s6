@@ -1,5 +1,5 @@
-const express = require('express');
-const controller = require('../controllers/server-tcp_user.controller');
+const express = require("express");
+const controller = require("../controllers/server-tcp_user.controller");
 const router = express.Router();
 
 /**
@@ -83,6 +83,8 @@ router.post("/add", controller.createUser);
  *                    type: number
  *                  execTime:
  *                    type: number
+ *                  error:
+ *                    type: number
  *              user:
  *                type: object
  *                properties:
@@ -105,13 +107,14 @@ router.post("/add", controller.createUser);
  *                experience: "457870657269656e63652031"
  *                reactTime: 10
  *                execTime: 5
+ *                error: 2
  *              user:
- *                name: John
- *                firstName: Doe
+ *                name: Johnson
+ *                firstName: Emily
  *                password: mypassword
- *                email: john@example.com
+ *                email: johnEmily@gmail.com
  *                age: Adulte
- *                gender: Masculin
+ *                gender: Féminin
  *                results: []
  *      responses:
  *        '200':
