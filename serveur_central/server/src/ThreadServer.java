@@ -60,28 +60,28 @@ class ThreadServer extends Thread {
 				stop = requestAddUser(reqParts);
 			}
 
-			String response = exchanger.getHttpDriver().addResults("2", 12, 15, 10, currentUser);
-//			while(true) {
-//				System.out.println(lastExpNumero);
-//				req = br.readLine();
-//				if ((req == null) || (req.isEmpty())) {
-//					break;
-//				}
-//
-//				try{
-//					numExp = Integer.parseInt(req);
-//				} catch (NumberFormatException e){
-//					ps.print("ERR experience numero is not an int");
-//					break;
-//				}
-//
-//				if(numExp < 0 || numExp > lastExpNumero){
-//					ps.println("ERR experience numero doesn't exist");
-//					break;
-//				}
-//
-//				launchExperience(req);
-//			}
+//			String response = exchanger.getHttpDriver().addResults("2", 12, 15, 10, currentUser);
+			while(true) {
+				System.out.println(lastExpNumero);
+				req = br.readLine();
+				if ((req == null) || (req.isEmpty())) {
+					break;
+				}
+
+				try{
+					numExp = Integer.parseInt(req);
+				} catch (NumberFormatException e){
+					ps.print("ERR experience numero is not an int");
+					break;
+				}
+
+				if(numExp < 0 || numExp > lastExpNumero){
+					ps.println("ERR experience numero doesn't exist");
+					break;
+				}
+
+				launchExperience(req);
+			}
 			System.out.println("end of request loop");
 		}
 		catch(IOException e) {
@@ -94,31 +94,30 @@ class ThreadServer extends Thread {
 	 * @param numExp numero of the experience to launch
 	 */
 	public void launchExperience(String numExp){
-		String react = "", exec = "", errors = "";
+		String arduinoResponse = "";
+		String[] results = new String[3];
 		try {
 			this.arduinoConfig.getSerialPort().writeString(numExp);
 
 			while (true) {
 				if (this.arduinoConfig.getSerialPort().getInputBufferBytesCount() > 0) {
-					react = this.arduinoConfig.getSerialPort().readString();
-					System.out.println("Exp n°" + numExp + ", Temps de réaction (ms) : " + react);
-					exec = this.arduinoConfig.getSerialPort().readString();
-					System.out.println("Exp n°" + numExp + ", Temps d'exécution (ms) : " + exec);
-					errors = this.arduinoConfig.getSerialPort().readString();
-					System.out.println("Exp n°" + numExp + ", Nombre d'erreurs : " + errors);
+					arduinoResponse = this.arduinoConfig.getSerialPort().readString();
+					results = arduinoResponse.split("\n");
+//					System.out.println("Exp n°" + numExp + ", React : " + results[0] + ", Exec : " + results[1] + ", Errors : " + results[2]);
 					break;
 				}
 			}
 		} catch (SerialPortException e) {
 			System.out.println("Error writing to the serial port");
 		}
-		float[] res = checkValuesAddResults(react, exec, errors);
+		float[] res = checkValuesAddResults(results[0], results[1], results[2]);
 		if(res[0] == 1){
 			ps.println("ERR invalid parameters");
 			return;
 		}
-		String response = exchanger.getHttpDriver().addResults(numExp, res[1], res[2], (int) res[3], currentUser);
-//		String response = exchanger.getMongoDriver().addResults(numExp, res[1], res[2], (int) res[3], currentUser);
+//		String response = exchanger.getHttpDriver().addResults(numExp, res[1], res[2], (int) res[3], currentUser);
+		String response = exchanger.getMongoDriver().addResults(numExp, res[1], res[2], (int) res[3], currentUser);
+		System.out.println(response);
 	}
 
 	/**
@@ -172,7 +171,7 @@ class ThreadServer extends Thread {
 		try{
 			res[1] = Float.parseFloat(react);
 			res[2] = Float.parseFloat(exec);
-			res[3] = Integer.parseInt(errors);
+			res[3] = Float.parseFloat(errors);
 		} catch (NumberFormatException e){
 			// 1 = error
 			res[0] = 1;
