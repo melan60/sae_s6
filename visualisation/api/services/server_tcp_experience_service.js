@@ -1,5 +1,5 @@
 const errors = require("../common_variables");
-const {Experience, Module} = require("../models/index_models");
+const { Experience, Module } = require("../models/index_models");
 
 /**
  * function to create a experience
@@ -8,7 +8,7 @@ const {Experience, Module} = require("../models/index_models");
  * @return {Promise}
  */
 const createExperience = async (experience, callback) => {
-    Experience.findOne({name: experience.name})
+    Experience.findOne({ name: experience.name })
         .exec()
         .then((result) => {
             if (result) {
@@ -16,7 +16,7 @@ const createExperience = async (experience, callback) => {
             }
 
             Experience.find()
-                .sort({numero: -1})
+                .sort({ numero: -1 })
                 .limit(1)
                 .exec()
                 .then((exp) => {
@@ -53,7 +53,7 @@ const createExperience = async (experience, callback) => {
  * @return {Promise}
  */
 const createModule = async (module, callback) => {
-    Module.findOne({name: module.name})
+    Module.findOne({ name: module.name })
         .exec()
         .then((moduleFound) => {
             if (moduleFound) {
@@ -86,12 +86,12 @@ const addModuleToAnExperience = async (
     name_experience,
     callback
 ) => {
-    const module = await Module.findOne({name: name_module}).exec();
+    const module = await Module.findOne({ name: name_module }).exec();
     if (!module) {
         return callback(errors.not_found);
     }
 
-    const experience = await Experience.findOne({name: name_experience}).exec(); // findOneAndUpdate
+    const experience = await Experience.findOne({ name: name_experience }).exec(); // findOneAndUpdate
 
     if (
         experience !== null &&
@@ -106,20 +106,20 @@ const addModuleToAnExperience = async (
     return callback(null, experience.modules);
 };
 
-/**
- * function to get all experiences or one experience from its numero
- * @param {Number} numero - The numero of the experience to get
- * @param {function(error: Error, result: any)} callback
- * @return {Promise}
- */
-const getExperience = async (numero, callback) => {
-    let experience = null;
-    if (!numero) experience = await Experience.find().exec();
-    else experience = await Experience.findOne({numero: numero}).exec();
+// /**
+//  * function to get all experiences or one experience from its numero
+//  * @param {Number} numero - The numero of the experience to get
+//  * @param {function(error: Error, result: any)} callback
+//  * @return {Promise}
+//  */
+// const getExperience = async (numero, callback) => {
+//   let experience = null;
+//   if (!numero) experience = await Experience.find().exec();
+//   else experience = await Experience.findOne({ numero: numero }).exec();
 
-    if (!experience) return callback(errors.not_found);
-    return callback(null, experience);
-};
+//   if (!experience) return callback(errors.not_found);
+//   return callback(null, experience);
+// };
 
 /**
  * function to get all experiences from the database
@@ -139,7 +139,7 @@ const getAllExperiences = async (callback) => {
  */
 const getLastExperience = async (callback) => {
     const experience = await Experience.find()
-        .sort({numero: -1})
+        .sort({ numero: -1 })
         .limit(1)
         .exec();
     if (!experience) return callback(errors.not_found);
@@ -150,7 +150,7 @@ module.exports = {
     createExperience,
     createModule,
     addModuleToAnExperience,
-    getExperience,
+    // getExperience,
     getAllExperiences,
     getLastExperience,
 };
