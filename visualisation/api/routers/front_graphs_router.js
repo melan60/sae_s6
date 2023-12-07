@@ -1,5 +1,5 @@
 const express = require('express');
-const controller = require('../controllers/front_graphs.controller');
+const controller = require('../controllers/front_graphs_controller');
 const router = express.Router();
 
 /**

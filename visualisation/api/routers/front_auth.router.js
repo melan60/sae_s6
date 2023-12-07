@@ -1,10 +1,13 @@
 const express = require('express');
-const controller = require('../controllers/front_auth.controller');
+const controller = require('../controllers/front_auth_controller');
 const router = express.Router();
+
+
+router.post('/login', controller.login);
 
 /**
  * @swagger
- * /auth:
+ * /api/results:
  *   get:
  *      description: Get results for one people
  *      tags:
@@ -28,6 +31,6 @@ const router = express.Router();
  *          '500':
  *              description: Internal server error
  */
-router.get("/", controller.connectToFront);
+router.get("/results", controller.getResults);
 
 module.exports = router;

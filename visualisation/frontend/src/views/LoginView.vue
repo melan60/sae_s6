@@ -59,21 +59,24 @@
     </div>
 
     <div class="container">
-      <div class="justify-content-center"><h1 class="card-title text-center p-3" >LOGIN</h1></div>
+      <div class="justify-content-center"><h1 class="card-title text-center p-3">LOGIN</h1></div>
       <div class="d-flex justify-content-center align-items-center">
         <div class="col-md-4">
           <div class="card" :class="{ 'animate-on-load': animateCard }">
             <div class="card-body">
-              <form @submit.prevent="handleLogin">
+              <form @submit.prevent="login">
                 <div class="form-group p-1">
                   <label class="justify-content-center label" for="email">Email</label>
-                  <input type="email" class="form-control" id="email" placeholder="Entrez votre email" v-model="email" required>
+                  <input type="email" class="form-control" id="email" placeholder="Entrez votre email"
+                         v-model="email" required>
                 </div>
                 <div class="form-group">
                   <label class="justify-content-center label" for="password">Password</label>
-                  <input type="password" class="form-control" id="password" placeholder="Entrez votre mot de passe" v-model="password" required>
+                  <input type="password" class="form-control" id="password"
+                         placeholder="Entrez votre mot de passe" v-model="password" required>
                 </div>
                 <button type="submit" class="btn btn-block button">SE CONNECTER</button>
+                {{ error }}
               </form>
             </div>
           </div>
@@ -89,15 +92,31 @@ export default {
   name: "LoginView",
   data() {
     return {
-      email: '',
-      password: '',
+      email: null,
+      password: null,
+      error: '',
       animateCard: false,
-
     };
   },
   methods: {
-    handleLogin() {
-      console.log('Email:', this.email, 'Password:', this.password);
+    async login() {
+      try {
+        const userData = await this.$store.dispatch('login', {
+          email: this.email,
+          password: this.password
+        });
+
+        await this.$router.push({ name: 'cobaye', params: { nomCobaye: userData.user.name } });
+        this.error = '';
+
+      } catch (error) {
+        if (error.response && error.response.data) {
+          this.error = error.response.data.message;
+        } else {
+          this.error = "Error during login. Please try again.";
+        }
+        console.error("Error in login() LoginView:", error);
+      }
     }
   },
   mounted() {
@@ -108,89 +127,4 @@ export default {
 
 <style>
 @import '../../public/css/login.css';
-
-.card {
-  float: none;
-  margin: 0 auto 10px;
-  background-color: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 4px 8px rgb(37, 53, 89, 0.5), 0 6px 20px rgb(37, 53, 89,0.07);
-
-}
-
-.container {
-  width: auto;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%)
-}
-
-.label {
-  padding-bottom: 15px;
-  padding-top: 10px;
-}
-
-.button {
-  border: 0 !important;
-  background-color: #35a9a0 !important;
-}
-
-.button:hover {
-  background-color: #2c3e50 !important;
-  color: white !important;
-  transition: background-color 0.3s ease;
-
-}
-
-.form-group {
-  padding-bottom: 15px;
-}
-
-@keyframes zoomOutWithBlur {
-  from {
-    transform: scale(1.1);
-    filter: blur(5px); /* Start with 5px of blur.*/
-  }
-  to {
-    transform: scale(1);
-    filter: blur(0px); /* End with no blur. */
-  }
-}
-
-
-.card.animate-on-load {
-  animation: zoomOutWithBlur 0.7s forwards;
-}
-
-@keyframes h1Animation {
-  0% {
-    filter: blur(5px);
-    transform: scale(1.1);
-  }
-  100% {
-    filter: blur(0);
-    transform: scale(1);
-  }
-}
-
-h1.card-title {
-  animation: h1Animation 0.7s forwards;
-}
-
-
-#bg-wrap {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1; /* Ensure the SVG is behind your content */
-}
-
-input {
-  display: block;
-  padding: 0 1.25rem;
-}
-
-
 </style>

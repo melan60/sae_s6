@@ -1,5 +1,5 @@
 const variables = require("../common_variables");
-const { User, Experience } = require('../models/index.models');
+const { User, Experience } = require('../models/index_models');
 
 /**
  * function to get results for a user

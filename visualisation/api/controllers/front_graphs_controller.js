@@ -1,4 +1,4 @@
-const services = require('../services/front_graphs.service');
+const services = require('../services/front_graphs_service');
 
 const getIndividualData = async (req, res) => {
     const id_user = req.query.id_user;
