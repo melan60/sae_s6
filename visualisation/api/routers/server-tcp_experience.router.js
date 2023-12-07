@@ -109,28 +109,28 @@ router.post("/module/add", controller.createModule);
  */
 router.put("/updateModule", controller.addModuleToAnExperience);
 
-/**
- *  @swagger
- *  /experience:
- *    get:
- *      tags:
- *        - Experience
- *      description: Get all experiences, or one experience if numero is precised
- *      parameters:
- *        - in: query
- *          name: numero
- *          type: string
- *          required: false
- *          description: Numero of the experience
- *      responses:
- *        '200':
- *          description: Get experience successful
- *        '400':
- *          description: Bad request
- *        '500':
- *          description: Internal server error
- */
-router.get("/", controller.getExperience);
+// /**
+//  *  @swagger
+//  *  /experience:
+//  *    get:
+//  *      tags:
+//  *        - Experience
+//  *      description: Get all experiences, or one experience if numero is precised
+//  *      parameters:
+//  *        - in: query
+//  *          name: numero
+//  *          type: string
+//  *          required: false
+//  *          description: Numero of the experience
+//  *      responses:
+//  *        '200':
+//  *          description: Get experience successful
+//  *        '400':
+//  *          description: Bad request
+//  *        '500':
+//  *          description: Internal server error
+//  */
+// router.get("/", controller.getExperience);
 
 /**
  *  @swagger

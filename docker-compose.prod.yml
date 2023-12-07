@@ -22,8 +22,6 @@ services:
       - multi_architecture
     ports:
       - "4000:5000"
-    # env_file:
-    #   - ./visualisation/api/.env:./visualisation/api/.env
 
 networks:
   multi_architecture:

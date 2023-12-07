@@ -106,20 +106,20 @@ const addModuleToAnExperience = async (
   return callback(null, experience.modules);
 };
 
-/**
- * function to get all experiences or one experience from its numero
- * @param {Number} numero - The numero of the experience to get
- * @param {function(error: Error, result: any)} callback
- * @return {Promise}
- */
-const getExperience = async (numero, callback) => {
-  let experience = null;
-  if (!numero) experience = await Experience.find().exec();
-  else experience = await Experience.findOne({ numero: numero }).exec();
+// /**
+//  * function to get all experiences or one experience from its numero
+//  * @param {Number} numero - The numero of the experience to get
+//  * @param {function(error: Error, result: any)} callback
+//  * @return {Promise}
+//  */
+// const getExperience = async (numero, callback) => {
+//   let experience = null;
+//   if (!numero) experience = await Experience.find().exec();
+//   else experience = await Experience.findOne({ numero: numero }).exec();
 
-  if (!experience) return callback(errors.not_found);
-  return callback(null, experience);
-};
+//   if (!experience) return callback(errors.not_found);
+//   return callback(null, experience);
+// };
 
 /**
  * function to get all experiences from the database
@@ -150,7 +150,7 @@ module.exports = {
   createExperience,
   createModule,
   addModuleToAnExperience,
-  getExperience,
+  // getExperience,
   getAllExperiences,
   getLastExperience,
 };

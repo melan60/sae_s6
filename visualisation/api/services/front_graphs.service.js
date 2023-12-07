@@ -150,6 +150,12 @@ const getAllStimulis = async (callback) => {
 }
 
 // ============================================================================
+/**
+ * function to get all results for a stimulis
+ * @param {string} data - The stimulis whose data we want
+ * @param {function(error: Error, result: any)} callback
+ * @return {Promise}
+ */
 const filterResultsGraph = async (data, callback) => {
     Experience.find({ typeStimulus: data })
         .exec()
