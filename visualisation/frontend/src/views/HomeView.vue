@@ -7,6 +7,7 @@
   </div>
 </template>
 
+
 <script>
 import axios from "axios";
 import GraphBarComponent from '@/components/GraphBarComponent.vue';
@@ -66,12 +67,7 @@ export default {
         });
       }
     }
-  },
-  computed: {
-    user() {
-      return this.$store.getters.getUser;
-    }
-  },
+  }
 }
 </script>
 

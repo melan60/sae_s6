@@ -1,6 +1,6 @@
 // variables
 const cors = require("cors");
-const db = require("./db.init");
+const db = require("./database/db.init");
 const dotenv = require("dotenv");
 const express = require("express");
 const mongoose = require("mongoose");

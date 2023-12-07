@@ -26,9 +26,11 @@ export default {
 
   created() {
     // Initialize selectedStimulus with false for all stimulus types
-    this.stimulis.forEach(stimulus => {
-      this.$set(this.selectedStimulus, stimulus, false);
-    });
+    if (this.stimulis) {
+      this.stimulis.forEach(stimulus => {
+        this.$set(this.selectedStimulus, stimulus, false);
+      });
+    }
   },
   methods: {
     validate() {
