@@ -72,12 +72,12 @@ class ThreadServer extends Thread {
 					numExp = Integer.parseInt(req);
 				} catch (NumberFormatException e){
 					ps.print("ERR experience numero is not an int");
-					break;
+					continue;
 				}
 
 				if(numExp < 0 || numExp > lastExpNumero){
 					ps.println("ERR experience numero doesn't exist");
-					break;
+					continue;
 				}
 
 				launchExperience(req);
@@ -235,7 +235,7 @@ class ThreadServer extends Thread {
 		try{
 			valueInt = Integer.parseInt(value);
 		} catch (NumberFormatException e){
-			return "ERR" + e.toString();
+			return "ERR " + e.toString();
 		}
 
 		if(valueInt > 0 && valueInt < choices.size()+1){
