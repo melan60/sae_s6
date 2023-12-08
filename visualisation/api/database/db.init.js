@@ -7,7 +7,7 @@ const chalk = require("chalk");
 
 async function initModules() {
     try {
-        modules.forEach(async (module) => {
+        for (const module of modules) {
             const module_found = await Module.findOne({ name: module.name }).exec();
             if (module_found === null) {
                 const module_created = await Module.create({
@@ -17,7 +17,7 @@ async function initModules() {
                 });
                 console.log(chalk.bgGreen(`Added module :`) + chalk.bgYellow(module_created));
             }
-        });
+        };
     } catch (err) {
         console.error(chalk.bgRed(`Cannot add module :`) + err);
     }
@@ -48,8 +48,10 @@ async function initExperiences() {
 async function initResults() {
     let cpt = 0;
     let results = [];
-    const experiences = await Experience.find().exec();
-    for (let experience of experiences) {
+    const experiencesBDD = await Experience.find().exec();
+    console.log(experiencesBDD)
+
+    for (const experience of experiencesBDD) {
         console.log(chalk.bgMagenta("Result for experience :" + experience));
 
         try {
@@ -67,8 +69,9 @@ async function initResults() {
         } catch (err) {
             console.error(chalk.bgRed(`Cannot add result :`) + err);
         }
-        return results;
     }
+
+    return results;
 }
 
 function initUsers() {
