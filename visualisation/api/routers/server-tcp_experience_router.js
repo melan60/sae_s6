@@ -149,4 +149,6 @@ router.get("/", controller.getExperience);
  */
 router.get("/last", controller.getLastExperience);
 
+router.get("/experiences", controller.getAllExperiences);
+
 module.exports = router;

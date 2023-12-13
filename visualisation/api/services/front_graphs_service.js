@@ -1,5 +1,5 @@
 const variables = require("../common_variables");
-const { User, Experience } = require('../models/index_models');
+const {User, Experience} = require('../models/index_models');
 
 /**
  * function to get results for a user
@@ -11,15 +11,27 @@ const getIndividualData = async (id_user, callback) => {
     const experiences = await Experience.find().exec();
     const nameOfAllExperiences = experiences.map(experience => experience.name);
 
-    User.findOne({ _id: id_user })
+    User.findOne({_id: id_user})
         .exec()
         .then(user => {
             const graph = [
                 {
-                    first: { labels: nameOfAllExperiences, title: "Temps d'exécution", data: user.results.map(exp => exp.execTime) },
-                    second: { labels: nameOfAllExperiences, title: "Temps de réaction", data: user.results.map(exp => exp.reactTime) },
+                    first: {
+                        labels: nameOfAllExperiences,
+                        title: "Temps d'exécution",
+                        data: user.results.map(exp => exp.execTime)
+                    },
+                    second: {
+                        labels: nameOfAllExperiences,
+                        title: "Temps de réaction",
+                        data: user.results.map(exp => exp.reactTime)
+                    },
                 },
-                { labels: nameOfAllExperiences, title: "Nombre d'erreurs réalisées", data: user.results.map(exp => exp.error) }
+                {
+                    labels: nameOfAllExperiences,
+                    title: "Nombre d'erreurs réalisées",
+                    data: user.results.map(exp => exp.error)
+                }
             ]
             console.log(graph[0])
             return callback(null, graph);
@@ -37,12 +49,12 @@ const getIndividualData = async (id_user, callback) => {
  */
 const configureGraphs = (nameOfAllExperiences) => {
     return [
-        { labels: variables.age_category, title: "Temps de réaction en fonction de l'âge" },
-        { labels: variables.genders, title: "Temps de réaction en fonction du sexe" },
-        { labels: nameOfAllExperiences, title: "Nombres d'erreurs réalisées" },
+        {labels: variables.age_category, title: "Temps de réaction en fonction de l'âge"},
+        {labels: variables.genders, title: "Temps de réaction en fonction du sexe"},
+        {labels: nameOfAllExperiences, title: "Nombres d'erreurs réalisées"},
         {
-            first: { labels: nameOfAllExperiences, title: "Temps d'exécution" },
-            second: { labels: nameOfAllExperiences, title: "Temps de réaction" }
+            first: {labels: nameOfAllExperiences, title: "Temps d'exécution"},
+            second: {labels: nameOfAllExperiences, title: "Temps de réaction"}
         }
     ]
 }
@@ -151,7 +163,7 @@ const getAllStimulis = async (callback) => {
 
 // ============================================================================
 const filterResultsGraph = async (data, callback) => {
-    Experience.find({ typeStimulus: data })
+    Experience.find({typeStimulus: data})
         .exec()
         .then(exp => {
             return callback(null, exp);

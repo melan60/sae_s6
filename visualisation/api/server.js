@@ -8,7 +8,7 @@ const bodyParser = require("body-parser");
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUI = require("swagger-ui-express");
 
-const routes_auth = require("./routers/front_auth.router");
+const routes_auth = require("./routers/front_auth_router");
 const routes_graphs = require("./routers/front_graphs_router");
 const routes_server_tcp_experience = require("./routers/server-tcp_experience_router");
 const routes_server_tcp_user = require("./routers/server-tcp_user_router");
@@ -26,6 +26,7 @@ server.use(cors());
 // lancement du serveur
 server.use(express.json());
 server.use(express.urlencoded({ extended: true }));
+server.use(express.static('assets'))
 
 server.use(bodyParser.json());
 server.use(bodyParser.urlencoded({ extended: false }));

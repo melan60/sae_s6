@@ -59,6 +59,8 @@
     </div>
 
     <div class="container">
+      <ErrorComponent :error="loginError" @errorHandled="clearError" />
+
       <div class="justify-content-center"><h1 class="card-title text-center p-3">LOGIN</h1></div>
       <div class="d-flex justify-content-center align-items-center">
         <div class="col-md-4">
@@ -76,7 +78,6 @@
                          placeholder="Entrez votre mot de passe" v-model="password" required>
                 </div>
                 <button type="submit" class="btn btn-block button">SE CONNECTER</button>
-                {{ error }}
               </form>
             </div>
           </div>
@@ -88,13 +89,18 @@
 
 <script>
 
+import ErrorComponent from "@/components/ErrorComponent.vue";
+
 export default {
   name: "LoginView",
+  components: {
+    ErrorComponent
+  },
   data() {
     return {
       email: null,
       password: null,
-      error: '',
+      loginError: '',
       animateCard: false,
     };
   },
@@ -107,16 +113,19 @@ export default {
         });
 
         await this.$router.push({ name: 'cobaye', params: { nomCobaye: userData.user.name } });
-        this.error = '';
+        this.loginError = '';
 
       } catch (error) {
         if (error.response && error.response.data) {
-          this.error = error.response.data.message;
+          this.loginError = error.response.data.message;
         } else {
-          this.error = "Error during login. Please try again.";
+          this.loginError = "Error during login. Please try again.";
         }
         console.error("Error in login() LoginView:", error);
       }
+    },
+    clearError() {
+      this.error = null;
     }
   },
   mounted() {
