@@ -1,10 +1,10 @@
 <template>
-    <div>
-        <FilterComponent :stimulis="stimulis" />
-      <div style="height: 300px">
-        <GraphLine :data="dataGraph" :options="options" />
-      </div>
+  <div>
+    <FilterComponent :stimulis="stimulis" />
+    <div style="height: 300px">
+      <GraphLine :data="dataGraph" :options="options" />
     </div>
+  </div>
 </template>
 
 

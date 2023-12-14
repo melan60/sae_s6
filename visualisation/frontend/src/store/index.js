@@ -1,5 +1,5 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import Vue from 'vue';
+import Vuex from 'vuex';
 import axios from "axios";
 
 Vue.use(Vuex)
@@ -30,12 +30,11 @@ export default new Vuex.Store({
     },
   },
   actions: {
-    async login({commit}, credentials) {
-        const response = await axios.post('/api/login', credentials);
-        // Store the token in localStorage
-        localStorage.setItem('token', response.data.token);
-
-        // Commit the user data to the store
+    async login({ commit }, credentials) {
+      const response = await axios.post('/api/login', credentials);
+      // Store the token in localStorage
+      localStorage.setItem('token', response.data.token);
+       // Commit the user data to the store
         commit('setUser', response.data.user);
         commit('setAuthentication', true);
         console.log('login', response.data.user);
@@ -47,7 +46,4 @@ export default new Vuex.Store({
       commit('clearUser'); // Clear user data from state
     },
   },
-
-  modules: {
-  }
-})
+});

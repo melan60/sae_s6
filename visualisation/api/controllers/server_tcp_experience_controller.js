@@ -47,14 +47,14 @@ const addModuleToAnExperience = async (req, res) => {
   );
 };
 
-const getExperience = async (req, res) => {
-  const numero = req.query.numero;
+// const getExperience = async (req, res) => {
+//   const numero = req.query.numero;
 
-  await services.getExperience(numero, (err, result) => {
-    if (err) return res.status(400).send({ success: 0, data: err });
-    return res.status(200).send({ success: 1, data: result });
-  });
-};
+//   await services.getExperience(numero, (err, result) => {
+//     if (err) return res.status(400).send({ success: 0, data: err });
+//     return res.status(200).send({ success: 1, data: result });
+//   });
+// };
 
 const getAllExperiences = async (req, res) => {
   await services.getAllExperiences((err, result) => {
@@ -74,7 +74,7 @@ module.exports = {
   createExperience,
   createModule,
   addModuleToAnExperience,
-  getExperience,
+  // getExperience,
   getAllExperiences,
   getLastExperience,
 };

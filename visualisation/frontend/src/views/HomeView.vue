@@ -28,8 +28,8 @@
       </div>
     </div>
   </div>
-
 </template>
+
 
 <script>
 import axios from "axios";
@@ -43,67 +43,6 @@ export default {
     GraphLineComponent,
   },
   data: () => ({
-    chartData: {
-      labels: ['January', 'February', 'March', 'April', 'May'],
-      datasets: [
-        {
-          label: 'Scatter Dataset 1',
-          fill: false,
-          borderColor: '#308bf4',
-          backgroundColor: ['#7fdbe8', '#35a9a0', '#294f40', '#62e07f', '#2c3e50', '#6bc2e0', '#308bf4'],
-          data: [
-            {
-              x: -2,
-              y: 4
-            },
-            {
-              x: -1,
-              y: 1
-            },
-            {
-              x: 0,
-              y: 0
-            },
-            {
-              x: 1,
-              y: 1
-            },
-            {
-              x: 2,
-              y: 4
-            }
-          ]
-        },
-        {
-          label: 'Scatter Dataset 2',
-          fill: false,
-          borderColor: '#7acbf9',
-          backgroundColor: '#7acbf9',
-          data: [
-            {
-              x: -2,
-              y: -4
-            },
-            {
-              x: -1,
-              y: -1
-            },
-            {
-              x: 0,
-              y: 1
-            },
-            {
-              x: 1,
-              y: -1
-            },
-            {
-              x: 2,
-              y: -4
-            }
-          ]
-        }
-      ]
-    },
     values: [],
     options: {
       responsive: true,
@@ -115,7 +54,7 @@ export default {
     const user = this.$store.getters.getUser;
     try {
       const res = user ? await axios.get(`http://localhost:5000/graphs/users?id_user=${user._id}`) :
-          await axios.get("http://localhost:5000/graphs/time");
+        await axios.get("http://localhost:5000/graphs/time");
       this.initGraph(res.data.data);
     } catch (e) {
       console.log(e);
@@ -131,19 +70,19 @@ export default {
         labels = value.labels || (value.first && value.first.labels);
 
         datasets = value.first
-            ? Object.values(value).map((item, id) => {
-              return ({
-                label: item.title,
-                backgroundColor: colors[id % colors.length],
-                borderColor: colors[id % colors.length],
-                data: item.data
-              })
-            }) : [{
-              label: value.title,
-              backgroundColor: colors[index % colors.length],
-              borderColor: colors[index % colors.length],
-              data: value.data
-            }];
+          ? Object.values(value).map((item, id) => {
+            return ({
+              label: item.title,
+              backgroundColor: colors[id % colors.length],
+              borderColor: colors[id % colors.length],
+              data: item.data
+            })
+          }) : [{
+            label: value.title,
+            backgroundColor: colors[index % colors.length],
+            borderColor: colors[index % colors.length],
+            data: value.data
+          }];
 
         this.values.push({
           labels: labels,
@@ -160,14 +99,13 @@ export default {
         // Handle error, e.g., show an error message to the user
       }
     }
-
-
   },
   computed: {
     user() {
       return this.$store.getters.getUser;
     }
   },
+
 }
 </script>
 

@@ -1,6 +1,6 @@
 // variables
 const cors = require("cors");
-const db = require("./db.init");
+const db = require("./database/db.init");
 const dotenv = require("dotenv");
 const express = require("express");
 const mongoose = require("mongoose");
@@ -69,13 +69,13 @@ function initialisationBDD() {
   else
     dev_db_url = `mongodb://127.0.0.1/${process.env.DATABASE_NAME}`;
   mongoose.connect(dev_db_url)
-      .then(async () => {
-        await db.initBdD();
-        server.listen(process.env.PORT_SERVER, () => {
-          console.log(`Server is listening port ${process.env.PORT_SERVER}`);
-        });
-      })
-      .catch(e => console.error(e)); // server
+    .then(async () => {
+      await db.initBdD();
+      server.listen(process.env.PORT_SERVER, () => {
+        console.log(`Server is listening port ${process.env.PORT_SERVER}`);
+      });
+    })
+    .catch(e => console.error(e)); // server
 }
 
 initialisationBDD();
@@ -84,7 +84,7 @@ initialisationBDD();
  * If path not found before then an error sent
  */
 server.use("*", (req, res, next) => {
-    const err = new Error("Not found !");
-    err.status = 404;
-    next(err);
+  const err = new Error("Not found !");
+  err.status = 404;
+  next(err);
 });
