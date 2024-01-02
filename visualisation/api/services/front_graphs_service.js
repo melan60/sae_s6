@@ -169,6 +169,7 @@ const filterResultsGraph = async (data, callback) => {
 
 module.exports = {
     getIndividualData,
+    makeAnAverage,
     getReactAndExecTime,
     getAllStimulis,
     filterResultsGraph

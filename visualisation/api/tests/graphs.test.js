@@ -27,7 +27,7 @@ before(async () => {
 
 describe('Testing the getIndividualData service', function () {
 
-    it('The service returns an array of length 2 with the results of the cobaye', async function () {
+    it('the service returns an array of length 2 with the results of the cobaye', async function () {
         const user = await User.findOne({ email: "patelaiden@gmail.com" });
         const results = await new Promise((resolve, reject) => {
             service.getIndividualData(user._id, (error, result) => {
@@ -45,7 +45,7 @@ describe('Testing the getIndividualData service', function () {
         assert.deepEqual(results[1].data, expectedData, `Expected error ${expectedData}; got ${results[1].data}`);
     });
 
-    it('The service returns an error related to the user id', async function () {
+    it('the service returns an error related to the user id', async function () {
         const results = await new Promise((resolve, reject) => {
             service.getIndividualData(1, (error, result) => {
                 if (error) {
@@ -55,5 +55,38 @@ describe('Testing the getIndividualData service', function () {
             });
         });
         assert.ok(results);
+    });
+});
+
+
+describe('Testing the makeAnAverage service', function () {
+
+    it('should calculate the average', function () {
+        const length = 4;
+        const testData = [
+            { data: [] },
+            {
+                first: { data: [] },
+                second: { data: [] }
+            }
+        ];
+        const expectedData = JSON.parse(JSON.stringify(testData));
+
+        for (let i = 1; i <= length; i++) {
+            let pos0 = Math.pow(i, 5);
+            let pos1 = i * 42 / 89;
+            let pos2 = Math.sqrt(i);
+
+            testData[0].data.push(pos0);
+            testData[1].first.data.push(pos1);
+            testData[1].second.data.push(pos2);
+
+            expectedData[0].data.push(pos0 / length);
+            expectedData[1].first.data.push(pos1 / length);
+            expectedData[1].second.data.push(pos2 / length);
+        }
+
+        service.makeAnAverage(testData, length);
+        assert.deepEqual(testData, expectedData, 'Les résultats après la moyenne ne correspondent pas aux attentes.');
     });
 });
