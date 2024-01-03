@@ -21,7 +21,6 @@ const getIndividualData = async (id_user, callback) => {
                 },
                 { labels: nameOfAllExperiences, title: "Nombre d'erreurs réalisées", data: user.results.map(exp => exp.error) }
             ]
-            console.log(graph[0])
             return callback(null, graph);
         })
         .catch(e => {
