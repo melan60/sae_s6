@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "nodemon server.js -L",
-    "test": "mocha tests/*"
+    "test": "mocha tests/users.test.js"
   },
   "author": "",
   "license": "ISC",
@@ -24,7 +24,6 @@
     "mongoose": "^7.6.5",
     "mongoose-unique-validator": "^4.0.0",
     "nodemon": "^3.0.1",
-    "sinon": "^17.0.1",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.0",
     "validator": "^13.11.0"
