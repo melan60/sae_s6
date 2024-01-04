@@ -6,7 +6,7 @@ const db = require('../database/db.init');
 const { User, Experience, Result } = require('../models/index_models');
 
 const common_variables = require("../common_variables");
-const controller = require('../controllers/front_graphs_controller');
+const controller = require('../controllers/server_tcp_user_controller');
 const service = require('../services/server_tcp_user_service');
 
 

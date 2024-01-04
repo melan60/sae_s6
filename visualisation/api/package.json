@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "nodemon server.js -L",
-    "test": "mocha tests/users.test.js"
+    "test": "mocha tests/experience.test.js"
   },
   "author": "",
   "license": "ISC",
