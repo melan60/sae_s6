@@ -30,7 +30,7 @@ exports.login = async (req, res) => {
             });
         } else {
             // Log the reason for failure
-            console.log('Login failed because of password mismatch or user is not an admin');
+            console.log('Login failed because of password mismatch or user is not an admin'); // TODO
             res.status(401).json({ message: 'You are not authorized to login.' });
         }
     } catch (error) {

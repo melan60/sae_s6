@@ -59,7 +59,7 @@ describe('Testing the createUser service', function () {
 
         // tester que le mot de passe est crypté et qu'une fois décrypté, c'est le même que celui souhaité
         assert.notEqual(user_founded[0].password, user.password); // TODO
-        assert.ok(bcrypt.compare(user_founded[0].password, user.password));
+        assert.ok(await bcrypt.compare(user_founded[0].password, user.password));
     });
 
     it('the service returns an error because the user is already registered', async function () {
