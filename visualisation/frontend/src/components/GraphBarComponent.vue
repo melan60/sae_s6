@@ -1,13 +1,13 @@
 <template>
   <div style="height: 400px;">
-    <Bar :data="data" :options="options" />
+    <Bar :data="data" :options="options"/>
   </div>
 </template>
 
 
 <script>
-import { Chart, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
-import { Bar } from 'vue-chartjs'
+import {BarElement, CategoryScale, Chart, Legend, LinearScale, Title, Tooltip} from 'chart.js'
+import {Bar} from 'vue-chartjs'
 
 Chart.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
