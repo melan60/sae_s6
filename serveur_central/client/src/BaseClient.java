@@ -7,7 +7,7 @@ class BaseClient {
     MainClient client;
 
     if (args.length != 2) {
-      System.out.println("usage: java WeatherClient ip_server port");
+      System.out.println("usage: java BaseClient ip_server port");
       System.exit(1);
     }
 
