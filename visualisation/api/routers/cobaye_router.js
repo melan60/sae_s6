@@ -3,13 +3,8 @@ const router = express.Router();
 const middleware = require('../middlewares/auth_middleware');
 const User = require('../models/user_schema');
 
-<<<<<<< HEAD
 router.get('/', middleware.authenticateJWT, async (req, res) => {
     if(req.user.typeUser && req.user.typeUser.includes('cobaye')) {
-=======
-router.get('/cobaye/:nomCobaye', middleware.authenticateJWT, async (req, res) => {
-    if (req.user.typeUser && req.user.typeUser.includes('cobaye')) {
->>>>>>> refs/remotes/origin/dev
         try {
             const nomCobaye = req.params.nomCobaye;
             const user = await User.findOne({ name: nomCobaye });
