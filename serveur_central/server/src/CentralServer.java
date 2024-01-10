@@ -7,7 +7,7 @@ class CentralServer {
     MainServer server = null;
 
     if (args.length != 1) {
-      System.out.println("usage: WeatherCentralServer port");
+      System.out.println("usage: CentralServer port");
       System.exit(1);
     }
 
