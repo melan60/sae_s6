@@ -8,19 +8,13 @@ const controller = require('../controllers/front_auth_controller');
 const flushPromises = () => new Promise(setImmediate);
 
 
-before(() => {
-    let dev_db_url;
-    if (process.env.DOCKER_MONGO) {
-        dev_db_url = `mongodb://${process.env.DOCKER_MONGO}:27017/saeS5Test`
-    } else {
-        dev_db_url = `mongodb://127.0.0.1/saeS5Test`;
-    }
+before(async () => {
+    let dev_db_url = process.env.DOCKER_MONGO ?
+        `mongodb://${process.env.DOCKER_MONGO}:27017/saeS5Test` :
+        `mongodb://127.0.0.1/saeS5Test`;
 
-    mongoose.connect(dev_db_url)
-        .then(async () => {
-            await db.initBdD();
-        })
-        .catch(e => console.error(e)); // server
+    await mongoose.connect(dev_db_url);
+    await db.initBdD();
 });
 
 
@@ -59,4 +53,8 @@ describe('Testing the login service', function () {
         sinon.assert.calledWith(res.status, 401);
         sinon.assert.calledWith(res.json, { message: 'You are not authorized to login.' });
     });
+});
+
+after(async function () {
+    await mongoose.connection.db.dropDatabase();
 });
