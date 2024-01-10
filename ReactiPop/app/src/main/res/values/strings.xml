@@ -1,10 +1,9 @@
 <resources>
     <string name="app_name">ReactiPop</string>
-    <string name="start_capture">Démarer la vidéo</string>
-    <string name="stop_capture">Stopper la vidéo</string>
+    <string name="take_photo">Prendre une photo</string>
 
-    <string name="video_recording_success">La vidéo a réussi : </string>
-    <string name="error_video_recording">La vidéo s\'est terminée avec une erreur : </string>
+    <string name="success_capture">La capture de la photo s\'est terminée avec succés </string>
+    <string name="error_capture">La capture de la photo s\'est terminée avec une erreur : </string>
     <string name="use_case_bindings_error">La liaison des cas d\'utilisation a échoué</string>
     <string name="permissions_denied">Les autorisations n\'ont pas été accordées par l\'utilisateur.</string>
 </resources>

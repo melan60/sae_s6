@@ -9,10 +9,8 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="mongodb-driver-sync" level="application" />
     <orderEntry type="library" name="github.jkschneider.netty.jssc" level="project" />
-    <orderEntry type="library" name="github.robert2411.platform.components.serialport.api" level="project" />
     <orderEntry type="library" name="google.code.gson" level="project" />
-    <orderEntry type="library" name="fasterxml.jackson.dataformat.xml" level="project" />
-    <orderEntry type="library" name="io.github.cdimascio.dotenv.java" level="application" />
+    <orderEntry type="library" name="io.github.cdimascio.dotenv.java" level="project" />
     <orderEntry type="library" name="at.favre.lib.bcrypt" level="project" />
   </component>
 </module>

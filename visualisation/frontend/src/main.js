@@ -2,8 +2,12 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router/router'
 import store from './store'
-import { BootstrapVue, IconsPlugin, BIcon } from 'bootstrap-vue'
+import { BootstrapVue, IconsPlugin, BIcon, ModalPlugin, ButtonPlugin } from 'bootstrap-vue'
 import axios from 'axios';
+import AOS from 'aos'
+import 'aos/dist/aos.css'
+
+import * as VueAos from 'vue-aos'
 
 // Import Bootstrap and BootstrapVue CSS files (order is important)
 import 'bootstrap/dist/css/bootstrap.css'
@@ -12,6 +16,9 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 Vue.config.productionTip = false
 // Make BootstrapVue available throughout your project
 Vue.use(BootstrapVue)
+Vue.use(ModalPlugin)
+Vue.use(ButtonPlugin)
+Vue.use(VueAos);
 
 // Optionally install the BootstrapVue icon components plugin
 Vue.use(IconsPlugin)
@@ -29,5 +36,8 @@ axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
 new Vue({
   router,
   store,
+  created() {
+    AOS.init();
+  },
   render: h => h(App)
 }).$mount('#app')

@@ -149,4 +149,6 @@ router.put("/updateModule", controller.addModuleToAnExperience);
  */
 router.get("/last", controller.getLastExperience);
 
+router.get("/experiences", controller.getAllExperiences);
+
 module.exports = router;
