@@ -6,4 +6,7 @@
     <string name="error_capture">La capture de la photo s\'est terminée avec une erreur : </string>
     <string name="use_case_bindings_error">La liaison des cas d\'utilisation a échoué</string>
     <string name="permissions_denied">Les autorisations n\'ont pas été accordées par l\'utilisateur.</string>
+
+    <string name="not_register">Ne pas enregistrer</string>
+    <string name="register">Enregistrer</string>
 </resources>

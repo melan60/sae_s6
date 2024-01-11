@@ -33,13 +33,14 @@ public class FaceDetectorServer {
         }
 
         // Connection to the main server
-        String addrMainServer = args[1];
-        int portMainServer = Integer.parseInt(args[2]);
-        PrintStream psMainServer = connectToMainServer(addrMainServer, portMainServer);
+//        String addrMainServer = args[1];
+//        int portMainServer = Integer.parseInt(args[2]);
+//        PrintStream psMainServer = connectToMainServer(addrMainServer, portMainServer);
 
         try {
             while (true) {
                 socketClient = socketServer.accept(); // attente connexion client
+                System.out.println("Client connecté");
                 br = new BufferedReader(new InputStreamReader(socketClient.getInputStream())); // creation flux lecture lignes de textes
                 ps = new PrintStream(socketClient.getOutputStream()); // création flux écriture lignes de texte
 
@@ -47,13 +48,13 @@ public class FaceDetectorServer {
                 System.out.println("le client me dit : " + line); // affichage debug
 
                 // load image
-                System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-                Mat image = Imgcodecs.imread(line);
+//                System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+//                Mat image = Imgcodecs.imread(line);
+//
+//                // create method for detect
+//                imageAnalyse(image);
 
-                // create method for detect
-                imageAnalyse(image);
-
-                sendToMainServer(psMainServer, "TODO");
+//                sendToMainServer(psMainServer, "TODO");
                 br.close();
                 ps.close();
             }
