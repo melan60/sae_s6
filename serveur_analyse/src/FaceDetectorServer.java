@@ -1,6 +1,11 @@
 import java.io.*;
 import java.net.*;
 
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+
+import javax.imageio.ImageIO;
+
 import org.opencv.core.*;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
@@ -10,14 +15,13 @@ import org.opencv.objdetect.Objdetect;
 public class FaceDetectorServer {
 
     public static void main(String[] args) {
-
-        BufferedReader br; // pour lire du texte sur la socket
-        // TODO qu'envoie le server au mobile ?
-        PrintStream ps; // pour envoyer du texte sur la socket
-        String line; // la ligne reçu/envoyée
+        BufferedImage bufferedImage;
+        ByteArrayOutputStream buffer;
+        InputStream in;
         ServerSocket socketServer = null;
         Socket socketClient;
-        int port;
+
+        int nRead;
 
         if (args.length != 3) {
             System.err.println("ERR usage");
@@ -25,7 +29,7 @@ public class FaceDetectorServer {
         }
 
         try {
-            port = Integer.parseInt(args[0]); // récupération du port sous forme int
+            int port = Integer.parseInt(args[0]); // récupération du port sous forme int
             socketServer = new ServerSocket(port); // création socket serveur
         } catch (IOException e) {
             System.err.println("ERR problème création socket serveur : " + e.getMessage());
@@ -33,29 +37,35 @@ public class FaceDetectorServer {
         }
 
         // Connection to the main server
-        String addrMainServer = args[1];
-        int portMainServer = Integer.parseInt(args[2]);
-        PrintStream psMainServer = connectToMainServer(addrMainServer, portMainServer);
+//        String addrMainServer = args[1];
+//        int portMainServer = Integer.parseInt(args[2]);
+//        PrintStream psMainServer = connectToMainServer(addrMainServer, portMainServer);
 
         try {
             while (true) {
                 socketClient = socketServer.accept(); // attente connexion client
-                br = new BufferedReader(new InputStreamReader(socketClient.getInputStream())); // creation flux lecture lignes de textes
-                ps = new PrintStream(socketClient.getOutputStream()); // création flux écriture lignes de texte
-
-                line = br.readLine(); // réception d'une ligne
-                System.out.println("le client me dit : " + line); // affichage debug
-
-                // load image
                 System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-                Mat image = Imgcodecs.imread(line);
+
+                buffer = new ByteArrayOutputStream();
+                in = socketClient.getInputStream();
+                byte[] data = new byte[16384];
+                while ((nRead = in.read(data, 0, data.length)) != -1) {
+                    buffer.write(data, 0, nRead);
+                }
+
+                bufferedImage = ImageIO.read(new ByteArrayInputStream(buffer.toByteArray()));
+                Mat image = new Mat(bufferedImage.getHeight(), bufferedImage.getWidth(), CvType.CV_8UC3);
+                image.put(0, 0, ((DataBufferByte) bufferedImage.getRaster().getDataBuffer()).getData());
+
+                Imgcodecs.imwrite("Images/output.jpg", image);
+
+                buffer.close();
+                in.close();
+                socketClient.close();
 
                 // create method for detect
                 imageAnalyse(image);
-
-                sendToMainServer(psMainServer, "TODO");
-                br.close();
-                ps.close();
+//                sendToMainServer(psMainServer, "TODO");
             }
         } catch (IOException e) {
             System.err.println(e.getMessage());
@@ -78,7 +88,7 @@ public class FaceDetectorServer {
     }
 
     private static void sendToMainServer(PrintStream ps, String message) {
-        ps.println(message); // envoi du texte donné en args[2] au serveur
+        ps.println(message);
     }
 
     private static void imageAnalyse(Mat image) {
