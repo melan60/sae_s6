@@ -55,9 +55,28 @@ describe('Testing the createExperience service', function () {
         assert.ok(experience_bdd);
     });
 
-    // it('the number of the experience created is the correct one', async function () {
+    it('the number of the experience created is the correct one', async function () {
+        const experiences = await Experience.find();
+        const module = await Module.findOne({ name: "module1" });
+        const experienceData = {
+            name: 'Expérience n°2',
+            typeStimulus: 'Visuel',
+            distraction: '',
+            modules: module._id,
+        };
 
-    // });
+        const experience_created = await new Promise((resolve, reject) => {
+            service.createExperience(experienceData, (error, result) => {
+                if (error) {
+                    reject(error);
+                }
+                resolve(result);
+            });
+        });
+
+        const experience_bdd = await Experience.findOne({ name: experience_created.name });
+        assert.equal(experiences.length+1, experience_bdd.numero);
+    });
 
     it('should return an error because the experience is already registered', async function () {
         const module = await Module.findOne({ name: "module1" });
@@ -97,8 +116,28 @@ describe('Testing the createExperience service', function () {
                 }
             });
         });
-
         assert.ok(error);
+    });
+});
+
+// ============================================================================ getLastExperience
+describe('Testing the getLastExperience service', function () {
+
+    it('should get the last created experience', async function () {
+        const experiences = await Experience.find();
+
+        const last_experience = await new Promise((resolve, reject) => {
+            service.getLastExperience((error, result) => {
+                if (error) {
+                    reject(error);
+                }
+                resolve(result);
+            });
+        });
+
+        // le résultat a les mêmes attributs que ceux souhaités
+        assert.ok(last_experience);
+        assert.equal(last_experience._doc.numero, experiences.length);
     });
 });
 
