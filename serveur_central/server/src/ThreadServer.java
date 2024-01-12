@@ -23,6 +23,7 @@ class ThreadServer extends Thread {
 		this.idThread = idThread;
 		this.exchanger = data;
 		this.arduinoConfig = new ArduinoConfig();
+		arduinoConfig.init();
 	}
 
 	public void run() {
@@ -41,7 +42,7 @@ class ThreadServer extends Thread {
 				analyseLoop();
 			}
 			else{
-				arduinoConfig.init();
+//				arduinoConfig.init();
 				System.out.println("client");
 				requestLoop();
 			}
@@ -83,7 +84,6 @@ class ThreadServer extends Thread {
 
 //			String response = exchanger.getHttpDriver().addResults("2", 12, 15, 10, currentUser);
 			while(true) {
-				System.out.println(lastExpNumero);
 				req = br.readLine();
 				if ((req == null) || (req.isEmpty())) {
 					break;
@@ -138,6 +138,7 @@ class ThreadServer extends Thread {
 		}
 //		String response = exchanger.getHttpDriver().addResults(numExp, res[1], res[2], (int) res[3], currentUser);
 		String response = exchanger.getMongoDriver().addResults(numExp, res[1], res[2], (int) res[3], currentUser);
+		ps.println(response);
 		System.out.println(response);
 	}
 
