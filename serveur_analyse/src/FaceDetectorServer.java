@@ -14,14 +14,16 @@ import org.opencv.objdetect.Objdetect;
 
 public class FaceDetectorServer {
 
+//getbytes android
+//av envoie date j'envoie 1 octect
+
     public static void main(String[] args) {
-        BufferedImage bufferedImage;
+        InputStream inputStream;
+
         ByteArrayOutputStream buffer;
-        InputStream in;
+
         ServerSocket socketServer = null;
         Socket socketClient;
-
-        int nRead;
 
         if (args.length != 3) {
             System.err.println("ERR usage");
@@ -29,66 +31,68 @@ public class FaceDetectorServer {
         }
 
         try {
-            int port = Integer.parseInt(args[0]); // récupération du port sous forme int
-            socketServer = new ServerSocket(port); // création socket serveur
+            int port = Integer.parseInt(args[0]);
+            socketServer = new ServerSocket(port);
         } catch (IOException e) {
             System.err.println("ERR problème création socket serveur : " + e.getMessage());
             System.exit(1);
         }
 
-        // Connection to the main server
+        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+
 //        String addrMainServer = args[1];
 //        int portMainServer = Integer.parseInt(args[2]);
 //        PrintStream psMainServer = connectToMainServer(addrMainServer, portMainServer);
 
         try {
             while (true) {
-                socketClient = socketServer.accept(); // attente connexion client
-                System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+                socketClient = socketServer.accept();
 
+                inputStream = socketClient.getInputStream();
                 buffer = new ByteArrayOutputStream();
-                in = socketClient.getInputStream();
-                byte[] data = new byte[16384];
-                while ((nRead = in.read(data, 0, data.length)) != -1) {
-                    buffer.write(data, 0, nRead);
-                }
 
-                bufferedImage = ImageIO.read(new ByteArrayInputStream(buffer.toByteArray()));
-                Mat image = new Mat(bufferedImage.getHeight(), bufferedImage.getWidth(), CvType.CV_8UC3);
-                image.put(0, 0, ((DataBufferByte) bufferedImage.getRaster().getDataBuffer()).getData());
+                getTime(inputStream, buffer);
+                Mat image = getImageFromMobile(inputStream, buffer);
 
                 Imgcodecs.imwrite("Images/output.jpg", image);
+                imageAnalyse(image);
 
+                inputStream.close();
                 buffer.close();
-                in.close();
                 socketClient.close();
 
-                // create method for detect
-                imageAnalyse(image);
 //                sendToMainServer(psMainServer, "TODO");
             }
-        } catch (IOException e) {
+        } catch (IOException | NullPointerException e) {
             System.err.println(e.getMessage());
             System.exit(1);
         }
     }
 
-    private static PrintStream connectToMainServer(String addrMainServer, int portMainServer) {
-        Socket socketMainServer;
-        PrintStream psMainServer = null;
-        try {
-            System.out.println(addrMainServer + "  " + portMainServer);
-            socketMainServer = new Socket(addrMainServer, portMainServer);
-            psMainServer = new PrintStream(socketMainServer.getOutputStream()); // création flux écriture lignes de texte
-        } catch (Exception e) {
-            System.err.println("ERR connection with main server : " + e.getMessage());
-            System.exit(1);
+    private static void getTime(InputStream inputStream, ByteArrayOutputStream buffer) throws IOException {
+        int size = inputStream.read();
+        System.out.println(size);
+        byte[] dateTime = new byte[size];
+        int nRead;
+
+        while ((nRead = inputStream.read(dateTime, 0, 1024)) != -1) {
+            buffer.write(dateTime, 0, nRead);
         }
-        return psMainServer;
     }
 
-    private static void sendToMainServer(PrintStream ps, String message) {
-        ps.println(message);
+    private static Mat getImageFromMobile(InputStream inputStream, ByteArrayOutputStream buffer) throws IOException, NullPointerException {
+        byte[] data = new byte[16384];
+        int nRead;
+
+        while ((nRead = inputStream.read(data, 0, 1024)) != -1) {
+            buffer.write(data, 0, nRead);
+        }
+
+        BufferedImage bufferedImage = ImageIO.read(new ByteArrayInputStream(buffer.toByteArray()));
+        Mat image = new Mat(bufferedImage.getHeight(), bufferedImage.getWidth(), CvType.CV_8UC3);
+        image.put(0, 0, ((DataBufferByte) bufferedImage.getRaster().getDataBuffer()).getData());
+
+        return image;
     }
 
     private static void imageAnalyse(Mat image) {
@@ -117,5 +121,22 @@ public class FaceDetectorServer {
         } else {
             System.out.println("Les participants regardent dans la même direction.");
         }
+    }
+
+    private static PrintStream connectToMainServer(String addrMainServer, int portMainServer) {
+        Socket socketMainServer;
+        PrintStream psMainServer = null;
+        try {
+            socketMainServer = new Socket(addrMainServer, portMainServer);
+            psMainServer = new PrintStream(socketMainServer.getOutputStream()); // création flux écriture lignes de texte
+        } catch (Exception e) {
+            System.err.println("ERR connection with main server : " + e.getMessage());
+            System.exit(1);
+        }
+        return psMainServer;
+    }
+
+    private static void sendToMainServer(PrintStream ps, String message) {
+        ps.println(message);
     }
 }
