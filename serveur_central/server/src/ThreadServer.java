@@ -41,6 +41,7 @@ class ThreadServer extends Thread {
 				analyseLoop();
 			}
 			else{
+				arduinoConfig.init();
 				System.out.println("client");
 				requestLoop();
 			}
