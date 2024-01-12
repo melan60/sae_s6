@@ -129,6 +129,7 @@ public class FaceDetectorServer {
         try {
             socketMainServer = new Socket(addrMainServer, portMainServer);
             psMainServer = new PrintStream(socketMainServer.getOutputStream()); // création flux écriture lignes de texte
+            psMainServer.println("analyse");
         } catch (Exception e) {
             System.err.println("ERR connection with main server : " + e.getMessage());
             System.exit(1);

@@ -23,10 +23,10 @@ class ThreadServer extends Thread {
 		this.idThread = idThread;
 		this.exchanger = data;
 		this.arduinoConfig = new ArduinoConfig();
+		arduinoConfig.init();
 	}
 
 	public void run() {
-		arduinoConfig.init();
 		try {
 			br = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 			ps = new PrintStream(sock.getOutputStream());
@@ -35,8 +35,30 @@ class ThreadServer extends Thread {
 			System.err.println("Thread "+ idThread +": cannot create streams. Aborting.");
 			return;
 		}
-		requestLoop();
+		try {
+			String clientType = br.readLine();
+			if(clientType.equals("analyse")){
+				System.out.println("analyse");
+				analyseLoop();
+			}
+			else{
+//				arduinoConfig.init();
+				System.out.println("client");
+				requestLoop();
+			}
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 		System.out.println("end of thread "+ idThread);
+	}
+
+	public void analyseLoop(){
+		try {
+			String message = br.readLine();
+			System.out.println(message);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public void requestLoop() {
@@ -62,7 +84,6 @@ class ThreadServer extends Thread {
 
 //			String response = exchanger.getHttpDriver().addResults("2", 12, 15, 10, currentUser);
 			while(true) {
-				System.out.println(lastExpNumero);
 				req = br.readLine();
 				if ((req == null) || (req.isEmpty())) {
 					break;
@@ -117,6 +138,7 @@ class ThreadServer extends Thread {
 		}
 //		String response = exchanger.getHttpDriver().addResults(numExp, res[1], res[2], (int) res[3], currentUser);
 		String response = exchanger.getMongoDriver().addResults(numExp, res[1], res[2], (int) res[3], currentUser);
+		ps.println(response);
 		System.out.println(response);
 	}
 

@@ -23,6 +23,7 @@ class MainClient  {
 		boolean stop = false;
 
 		try {
+			ps.println("client");
 			while(!stop) {
 				stop = createUser();
 			}

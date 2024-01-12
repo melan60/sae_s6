@@ -6,7 +6,7 @@ public class ArduinoConfig {
     private SerialPort serialPort;
 
     public ArduinoConfig() {
-        this.serialPort = new SerialPort("/dev/ttyACM0");
+        this.serialPort = new SerialPort("COM4");
     }
 
     public void init(){
