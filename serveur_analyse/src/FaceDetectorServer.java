@@ -37,9 +37,9 @@ public class FaceDetectorServer {
         }
 
         // Connection to the main server
-//        String addrMainServer = args[1];
-//        int portMainServer = Integer.parseInt(args[2]);
-//        PrintStream psMainServer = connectToMainServer(addrMainServer, portMainServer);
+        String addrMainServer = args[1];
+        int portMainServer = Integer.parseInt(args[2]);
+        PrintStream psMainServer = connectToMainServer(addrMainServer, portMainServer);
 
         try {
             while (true) {
@@ -80,6 +80,7 @@ public class FaceDetectorServer {
             System.out.println(addrMainServer + "  " + portMainServer);
             socketMainServer = new Socket(addrMainServer, portMainServer);
             psMainServer = new PrintStream(socketMainServer.getOutputStream()); // création flux écriture lignes de texte
+            psMainServer.println("analyse");
         } catch (Exception e) {
             System.err.println("ERR connection with main server : " + e.getMessage());
             System.exit(1);

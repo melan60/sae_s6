@@ -26,7 +26,6 @@ class ThreadServer extends Thread {
 	}
 
 	public void run() {
-		arduinoConfig.init();
 		try {
 			br = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 			ps = new PrintStream(sock.getOutputStream());
@@ -35,8 +34,29 @@ class ThreadServer extends Thread {
 			System.err.println("Thread "+ idThread +": cannot create streams. Aborting.");
 			return;
 		}
-		requestLoop();
+		try {
+			String clientType = br.readLine();
+			if(clientType.equals("analyse")){
+				System.out.println("analyse");
+				analyseLoop();
+			}
+			else{
+				System.out.println("client");
+				requestLoop();
+			}
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 		System.out.println("end of thread "+ idThread);
+	}
+
+	public void analyseLoop(){
+		try {
+			String message = br.readLine();
+			System.out.println(message);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public void requestLoop() {
