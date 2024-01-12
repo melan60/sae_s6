@@ -18,6 +18,7 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.core.Preview
 import androidx.camera.core.CameraSelector
 import android.util.Log
+import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.camera.core.ImageCaptureException
 import com.example.reactipop.databinding.ActivityMainBinding
@@ -26,11 +27,11 @@ import java.util.Locale
 
 
 class MainActivity : AppCompatActivity() {
+
     private lateinit var viewBinding: ActivityMainBinding
-
     private var imageCapture: ImageCapture? = null
-
     private lateinit var cameraExecutor: ExecutorService
+    private var dateTime: String = ""
 
     companion object {
         private const val TAG = "CameraXApp"
@@ -64,6 +65,14 @@ class MainActivity : AppCompatActivity() {
 
         // Set up the listeners for take photo
         viewBinding.imageCaptureButton.setOnClickListener { takePhoto() }
+        viewBinding.startExperienceButton.setOnClickListener {
+            val currentTimeMillis = System.currentTimeMillis()
+            val dateFormatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+            dateTime = dateFormatter.format(currentTimeMillis)
+
+            viewBinding.startExperienceButton.visibility = View.GONE
+            viewBinding.imageCaptureButton.visibility = View.VISIBLE
+        }
 
         cameraExecutor = Executors.newSingleThreadExecutor()
     }
@@ -105,7 +114,9 @@ class MainActivity : AppCompatActivity() {
 
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
                     val intent = Intent(this@MainActivity, NewActivity::class.java)
+                    Log.e("Temps", dateTime)
                     intent.putExtra("image_uri", output.savedUri.toString())
+                    intent.putExtra("date_time", dateTime)
                     startActivity(intent)
                 }
             }
@@ -177,5 +188,3 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
-
-
