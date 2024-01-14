@@ -18,9 +18,9 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 1
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 1
+}</component>
   <component name="ProjectId" id="2arXaWIcxrNDfVoPWLDGkCcQU3R" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -32,7 +32,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "dev",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/mathe/sae_s5",
+    "last_opened_file_path": "C:/Users/mathe/sae_s5/serveur_central",
     "node.js.detected.package.eslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
@@ -48,6 +48,7 @@
       <option name="presentableId" value="Default" />
       <updated>1705077736140</updated>
       <workItem from="1705077737320" duration="37000" />
+      <workItem from="1705077938327" duration="18000" />
     </task>
     <servers />
   </component>

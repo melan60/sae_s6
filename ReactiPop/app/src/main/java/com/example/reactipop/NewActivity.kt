@@ -42,7 +42,7 @@ class NewActivity : AppCompatActivity() {
     }
 
     private fun sendToServer(imageUri: Uri, dateTime: String) {
-        val serverName = "192.168.206.221"
+        val serverName = "10.192.18.249"
         val serverPort = 8000
         val imageData = getImageBytes(imageUri)
 
@@ -54,19 +54,23 @@ class NewActivity : AppCompatActivity() {
         Thread {
             try {
                 val socket = Socket(serverName, serverPort)
-                val printStream = PrintStream(socket.getOutputStream())
+                val outputStream = socket.getOutputStream()
 
-                Log.e("Temps v8", dateTime)
-                printStream.println(dateTime)
-                printStream.write(imageData)
+                val dateTimeBytes = dateTime.toByteArray(Charsets.UTF_8)
+                outputStream.write(dateTimeBytes.size)
+                outputStream.write(dateTimeBytes)
 
-                printStream.flush()
+                outputStream.write(imageData)
+                Log.e("Image", imageData.toString())
+
+                outputStream.flush()
                 socket.close()
             } catch (e: IOException) {
                 Log.e("ERR sendToConnect", e.message.toString())
             }
         }.start()
     }
+
 
     private fun getImageBytes(imageUri: Uri): ByteArray? {
         return try {

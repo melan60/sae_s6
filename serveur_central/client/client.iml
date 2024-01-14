@@ -7,5 +7,17 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="mongodb-driver-sync" level="application" />
+    <orderEntry type="library" name="bcrypt-0.10.2" level="application" />
+    <orderEntry type="library" name="bson-4.10.2" level="application" />
+    <orderEntry type="library" name="bson-record-codec-4.10.2" level="application" />
+    <orderEntry type="library" name="bytes-1.5.0" level="application" />
+    <orderEntry type="library" name="dotenv-java-3.0.0" level="application" />
+    <orderEntry type="library" name="gson-2.10.1" level="application" />
+    <orderEntry type="library" name="jssc-2.8.0" level="application" />
+    <orderEntry type="library" name="mongodb-driver-core-4.10.2" level="application" />
+    <orderEntry type="library" name="mongodb-driver-sync-4.10.2" level="application" />
+    <orderEntry type="library" name="netty-all-4.0.21.Final" level="application" />
+    <orderEntry type="library" name="netty-jssc-0.1.0" level="application" />
   </component>
 </module>
