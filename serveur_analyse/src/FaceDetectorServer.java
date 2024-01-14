@@ -3,6 +3,7 @@ import java.net.*;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
+import java.nio.charset.StandardCharsets;
 
 import javax.imageio.ImageIO;
 
@@ -51,7 +52,7 @@ public class FaceDetectorServer {
                 inputStream = socketClient.getInputStream();
                 buffer = new ByteArrayOutputStream();
 
-                getTime(inputStream, buffer);
+                getTime(inputStream);
                 Mat image = getImageFromMobile(inputStream, buffer);
 
                 Imgcodecs.imwrite("Images/output.jpg", image);
@@ -69,15 +70,17 @@ public class FaceDetectorServer {
         }
     }
 
-    private static void getTime(InputStream inputStream, ByteArrayOutputStream buffer) throws IOException {
+    private static void getTime(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         int size = inputStream.read();
-        System.out.println(size);
         byte[] dateTime = new byte[size];
-        int nRead;
 
-        while ((nRead = inputStream.read(dateTime, 0, 1024)) != -1) {
-            buffer.write(dateTime, 0, nRead);
-        }
+        int nRead = inputStream.read(dateTime);
+        buffer.write(dateTime, 0, nRead);
+
+        System.out.println(buffer.toString(StandardCharsets.UTF_8));
+
+        buffer.close();
     }
 
     private static Mat getImageFromMobile(InputStream inputStream, ByteArrayOutputStream buffer) throws IOException, NullPointerException {
