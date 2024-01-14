@@ -31,7 +31,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewBinding: ActivityMainBinding
     private var imageCapture: ImageCapture? = null
     private lateinit var cameraExecutor: ExecutorService
-    private var dateTime: String = ""
+    private var startTime: String = ""
+    private var stopTime: String = ""
+    private val dateFormatter = SimpleDateFormat("mm:ss:SSS", Locale.getDefault())
 
     companion object {
         private const val TAG = "CameraXApp"
@@ -67,8 +69,7 @@ class MainActivity : AppCompatActivity() {
         viewBinding.imageCaptureButton.setOnClickListener { takePhoto() }
         viewBinding.startExperienceButton.setOnClickListener {
             val currentTimeMillis = System.currentTimeMillis()
-            val dateFormatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-            dateTime = dateFormatter.format(currentTimeMillis)
+            startTime = dateFormatter.format(currentTimeMillis)
 
             viewBinding.startExperienceButton.visibility = View.GONE
             viewBinding.imageCaptureButton.visibility = View.VISIBLE
@@ -87,6 +88,9 @@ class MainActivity : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private fun takePhoto() {
+        val currentTimeMillis = System.currentTimeMillis()
+        stopTime = dateFormatter.format(currentTimeMillis)
+
         // Get a stable reference of the modifiable image capture use case
         val imageCapture = imageCapture ?: return
 
@@ -122,9 +126,9 @@ class MainActivity : AppCompatActivity() {
 
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
                     val intent = Intent(this@MainActivity, NewActivity::class.java)
-                    Log.e("Temps", dateTime)
                     intent.putExtra("image_uri", output.savedUri.toString())
-                    intent.putExtra("date_time", dateTime)
+                    intent.putExtra("start_time", startTime)
+                    intent.putExtra("stop_time", stopTime)
                     startActivity(intent)
                 }
             }

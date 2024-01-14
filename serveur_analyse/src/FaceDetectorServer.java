@@ -53,6 +53,7 @@ public class FaceDetectorServer {
                 buffer = new ByteArrayOutputStream();
 
                 getTime(inputStream);
+                getTime(inputStream);
                 Mat image = getImageFromMobile(inputStream, buffer);
 
                 Imgcodecs.imwrite("Images/output.jpg", image);
