@@ -18,6 +18,34 @@ class MainClient  {
 		ps = new PrintStream(sock.getOutputStream());
 	}
 
+	// TODO supprimer cette méthode
+	public void devLoop() {
+		System.out.println("ENTERING DEV LOOP, TO DELETE LATER");
+		String req = "";
+		boolean stop = false;
+
+		try {
+			ps.println("client");
+			nameUser = "Patel";
+			lastNumeroExperience = 5;
+			while (!stop) {
+				System.out.print(nameUser + " [Saisie du numéro de l'expérience (de 1 à " + lastNumeroExperience + ")]> ");
+				req = consoleIn.readLine();
+				if (req == null || req.equals("quit")) {
+					stop = true;
+				}
+				else {
+					ps.println(req);
+					String response = br.readLine();
+					System.out.println(response);
+				}
+			}
+		}
+		catch(IOException e) {
+			System.out.println("cannot communicated with server. Aborting");
+		}
+	}
+
 	public void mainLoop() {
 		String req = "";
 		boolean stop = false;

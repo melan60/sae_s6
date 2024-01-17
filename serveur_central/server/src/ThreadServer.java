@@ -38,13 +38,11 @@ class ThreadServer extends Thread {
 		try {
 			String clientType = br.readLine();
 			if(clientType.equals("analyse")){
-				System.out.println("analyse");
 				analyseLoop();
 			}
 			else{
-//				arduinoConfig.init();
-				System.out.println("client");
-				requestLoop();
+//				requestLoop();
+				devLoop();
 			}
 		} catch (IOException e) {
 			throw new RuntimeException(e);
@@ -58,6 +56,37 @@ class ThreadServer extends Thread {
 			System.out.println(message);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
+		}
+	}
+
+	public void devLoop() {
+		System.out.println("ENTERING DEV LOOP, TO DELETE LATER");
+		String req = "";
+		int numExp = -1;
+		lastExpNumero = exchanger.getMongoDriver().getLastExperience();
+		this.currentUser = exchanger.getMongoDriver().getUser();
+		try {
+			while(true) {
+				req = br.readLine();
+				if ((req == null) || (req.isEmpty())) {
+					break;
+				}
+				try{
+					numExp = Integer.parseInt(req);
+				} catch (NumberFormatException e){
+					ps.print("ERR experience numero is not an int");
+					continue;
+				}
+				if(numExp < 0 || numExp > lastExpNumero){
+					ps.println("ERR experience numero doesn't exist");
+					continue;
+				}
+				launchExperience(req);
+			}
+			System.out.println("end of request loop");
+		}
+		catch(IOException e) {
+			System.out.println("problem with receiving request: "+e.getMessage());
 		}
 	}
 
@@ -130,6 +159,8 @@ class ThreadServer extends Thread {
 			}
 		} catch (SerialPortException e) {
 			System.out.println("Error writing to the serial port");
+			ps.println("ERR no result returned from arduino");
+			return;
 		}
 		float[] res = checkValuesAddResults(results[0], results[1], results[2]);
 		if(res[0] == 1){
