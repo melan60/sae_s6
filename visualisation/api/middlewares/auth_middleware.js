@@ -1,5 +1,11 @@
 const jwt = require('jsonwebtoken');
 
+/**
+ * Middleware to authenticate JWT token
+ * @param req
+ * @param res
+ * @param next
+ */
 exports.authenticateJWT = (req, res, next) => {
     const authHeader = req.headers.authorization;
     if (authHeader && authHeader.startsWith('Bearer ')) {
