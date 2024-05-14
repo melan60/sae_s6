@@ -7,23 +7,23 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import androidx.appcompat.app.AppCompatActivity
-import androidx.camera.core.ImageCapture
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
-import android.widget.Toast
-import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.camera.core.Preview
-import androidx.camera.core.CameraSelector
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
+import androidx.camera.core.Preview
+import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.example.reactipop.databinding.ActivityMainBinding
 import java.text.SimpleDateFormat
 import java.util.Locale
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 
 class MainActivity : AppCompatActivity() {
@@ -32,6 +32,9 @@ class MainActivity : AppCompatActivity() {
     private var imageCapture: ImageCapture? = null
     private lateinit var cameraExecutor: ExecutorService
     private var time: String = ""
+    private var startTime: String = ""
+    private var stopTime: String = ""
+    private val dateFormatter = SimpleDateFormat("mm:ss:SSS", Locale.getDefault())
 
     companion object {
         private const val TAG = "CameraXApp"
@@ -66,6 +69,10 @@ class MainActivity : AppCompatActivity() {
         // Set up the listeners for take photo
         viewBinding.imageCaptureButton.setOnClickListener { takePhoto() }
         viewBinding.startExperienceButton.setOnClickListener {
+
+            val currentTimeMillis = System.currentTimeMillis()
+            startTime = dateFormatter.format(currentTimeMillis)
+
             viewBinding.startExperienceButton.visibility = View.GONE
             viewBinding.imageCaptureButton.visibility = View.VISIBLE
         }
@@ -73,8 +80,19 @@ class MainActivity : AppCompatActivity() {
         cameraExecutor = Executors.newSingleThreadExecutor()
     }
 
+    // Reset button when an experiment is finished
+    override fun onResume() {
+        super.onResume()
+        viewBinding.startExperienceButton.visibility = View.VISIBLE
+        viewBinding.imageCaptureButton.visibility = View.GONE
+    }
+
+
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private fun takePhoto() {
+        val currentTimeMillis = System.currentTimeMillis()
+        stopTime = dateFormatter.format(currentTimeMillis)
+
         // Get a stable reference of the modifiable image capture use case
         val imageCapture = imageCapture ?: return
 
@@ -117,6 +135,8 @@ class MainActivity : AppCompatActivity() {
                     Log.e("Temps", time)
                     intent.putExtra("image_uri", output.savedUri.toString())
                     intent.putExtra("date_time", time)
+                    intent.putExtra("start_time", startTime)
+                    intent.putExtra("stop_time", stopTime)
                     startActivity(intent)
                 }
             }

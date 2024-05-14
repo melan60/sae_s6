@@ -24,7 +24,7 @@ function generateAccessToken(user) {
         const user = await User.findOne({ email }).exec();
 
         if (!user) {
-            return res.status(401).json({ message: 'Login failed' });
+            return res.status(401).json({ message: 'Login failed.' });
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
@@ -40,11 +40,11 @@ function generateAccessToken(user) {
                 user: user,
             });
          } else if(!isMatch) {
-            console.log('Login failed because of password mismatch');
+            console.log('Login failed because of password mismatch.');
             // Passwords don't match
-            res.status(401).json({ message: 'Login failed, retry your email or password' });
+            res.status(401).json({ message: 'Login failed, retry your email or password.' });
         } else if (user.typeUser !== 'cobaye') {
-            console.log('Login failed because user is not a cobaye');
+            console.log('Login failed because user is not a cobaye.');
             res.status(401).json({ message: 'You are not authorized to login.' });
         }
     } catch (error) {
@@ -53,17 +53,27 @@ function generateAccessToken(user) {
     }
 }
 
+/**
+ * Function used to get the results of the user
+ * @param req
+ * @param res
+ * @returns {Promise<void>}
+ */
 const getResults = async (req, res) => {
     let token = req.headers.token; //token
-    jwt.verify(token, 'secretkey', (err, decoded) => {
-        if (err) return res.status(401).json({
-            title: 'unauthorized'
-        })
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+        if (err) {
+            console.error('Token verification error:', err);
+            return res.status(401).json({ title: 'unauthorized' });
+        }
         //token is valid
         User.findOne({ _id: decoded.userId }, (err, user) => {
-            if (err) return console.log(err)
+            if (err) {
+                console.error('Error fetching user:', err);
+                return;
+            }
             return res.status(200).json({
-                title: 'user grabbed',
+                title: 'User fetched',
                 user: {
                     email: user.email,
                     name: user.name

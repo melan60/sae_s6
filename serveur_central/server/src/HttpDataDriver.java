@@ -85,6 +85,11 @@ public class HttpDataDriver implements DataDriver {
         return doc;
     }
 
+    // TODO supprimer plus tard
+    public synchronized User getUser(){
+        return new User();
+    }
+
     /**
      * Request to add a new user in the database
      * @param user the user to add

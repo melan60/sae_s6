@@ -1,5 +1,11 @@
 const services = require('../services/front_graphs_service');
 
+/**
+ * Function used to get individual data
+ * @param req
+ * @param res
+ * @returns {Promise<void>}
+ */
 const getIndividualData = async (req, res) => {
     const id_user = req.query.id_user;
     await services.getIndividualData(id_user, (error, result) => {
@@ -10,6 +16,12 @@ const getIndividualData = async (req, res) => {
     });
 }
 
+/**
+ * Function used to get the reaction time and execution time
+ * @param req
+ * @param res
+ * @returns {Promise<void>}
+ */
 const getReactAndExecTime = async (req, res) => {
     await services.getReactAndExecTime((error, result) => {
         if (error) {
@@ -20,6 +32,12 @@ const getReactAndExecTime = async (req, res) => {
 
 }
 
+/**
+ * Function used to get all stimulis
+ * @param req
+ * @param res
+ * @returns {Promise<void>}
+ */
 const getAllStimulis = async (req, res) => {
     await services.getAllStimulis((error, results) => {
         if (error) {
@@ -29,6 +47,12 @@ const getAllStimulis = async (req, res) => {
     });
 }
 
+/**
+ * Function used to filter results for the graph
+ * @param req
+ * @param res
+ * @returns {Promise<void>}
+ */
 const filterResultsGraph = async (req, res) => {
     const data = req.query.type;
 

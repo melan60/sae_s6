@@ -46,6 +46,8 @@ public class FaceDetectorServer {
                 inputStream = socketClient.getInputStream();
 
                 getTime(inputStream);
+
+                getTime(inputStream);
                 Mat image = getImageFromMobile(inputStream);
 
                 Imgcodecs.imwrite("Images/output.jpg", image);
