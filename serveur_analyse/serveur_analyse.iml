@@ -8,5 +8,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="opencv-480" level="application" />
+    <orderEntry type="library" name="x64" level="application" />
   </component>
 </module>

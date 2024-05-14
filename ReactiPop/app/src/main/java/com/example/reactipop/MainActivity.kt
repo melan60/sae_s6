@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewBinding: ActivityMainBinding
     private var imageCapture: ImageCapture? = null
     private lateinit var cameraExecutor: ExecutorService
-    private var dateTime: String = ""
+    private var time: String = ""
 
     companion object {
         private const val TAG = "CameraXApp"
@@ -66,10 +66,6 @@ class MainActivity : AppCompatActivity() {
         // Set up the listeners for take photo
         viewBinding.imageCaptureButton.setOnClickListener { takePhoto() }
         viewBinding.startExperienceButton.setOnClickListener {
-            val currentTimeMillis = System.currentTimeMillis()
-            val dateFormatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-            dateTime = dateFormatter.format(currentTimeMillis)
-
             viewBinding.startExperienceButton.visibility = View.GONE
             viewBinding.imageCaptureButton.visibility = View.VISIBLE
         }
@@ -114,9 +110,13 @@ class MainActivity : AppCompatActivity() {
 
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
                     val intent = Intent(this@MainActivity, NewActivity::class.java)
-                    Log.e("Temps", dateTime)
+                    val currentTimeMillis = System.currentTimeMillis()
+                    val dateFormatter = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+                    time = dateFormatter.format(currentTimeMillis)
+
+                    Log.e("Temps", time)
                     intent.putExtra("image_uri", output.savedUri.toString())
-                    intent.putExtra("date_time", dateTime)
+                    intent.putExtra("date_time", time)
                     startActivity(intent)
                 }
             }
