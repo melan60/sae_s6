@@ -10,6 +10,7 @@ ReactiPop/.cxx
 ReactiPop/local.properties
 
 serveur_central/.env
+serveur_central/.idea/
 serveur_central/out/*
 
 visualisation/.idea
@@ -18,3 +19,5 @@ visualisation/api/package-lock.json
 visualisation/api/.env
 
 serveur_analyse/.idea
+
+.idea
