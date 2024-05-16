@@ -2,7 +2,7 @@
   <b-navbar class="navbar navbar-expand-lg navbar justify-content-between" toggleable="lg" :style="{ backgroundColor: navbarColor }">
     <b-navbar-brand href="/" class="ms-3">
       <img href="/"
-           src="../../../../../visualisation/frontend/public/icon.png"
+           src="../../../public/images/icon.png"
            alt="LOGO" width="40" height="40" class="d-inline-block rounded align-text-top">
     </b-navbar-brand>
 

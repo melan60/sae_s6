@@ -20,10 +20,12 @@ class NewActivity : AppCompatActivity() {
 
         val imageUri = intent.getStringExtra("image_uri")
         val time = intent.getStringExtra("date_time")
+        val startTime = intent.getStringExtra("start_time")
+        val stopTime = intent.getStringExtra("stop_time")
         val imageView = findViewById<ImageView>(R.id.imageView)
         imageView.setImageURI(Uri.parse(imageUri))
 
-        // Bouton pour enregistrer la photo
+        // Bouton pour enregitrer la photo
         val saveButton = findViewById<Button>(R.id.save_button)
         saveButton.setOnClickListener {
             sendToServer(Uri.parse(imageUri), time.toString())
@@ -69,6 +71,7 @@ class NewActivity : AppCompatActivity() {
             }
         }.start()
     }
+
 
     private fun getImageBytes(imageUri: Uri): ByteArray? {
         return try {

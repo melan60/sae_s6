@@ -75,6 +75,11 @@ public class MongoDataDriver implements DataDriver {
         return experience.getNumero();
     }
 
+    // TODO supprimer cette méthode
+    public synchronized User getUser(){
+        return users.find(eq("name", "Patel")).first();
+    }
+
     /**
      * Request to add a new user in the database
      * @param user the user to add
