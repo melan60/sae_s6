@@ -189,7 +189,7 @@ class MainActivity : AppCompatActivity() {
             } else {
                 Toast.makeText(
                     this,
-                    "Permissions non donnÃ©es par l'utilisateur.",
+                    "Permissions non données par l'utilisateur.",
                     Toast.LENGTH_SHORT
                 ).show()
                 finish()
