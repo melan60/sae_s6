@@ -28,6 +28,7 @@ let UserSchema = new Schema(
             required: true,
             minLength: Config.USER_EMAIL_MIN_SIZE,
             maxLength: Config.USER_EMAIL_MAX_SIZE,
+            match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address'],
         },
         age: {
             type: String,

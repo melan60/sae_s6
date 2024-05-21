@@ -1,6 +1,11 @@
 import java.io.*;
 import java.net.*;
 
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+
+import javax.imageio.ImageIO;
+
 import org.opencv.core.*;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
@@ -10,14 +15,10 @@ import org.opencv.objdetect.Objdetect;
 public class FaceDetectorServer {
 
     public static void main(String[] args) {
+        InputStream inputStream;
 
-        BufferedReader br; // pour lire du texte sur la socket
-        // TODO qu'envoie le server au mobile ?
-        PrintStream ps; // pour envoyer du texte sur la socket
-        String line; // la ligne reçu/envoyée
         ServerSocket socketServer = null;
         Socket socketClient;
-        int port;
 
         if (args.length != 3) {
             System.err.println("ERR usage");
@@ -25,61 +26,80 @@ public class FaceDetectorServer {
         }
 
         try {
-            port = Integer.parseInt(args[0]); // récupération du port sous forme int
-            socketServer = new ServerSocket(port); // création socket serveur
+            int port = Integer.parseInt(args[0]);
+            socketServer = new ServerSocket(port);
         } catch (IOException e) {
             System.err.println("ERR problème création socket serveur : " + e.getMessage());
             System.exit(1);
         }
 
-        // Connection to the main server
+        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+
 //        String addrMainServer = args[1];
 //        int portMainServer = Integer.parseInt(args[2]);
 //        PrintStream psMainServer = connectToMainServer(addrMainServer, portMainServer);
 
         try {
             while (true) {
-                socketClient = socketServer.accept(); // attente connexion client
-                System.out.println("Client connecté");
-                br = new BufferedReader(new InputStreamReader(socketClient.getInputStream())); // creation flux lecture lignes de textes
-                ps = new PrintStream(socketClient.getOutputStream()); // création flux écriture lignes de texte
+                socketClient = socketServer.accept();
 
-                line = br.readLine(); // réception d'une ligne
-                System.out.println("le client me dit : " + line); // affichage debug
+                inputStream = socketClient.getInputStream();
 
-                // load image
-//                System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-//                Mat image = Imgcodecs.imread(line);
-//
-//                // create method for detect
-//                imageAnalyse(image);
+                getTime(inputStream);
+
+                getTime(inputStream);
+                Mat image = getImageFromMobile(inputStream);
+
+                Imgcodecs.imwrite("Images/output.jpg", image);
+                imageAnalyse(image);
+
+                inputStream.close();
+                socketClient.close();
 
 //                sendToMainServer(psMainServer, "TODO");
-                br.close();
-                ps.close();
             }
-        } catch (IOException e) {
+        } catch (IOException | NullPointerException e) {
             System.err.println(e.getMessage());
             System.exit(1);
         }
     }
 
-    private static PrintStream connectToMainServer(String addrMainServer, int portMainServer) {
-        Socket socketMainServer;
-        PrintStream psMainServer = null;
-        try {
-            System.out.println(addrMainServer + "  " + portMainServer);
-            socketMainServer = new Socket(addrMainServer, portMainServer);
-            psMainServer = new PrintStream(socketMainServer.getOutputStream()); // création flux écriture lignes de texte
-        } catch (Exception e) {
-            System.err.println("ERR connection with main server : " + e.getMessage());
-            System.exit(1);
+    private static String getTime(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        int size = inputStream.read();
+        byte[] time = new byte[size + 1];
+        int nRead;
+
+        if ((nRead = inputStream.read(time, 0, size + 1)) != -1) {
+            buffer.write(time, 0, nRead);
         }
-        return psMainServer;
+
+        String endTime = "";
+        for (int i = 0; i < size; i++) {
+            endTime += Character.toString(time[i]);
+        }
+
+        System.out.println(endTime);
+
+        buffer.close();
+        return endTime;
     }
 
-    private static void sendToMainServer(PrintStream ps, String message) {
-        ps.println(message); // envoi du texte donné en args[2] au serveur
+    private static Mat getImageFromMobile(InputStream inputStream) throws IOException, NullPointerException {
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        byte[] data = new byte[16384];
+        int nRead;
+
+        while ((nRead = inputStream.read(data, 0, 1024)) != -1) {
+            buffer.write(data, 0, nRead);
+        }
+
+        BufferedImage bufferedImage = ImageIO.read(new ByteArrayInputStream(buffer.toByteArray()));
+        Mat image = new Mat(bufferedImage.getHeight(), bufferedImage.getWidth(), CvType.CV_8UC3);
+        image.put(0, 0, ((DataBufferByte) bufferedImage.getRaster().getDataBuffer()).getData());
+
+        buffer.close();
+        return image;
     }
 
     private static void imageAnalyse(Mat image) {
@@ -108,5 +128,23 @@ public class FaceDetectorServer {
         } else {
             System.out.println("Les participants regardent dans la même direction.");
         }
+    }
+
+    private static PrintStream connectToMainServer(String addrMainServer, int portMainServer) {
+        Socket socketMainServer;
+        PrintStream psMainServer = null;
+        try {
+            socketMainServer = new Socket(addrMainServer, portMainServer);
+            psMainServer = new PrintStream(socketMainServer.getOutputStream()); // création flux écriture lignes de texte
+            psMainServer.println("analyse");
+        } catch (Exception e) {
+            System.err.println("ERR connection with main server : " + e.getMessage());
+            System.exit(1);
+        }
+        return psMainServer;
+    }
+
+    private static void sendToMainServer(PrintStream ps, String message) {
+        ps.println(message);
     }
 }

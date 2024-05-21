@@ -7,23 +7,23 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import androidx.appcompat.app.AppCompatActivity
-import androidx.camera.core.ImageCapture
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
-import android.widget.Toast
-import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.camera.core.Preview
-import androidx.camera.core.CameraSelector
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
+import androidx.camera.core.Preview
+import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.example.reactipop.databinding.ActivityMainBinding
 import java.text.SimpleDateFormat
 import java.util.Locale
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 
 class MainActivity : AppCompatActivity() {
@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewBinding: ActivityMainBinding
     private var imageCapture: ImageCapture? = null
     private lateinit var cameraExecutor: ExecutorService
-    private var dateTime: String = ""
+    private var time: String = ""
 
     companion object {
         private const val TAG = "CameraXApp"
@@ -66,10 +66,6 @@ class MainActivity : AppCompatActivity() {
         // Set up the listeners for take photo
         viewBinding.imageCaptureButton.setOnClickListener { takePhoto() }
         viewBinding.startExperienceButton.setOnClickListener {
-            val currentTimeMillis = System.currentTimeMillis()
-            val dateFormatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-            dateTime = dateFormatter.format(currentTimeMillis)
-
             viewBinding.startExperienceButton.visibility = View.GONE
             viewBinding.imageCaptureButton.visibility = View.VISIBLE
         }
@@ -77,8 +73,17 @@ class MainActivity : AppCompatActivity() {
         cameraExecutor = Executors.newSingleThreadExecutor()
     }
 
+    // Reset button when an experiment is finished
+    override fun onResume() {
+        super.onResume()
+        viewBinding.startExperienceButton.visibility = View.VISIBLE
+        viewBinding.imageCaptureButton.visibility = View.GONE
+    }
+
+
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private fun takePhoto() {
+
         // Get a stable reference of the modifiable image capture use case
         val imageCapture = imageCapture ?: return
 
@@ -114,9 +119,13 @@ class MainActivity : AppCompatActivity() {
 
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
                     val intent = Intent(this@MainActivity, NewActivity::class.java)
-                    Log.e("Temps", dateTime)
+                    val currentTimeMillis = System.currentTimeMillis()
+                    val dateFormatter = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+                    time = dateFormatter.format(currentTimeMillis)
+
+                    Log.e("Temps", time)
                     intent.putExtra("image_uri", output.savedUri.toString())
-                    intent.putExtra("date_time", dateTime)
+                    intent.putExtra("date_time", time)
                     startActivity(intent)
                 }
             }
@@ -180,7 +189,7 @@ class MainActivity : AppCompatActivity() {
             } else {
                 Toast.makeText(
                     this,
-                    "Permissions not granted by the user.",
+                    "Permissions non donnÃ©es par l'utilisateur.",
                     Toast.LENGTH_SHORT
                 ).show()
                 finish()

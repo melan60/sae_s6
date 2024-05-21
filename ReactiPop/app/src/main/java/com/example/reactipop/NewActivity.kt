@@ -19,14 +19,14 @@ class NewActivity : AppCompatActivity() {
         setContentView(R.layout.activity_new)
 
         val imageUri = intent.getStringExtra("image_uri")
-        val dateTime = intent.getStringExtra("date_time")
+        val time = intent.getStringExtra("date_time")
         val imageView = findViewById<ImageView>(R.id.imageView)
         imageView.setImageURI(Uri.parse(imageUri))
 
-        // Bouton pour enregistrer la photo
+        // Bouton pour enregitrer la photo
         val saveButton = findViewById<Button>(R.id.save_button)
         saveButton.setOnClickListener {
-            sendToServer(Uri.parse(imageUri), dateTime.toString())
+            sendToServer(Uri.parse(imageUri), time.toString())
             Toast.makeText(this, "Photo enregistrée et envoyée au serveur", Toast.LENGTH_SHORT)
                 .show()
             finish()
@@ -41,8 +41,8 @@ class NewActivity : AppCompatActivity() {
         }
     }
 
-    private fun sendToServer(imageUri: Uri, dateTime: String) {
-        val serverName = "192.168.206.221"
+    private fun sendToServer(imageUri: Uri, time: String) {
+        val serverName = "192.168.43.221"
         val serverPort = 8000
         val imageData = getImageBytes(imageUri)
 
@@ -56,8 +56,10 @@ class NewActivity : AppCompatActivity() {
                 val socket = Socket(serverName, serverPort)
                 val printStream = PrintStream(socket.getOutputStream())
 
-                Log.e("Temps v8", dateTime)
-                printStream.println(dateTime)
+                Log.e("Temps v8", time)
+                printStream.write(time.length)
+                printStream.println(time)
+
                 printStream.write(imageData)
 
                 printStream.flush()
@@ -67,6 +69,7 @@ class NewActivity : AppCompatActivity() {
             }
         }.start()
     }
+
 
     private fun getImageBytes(imageUri: Uri): ByteArray? {
         return try {
