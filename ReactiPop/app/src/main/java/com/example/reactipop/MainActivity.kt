@@ -32,9 +32,6 @@ class MainActivity : AppCompatActivity() {
     private var imageCapture: ImageCapture? = null
     private lateinit var cameraExecutor: ExecutorService
     private var time: String = ""
-    private var startTime: String = ""
-    private var stopTime: String = ""
-    private val dateFormatter = SimpleDateFormat("mm:ss:SSS", Locale.getDefault())
 
     companion object {
         private const val TAG = "CameraXApp"
@@ -69,10 +66,6 @@ class MainActivity : AppCompatActivity() {
         // Set up the listeners for take photo
         viewBinding.imageCaptureButton.setOnClickListener { takePhoto() }
         viewBinding.startExperienceButton.setOnClickListener {
-
-            val currentTimeMillis = System.currentTimeMillis()
-            startTime = dateFormatter.format(currentTimeMillis)
-
             viewBinding.startExperienceButton.visibility = View.GONE
             viewBinding.imageCaptureButton.visibility = View.VISIBLE
         }
@@ -90,8 +83,6 @@ class MainActivity : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private fun takePhoto() {
-        val currentTimeMillis = System.currentTimeMillis()
-        stopTime = dateFormatter.format(currentTimeMillis)
 
         // Get a stable reference of the modifiable image capture use case
         val imageCapture = imageCapture ?: return
@@ -135,8 +126,6 @@ class MainActivity : AppCompatActivity() {
                     Log.e("Temps", time)
                     intent.putExtra("image_uri", output.savedUri.toString())
                     intent.putExtra("date_time", time)
-                    intent.putExtra("start_time", startTime)
-                    intent.putExtra("stop_time", stopTime)
                     startActivity(intent)
                 }
             }
@@ -200,7 +189,7 @@ class MainActivity : AppCompatActivity() {
             } else {
                 Toast.makeText(
                     this,
-                    "Permissions not granted by the user.",
+                    "Permissions non données par l'utilisateur.",
                     Toast.LENGTH_SHORT
                 ).show()
                 finish()

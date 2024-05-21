@@ -20,8 +20,6 @@ class NewActivity : AppCompatActivity() {
 
         val imageUri = intent.getStringExtra("image_uri")
         val time = intent.getStringExtra("date_time")
-        val startTime = intent.getStringExtra("start_time")
-        val stopTime = intent.getStringExtra("stop_time")
         val imageView = findViewById<ImageView>(R.id.imageView)
         imageView.setImageURI(Uri.parse(imageUri))
 
@@ -44,7 +42,7 @@ class NewActivity : AppCompatActivity() {
     }
 
     private fun sendToServer(imageUri: Uri, time: String) {
-        val serverName = "192.168.238.221"
+        val serverName = "192.168.43.221"
         val serverPort = 8000
         val imageData = getImageBytes(imageUri)
 
