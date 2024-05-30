@@ -43,19 +43,30 @@ const getResults = async (req, res) => {
     }
 }
 
+/**
+ * This function is used to get the current user
+ * @param req
+ * @param res
+ * @returns {Promise<*>}
+ */
 const getCurrentUser = async (req, res) => {
     try {
+        // Get the token from the request headers
         const token = req.headers.authorization.split(' ')[1];
+        // Decode the token
         const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+        // Find the user by the decoded user ID
         const user = await User.findById(decoded.userId);
 
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
 
+        // Return the user data
         res.status(200).json({
             id: user._id,
             email: user.email,
+            firstName: user.firstName,
             name: user.name,
             typeUser: user.typeUser,
         });

@@ -34,6 +34,9 @@ router.post('/login', controller.login);
  */
 router.get("/results", controller.getResults);
 
+/**
+ * Get the current user logged to identify the user when reloading the page
+ */
 router.get('/me', middleware.authenticateJWT, controller.getCurrentUser);
 
 module.exports = router;

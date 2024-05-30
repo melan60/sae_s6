@@ -57,11 +57,11 @@ new Vue({
       axios.get('/api/me') // Fetch current user data from this endpoint
           .then(response => {
             this.$store.commit('setUser', response.data);
-
-            // Now that the user data is set, you can make your API call to get the graphs
-            this.$store.dispatch('fetchUserGraphs', response.data._id);
+            // Fetch graph data after setting the user
+            this.$store.dispatch('fetchUserGraphs');
           })
-          .catch(() => {
+          .catch(error => {
+            console.error('Error fetching current user data:', error);
             // If the token is invalid, remove it
             localStorage.removeItem('token');
             this.$store.commit('clearUser');

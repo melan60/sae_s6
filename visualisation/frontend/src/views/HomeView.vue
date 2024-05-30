@@ -29,7 +29,7 @@
       <p>Vous n'êtes pas connecté</p>
     </div>
     <div class="grid-container">
-      <div v-for="(value, index) in values" :key="index" class="graph-container">
+      <div v-for="(value, index) in graphValues" :key="index" class="graph-container">
         <GraphBarComponent v-if="index < 3" :data="value" :options="options" />
         <GraphLineComponent v-else :data="value" :options="options" />
       </div>
@@ -38,10 +38,10 @@
 </template>
 
 <script>
-import axios from "axios";
 import GraphBarComponent from '@/components/GraphBarComponent.vue';
 import GraphLineComponent from '@/components/GraphLineComponent.vue';
 import pictureHome from "../../public/images/home.jpg";
+import { mapState } from "vuex";
 
 export default {
   name: 'HomeView',
@@ -50,7 +50,6 @@ export default {
     GraphLineComponent,
   },
   data: () => ({
-    values: [],
     options: {
       responsive: true,
       maintainAspectRatio: false,
@@ -58,31 +57,35 @@ export default {
     pictureHome: pictureHome
   }),
   async created() {
-    await this.fetchData();
-    this.interval = setInterval(this.fetchData, 5000); // Fetch data every 5 seconds
+    if (this.$store.state.userId) {
+      // Fetch user graphs
+      await this.$store.dispatch('fetchUserGraphs');
+      // Set interval to fetch user graphs every 5 seconds
+      this.interval = setInterval(() => {
+        this.$store.dispatch('fetchUserGraphs');
+        console.log('Loaded graph!');
+      }, 5000);
+    }
   },
-  
-  async beforeDestroy() {
+
+  beforeDestroy() {
     clearInterval(this.interval);
   },
-  methods: {
-    async fetchData() {
-      try {
-        const user = this.$store.getters.getUser;
-        if (!user) {
-          console.error("User is not defined");
-          return;
-        }
-        let url = user.typeUser === 'admin' ? '/graphs/time' : `/graphs/user/${user._id}`;
-        const res = await axios.get(`http://localhost:5000${url}`);
-        this.initGraph(res.data.data);
-      } catch (e) {
-        console.error("Error fetching graph data:", e);
-      }
+  computed: {
+    user() {
+      return this.$store.getters.getUser;
     },
+    graphValues() {
+      const graphData = this.$store.getters.getGraphData;
+      return graphData ? this.initGraph(graphData) : [];
+    },
+    ...mapState({
+      graphData: state => state.graphData
+    })
+  },
+  methods: {
     initGraph(results) {
-      this.values = [];
-
+      const values = [];
       const colors = ["#35a9a0", "#7fdbe8"];
       let value, labels, datasets;
 
@@ -104,18 +107,14 @@ export default {
               data: value.data
             }];
 
-        this.values.push({
+        values.push({
           labels: labels,
           datasets: datasets
         });
       }
-    },
-  },
-  computed: {
-    user() {
-      return this.$store.getters.getUser;
+      return values;
     }
-  },
+  }
 }
 </script>
 

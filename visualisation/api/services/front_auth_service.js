@@ -46,10 +46,12 @@ const login = async (email, password) => {
  */
 const getResults = async (token) => {
     return new Promise((resolve, reject) => {
+        // Verify the token
         jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
             if (err) {
                 reject(new Error('Token verification error'));
             } else {
+                // Find the user
                 User.findOne({ _id: decoded.userId }, (err, user) => {
                     if (err) {
                         reject(err);

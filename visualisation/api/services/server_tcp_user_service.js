@@ -71,6 +71,10 @@ const addResult = async (result, user, callback) => {
         });
 };
 
+/**
+ * function to get all users
+ * @returns {Promise<*>}
+ */
 const getAllUsers = async () => {
     try {
         return await User.find({}).exec();
@@ -80,6 +84,10 @@ const getAllUsers = async () => {
     }
 }
 
+/**
+ * function to get all cobayes
+ * @returns {Promise<*>}
+ */
 const getAllCobayes = async () => {
     try {
         return await User.find({typeUser: "cobaye"}).exec();
@@ -89,6 +97,10 @@ const getAllCobayes = async () => {
     }
 };
 
+/**
+ * function to delete all cobayes
+ * @returns {Promise<*>}
+ */
 const deleteAllCobayes = async () => {
     try {
         return await User.deleteMany({typeUser: "cobaye"}).exec();
@@ -98,6 +110,10 @@ const deleteAllCobayes = async () => {
     }
 }
 
+/**
+ * function to delete all users
+ * @returns {Promise<*>}
+ */
 const deleteAllUsers = async () => {
     try {
         return await User.deleteMany({}).exec();
@@ -107,6 +123,11 @@ const deleteAllUsers = async () => {
     }
 }
 
+/**
+ * function to delete a user with a given id
+ * @param {String} id
+ * @returns {Promise<*>}
+ */
 const deleteUser = async (id) => {
     try {
         return await User.deleteOne({_id: id}).exec();

@@ -7,8 +7,9 @@ const jwt = require('jsonwebtoken');
  * @param next
  */
 exports.authenticateJWT = (req, res, next) => {
-    console.log('passage middleware');
+    // Get the token from the request headers
     const authHeader = req.headers.authorization;
+    // Check if the token is valid
     if (authHeader && authHeader.startsWith('Bearer ')) {
         const token = authHeader.split(' ')[1];
         jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
@@ -19,8 +20,6 @@ exports.authenticateJWT = (req, res, next) => {
             req.user = user;
             next();
         });
-
-        console.log("passage middleware fin")
     } else {
         res.status(401).json({ error: 'jwt must be provided' });
     }
