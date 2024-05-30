@@ -1,14 +1,13 @@
 <template>
   <div>
-    <div v-if="user">
+    <div v-if="user && user.typeUser === 'cobaye'">
       <div>
         <div class="image-container">
           <b-card
               overlay
-              img-src = "pictureHome"
+              img-src="https://media.discordapp.net/attachments/1182622786150207548/1182630027372793866/markus-spiske-XrIfY_4cK1w-unsplash.jpg?ex=66565aca&is=6655094a&hm=34f3ac40a44ca2edbffa55ba08ead51595d9e7fed0e1649b68ef5a21d9f25368&=&format=webp&width=1440&height=317"
               text-variant="#2c3e50"
               class="text-center">
-
             <div class="centered-container">
               <div class="centered-text">
                 Bienvenue {{ user.firstName }} {{ user.name }}
@@ -21,21 +20,28 @@
         </div>
       </div>
     </div>
+    <div v-else-if="user && user.typeUser === 'admin'">
+      <!-- Admin can see all data -->
+      <p>hellooo test</p>
+    </div>
+
+    <div v-else>
+      <p>Vous n'êtes pas connecté</p>
+    </div>
     <div class="grid-container">
       <div v-for="(value, index) in values" :key="index" class="graph-container">
-        <GraphBarComponent v-if="index < 3" :data="value" :options="options"/>
-        <GraphLineComponent v-else :data="value" :options="options"/>
+        <GraphBarComponent v-if="index < 3" :data="value" :options="options" />
+        <GraphLineComponent v-else :data="value" :options="options" />
       </div>
     </div>
   </div>
 </template>
 
-
 <script>
 import axios from "axios";
 import GraphBarComponent from '@/components/GraphBarComponent.vue';
 import GraphLineComponent from '@/components/GraphLineComponent.vue';
-import pictureHome from "../../public/images/home.jpg"
+import pictureHome from "../../public/images/home.jpg";
 
 export default {
   name: 'HomeView',
@@ -51,19 +57,32 @@ export default {
     },
     pictureHome: pictureHome
   }),
-
   async created() {
-    const user = this.$store.getters.getUser;
-    try {
-      const res = user ? await axios.get(`http://localhost:5000/graphs/users?id_user=${user._id}`) :
-        await axios.get("http://localhost:5000/graphs/time");
-      this.initGraph(res.data.data);
-    } catch (e) {
-      console.log(e);
-    }
+    await this.fetchData();
+    this.interval = setInterval(this.fetchData, 5000); // Fetch data every 5 seconds
+  },
+  
+  async beforeDestroy() {
+    clearInterval(this.interval);
   },
   methods: {
+    async fetchData() {
+      try {
+        const user = this.$store.getters.getUser;
+        if (!user) {
+          console.error("User is not defined");
+          return;
+        }
+        let url = user.typeUser === 'admin' ? '/graphs/time' : `/graphs/user/${user._id}`;
+        const res = await axios.get(`http://localhost:5000${url}`);
+        this.initGraph(res.data.data);
+      } catch (e) {
+        console.error("Error fetching graph data:", e);
+      }
+    },
     initGraph(results) {
+      this.values = [];
+
       const colors = ["#35a9a0", "#7fdbe8"];
       let value, labels, datasets;
 
@@ -72,19 +91,18 @@ export default {
         labels = value.labels || (value.first && value.first.labels);
 
         datasets = value.first
-          ? Object.values(value).map((item, id) => {
-            return ({
+            ? Object.values(value).map((item, id) => ({
               label: item.title,
               backgroundColor: colors[id % colors.length],
               borderColor: colors[id % colors.length],
               data: item.data
-            })
-          }) : [{
-            label: value.title,
-            backgroundColor: colors[index % colors.length],
-            borderColor: colors[index % colors.length],
-            data: value.data
-          }];
+            }))
+            : [{
+              label: value.title,
+              backgroundColor: colors[index % colors.length],
+              borderColor: colors[index % colors.length],
+              data: value.data
+            }];
 
         this.values.push({
           labels: labels,
@@ -92,25 +110,14 @@ export default {
         });
       }
     },
-    async fetchExperiences() {
-      try {
-        const response = await axios.get('/api/experience');
-        this.experiences = response.data.experiences; //
-      } catch (error) {
-        console.error('Error fetching experiences:', error);
-        // Handle error, e.g., show an error message to the user
-      }
-    }
   },
   computed: {
     user() {
       return this.$store.getters.getUser;
     }
   },
-
 }
 </script>
-
 
 <style scoped>
 .main-container {
@@ -160,7 +167,6 @@ export default {
   padding: 20px;
   background: rgba(255, 255, 255, 0.5); /* semi-transparent white */
   border-radius: 10px;
-  /* Make sure the text doesn't go out of the container */
   max-width: 90%; /* Adjust as needed */
   text-align: center; /* Centers text within the 'centered-container' */
 }

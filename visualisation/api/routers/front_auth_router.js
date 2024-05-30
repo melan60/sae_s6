@@ -1,5 +1,6 @@
 const express = require('express');
 const controller = require('../controllers/front_auth_controller');
+const middleware = require("../middlewares/auth_middleware");
 const router = express.Router();
 
 
@@ -32,5 +33,7 @@ router.post('/login', controller.login);
  *              description: Internal server error
  */
 router.get("/results", controller.getResults);
+
+router.get('/me', middleware.authenticateJWT, controller.getCurrentUser);
 
 module.exports = router;

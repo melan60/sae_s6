@@ -7,7 +7,7 @@ const services = require('../services/front_graphs_service');
  * @returns {Promise<void>}
  */
 const getIndividualData = async (req, res) => {
-    const id_user = req.query.id_user;
+    const id_user = req.params.id;
     await services.getIndividualData(id_user, (error, result) => {
         if (error) {
             return res.status(400).send({ success: 0, data: error });
@@ -23,13 +23,17 @@ const getIndividualData = async (req, res) => {
  * @returns {Promise<void>}
  */
 const getReactAndExecTime = async (req, res) => {
-    await services.getReactAndExecTime((error, result) => {
-        if (error) {
-            return res.status(500).send({ success: 0, data: error });
-        }
-        return res.status(200).send({ success: 1, data: result });
-    });
-
+    try {
+        const user_id = req.query.userId;
+        await services.getReactAndExecTime(user_id, (error, results) => {
+            if (error) {
+                return res.status(500).send({success: 0, data: error});
+            }
+            return res.status(200).send({success: 1, data: results});
+        });
+    } catch (error) {
+        return res.status(500).send({success: 0, data: error});
+    }
 }
 
 /**

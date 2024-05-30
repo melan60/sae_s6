@@ -49,7 +49,6 @@ async function initResults() {
     let cpt = 0;
     let results = [];
     const experiencesBDD = await Experience.find().exec();
-    console.log(experiencesBDD)
 
     for (const experience of experiencesBDD) {
         console.log(chalk.bgMagenta("Result for experience :" + experience));
