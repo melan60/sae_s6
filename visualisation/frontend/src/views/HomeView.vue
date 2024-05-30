@@ -5,7 +5,7 @@
         <div class="image-container">
           <b-card
               overlay
-              img-src="https://media.discordapp.net/attachments/1182622786150207548/1182630027372793866/markus-spiske-XrIfY_4cK1w-unsplash.jpg?ex=6585650a&is=6572f00a&hm=566515e9c6826517ea5c4b11b1d9a28fc90a613993b8ec0e52892689820b4891&=&format=webp&width=1440&height=317"
+              img-src = "pictureHome"
               text-variant="#2c3e50"
               class="text-center">
 
@@ -35,6 +35,7 @@
 import axios from "axios";
 import GraphBarComponent from '@/components/GraphBarComponent.vue';
 import GraphLineComponent from '@/components/GraphLineComponent.vue';
+import pictureHome from "../../public/images/home.jpg"
 
 export default {
   name: 'HomeView',
@@ -47,7 +48,8 @@ export default {
     options: {
       responsive: true,
       maintainAspectRatio: false,
-    }
+    },
+    pictureHome: pictureHome
   }),
 
   async created() {

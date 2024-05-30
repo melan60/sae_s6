@@ -3,7 +3,6 @@ import org.bson.types.ObjectId;
 
 import java.io.*;
 import java.net.*;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -23,10 +22,10 @@ class ThreadServer extends Thread {
 		this.idThread = idThread;
 		this.exchanger = data;
 		this.arduinoConfig = new ArduinoConfig();
+		arduinoConfig.init();
 	}
 
 	public void run() {
-		arduinoConfig.init();
 		try {
 			br = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 			ps = new PrintStream(sock.getOutputStream());
@@ -35,8 +34,59 @@ class ThreadServer extends Thread {
 			System.err.println("Thread "+ idThread +": cannot create streams. Aborting.");
 			return;
 		}
-		requestLoop();
+		try {
+			String clientType = br.readLine();
+			if(clientType.equals("analyse")){
+				analyseLoop();
+			}
+			else{
+//				requestLoop();
+				devLoop();
+			}
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 		System.out.println("end of thread "+ idThread);
+	}
+
+	public void analyseLoop(){
+		try {
+			String message = br.readLine();
+			System.out.println(message);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public void devLoop() {
+		System.out.println("ENTERING DEV LOOP, TO DELETE LATER");
+		String req = "";
+		int numExp = -1;
+		lastExpNumero = exchanger.getMongoDriver().getLastExperience();
+		this.currentUser = exchanger.getMongoDriver().getUser();
+		try {
+			while(true) {
+				req = br.readLine();
+				if ((req == null) || (req.isEmpty())) {
+					break;
+				}
+				try{
+					numExp = Integer.parseInt(req);
+				} catch (NumberFormatException e){
+					ps.print("ERR experience numero is not an int");
+					continue;
+				}
+				if(numExp < 0 || numExp > lastExpNumero){
+					ps.println("ERR experience numero doesn't exist");
+					continue;
+				}
+				launchExperience(req);
+			}
+			System.out.println("end of request loop");
+		}
+		catch(IOException e) {
+			System.out.println("problem with receiving request: "+e.getMessage());
+		}
 	}
 
 	public void requestLoop() {
@@ -62,7 +112,6 @@ class ThreadServer extends Thread {
 
 //			String response = exchanger.getHttpDriver().addResults("2", 12, 15, 10, currentUser);
 			while(true) {
-				System.out.println(lastExpNumero);
 				req = br.readLine();
 				if ((req == null) || (req.isEmpty())) {
 					break;
@@ -109,14 +158,17 @@ class ThreadServer extends Thread {
 			}
 		} catch (SerialPortException e) {
 			System.out.println("Error writing to the serial port");
+			ps.println("ERR no result returned from arduino");
+			return;
 		}
-		float[] res = checkValuesAddResults(results[0], results[1], results[2]);
+        float[] res = checkValuesAddResults(results[0], results[1], results[2]);
 		if(res[0] == 1){
 			ps.println("ERR invalid parameters");
 			return;
 		}
 //		String response = exchanger.getHttpDriver().addResults(numExp, res[1], res[2], (int) res[3], currentUser);
 		String response = exchanger.getMongoDriver().addResults(numExp, res[1], res[2], (int) res[3], currentUser);
+		ps.println(response);
 		System.out.println(response);
 	}
 

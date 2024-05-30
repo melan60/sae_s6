@@ -1,12 +1,11 @@
 import jssc.SerialPort;
 import jssc.SerialPortException;
 
-
 public class ArduinoConfig {
     private SerialPort serialPort;
 
     public ArduinoConfig() {
-        this.serialPort = new SerialPort("/dev/ttyACM0");
+        this.serialPort = System.getProperty("os.name").equals("Linux") ? new SerialPort("/dev/ttyACM0") : new SerialPort("COM4");
     }
 
     public void init(){

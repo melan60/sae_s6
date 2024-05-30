@@ -87,17 +87,31 @@ const initializeTables = (configurations) => {
 
 /**
  * Determines an average time for each category
- * @param {Array} results - Array with all results
- * @param {Number} length - Number of all users
+ * @param {Array} data - Array with all results and length
  */
-const makeAnAverage = (results, length) => {
+const makeAnAverage = (results) => {
     for (let result of results) {
-        if (result.first) {
+        if (result.first) { //si le graphique a 2 courbes 
             for (let index in result) {
-                result[index].data = result[index].data.map(value => value / length);
+                // if et else pour tester qu'on ne divise pas par 0
+                if(result.first.length[0]!=0){
+                    result[index].data = result[index].data.map(value => value / result.first.length[0]);
+                }
+                else{
+                    console.log("dans le else ---------------------------")
+                    result[index].data = result[index].data.map(value => 0);
+                }
+                
             }
         } else {
-            result.data = result.data.map(value => value / length);
+            result.data.forEach((value,index)=>{
+                if(result.length[index%result.length.length]!=0){
+                    result.data[index] = value/result.length[index%result.length.length];
+                }
+                else{
+                    result.data[index]=0
+                }
+            });
         }
     }
 }
@@ -117,12 +131,15 @@ const getReactAndExecTime = async (callback) => {
     User.find()
         .exec()
         .then(users => {
+            var compteurByAge = [0,0,0,0];
+            var compteurByGender = [0,0];
             users.forEach(user => {
                 var index_1 = variables.age_category.indexOf(user.age) // getCategoryAge(user.age);
                 var index_2 = results[1].labels.indexOf(user.gender);
-
                 // TODO améliorer pour + d'évolutivité
                 user.results.forEach((result, index) => {
+                    compteurByAge[index_1]+=1;
+                    compteurByGender[index_2]+=1;
                     results[0].data[index_1] += result.reactTime;
                     results[1].data[index_2] += result.reactTime;
 
@@ -132,8 +149,12 @@ const getReactAndExecTime = async (callback) => {
                     results[3].second.data[index] += result.reactTime;
                 });
             });
-
-            makeAnAverage(results, users.length);
+            results[0].length = compteurByAge;
+            results[1].length = compteurByGender;
+            results[2].length = [users.length];
+            results[3].first.length = [users.length];
+            results[3].second.length = [users.length];
+            makeAnAverage(results);
             return callback(null, results);
         })
         .catch(e => {
