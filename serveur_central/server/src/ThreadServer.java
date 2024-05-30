@@ -3,7 +3,6 @@ import org.bson.types.ObjectId;
 
 import java.io.*;
 import java.net.*;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -162,7 +161,7 @@ class ThreadServer extends Thread {
 			ps.println("ERR no result returned from arduino");
 			return;
 		}
-		float[] res = checkValuesAddResults(results[0], results[1], results[2]);
+        float[] res = checkValuesAddResults(results[0], results[1], results[2]);
 		if(res[0] == 1){
 			ps.println("ERR invalid parameters");
 			return;

@@ -3,7 +3,6 @@ import java.net.*;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
-import java.nio.charset.StandardCharsets;
 
 import javax.imageio.ImageIO;
 
@@ -15,13 +14,8 @@ import org.opencv.objdetect.Objdetect;
 
 public class FaceDetectorServer {
 
-//getbytes android
-//av envoie date j'envoie 1 octect
-
     public static void main(String[] args) {
         InputStream inputStream;
-
-        ByteArrayOutputStream buffer;
 
         ServerSocket socketServer = null;
         Socket socketClient;
@@ -50,17 +44,14 @@ public class FaceDetectorServer {
                 socketClient = socketServer.accept();
 
                 inputStream = socketClient.getInputStream();
-                buffer = new ByteArrayOutputStream();
 
                 getTime(inputStream);
-                getTime(inputStream);
-                Mat image = getImageFromMobile(inputStream, buffer);
+                Mat image = getImageFromMobile(inputStream);
 
                 Imgcodecs.imwrite("Images/output.jpg", image);
                 imageAnalyse(image);
 
                 inputStream.close();
-                buffer.close();
                 socketClient.close();
 
 //                sendToMainServer(psMainServer, "TODO");
@@ -71,20 +62,29 @@ public class FaceDetectorServer {
         }
     }
 
-    private static void getTime(InputStream inputStream) throws IOException {
+    private static String getTime(InputStream inputStream) throws IOException {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         int size = inputStream.read();
-        byte[] dateTime = new byte[size];
+        byte[] time = new byte[size + 1];
+        int nRead;
 
-        int nRead = inputStream.read(dateTime);
-        buffer.write(dateTime, 0, nRead);
+        if ((nRead = inputStream.read(time, 0, size + 1)) != -1) {
+            buffer.write(time, 0, nRead);
+        }
 
-        System.out.println(buffer.toString(StandardCharsets.UTF_8));
+        String endTime = "";
+        for (int i = 0; i < size; i++) {
+            endTime += Character.toString(time[i]);
+        }
+
+        System.out.println(endTime);
 
         buffer.close();
+        return endTime;
     }
 
-    private static Mat getImageFromMobile(InputStream inputStream, ByteArrayOutputStream buffer) throws IOException, NullPointerException {
+    private static Mat getImageFromMobile(InputStream inputStream) throws IOException, NullPointerException {
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         byte[] data = new byte[16384];
         int nRead;
 
@@ -96,6 +96,7 @@ public class FaceDetectorServer {
         Mat image = new Mat(bufferedImage.getHeight(), bufferedImage.getWidth(), CvType.CV_8UC3);
         image.put(0, 0, ((DataBufferByte) bufferedImage.getRaster().getDataBuffer()).getData());
 
+        buffer.close();
         return image;
     }
 

@@ -1,7 +1,6 @@
 import jssc.SerialPort;
 import jssc.SerialPortException;
 
-
 public class ArduinoConfig {
     private SerialPort serialPort;
 

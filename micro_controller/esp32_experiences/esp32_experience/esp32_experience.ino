@@ -20,9 +20,9 @@ const int DIO = 32;  // Broche d'horloge
 const int nb_repetitions = 2;
 
 unsigned long startTime = 0;           // Variable pour stocker le temps de démarrage du chronomètre
-double reactTime = 0;           // Variable pour stocker le temps de de réaction de l'utilisateur
+double reactTime = 0;                  // Variable pour stocker le temps de de réaction de l'utilisateur
 unsigned long reactTimeIteration = 0;  // Variable pour stocker le temps de de réaction de l'utilisateur pour une itération
-double execTime = 0;            // Variable pour stocker le temps d'exécution de l'utilisateur
+double execTime = 0;                   // Variable pour stocker le temps d'exécution de l'utilisateur
 unsigned long errors = 0;              // Variable pour stocker le nombre d'erreurs réalisées
 
 bool chronometerRunning = false;  // Indique si le chronomètre est en cours d'exécution
@@ -72,7 +72,7 @@ void loop() {
       for (int i = 0; i < nb_repetitions; i += 1) {
         reactMovement = 0;
         experience1();
-        delay(5000);
+        // delay(5000);
       }
     } else if (test == '2') {
       for (int i = 0; i < nb_repetitions; i += 1) {
@@ -121,12 +121,8 @@ void goodBtnIsHigh(int btn, int led) {
     }
     digitalWrite(led, LOW);
     noTone(buzzerPin);
-    const long toto = stopChronometer();
-    // Serial.print("stopChronometer() : ");
-    // Serial.println(toto);
-    execTime += toto - reactTimeIteration;
-    // Serial.print("execTime : ");
-    // Serial.println(execTime);
+    const long time = stopChronometer();
+    execTime += time - reactTimeIteration;
   }
 }
 
@@ -137,90 +133,74 @@ bool aBtnIsHigh() {
 void detectMovement() {
   if (digitalRead(pinCapteurVibration) == HIGH && reactMovement == 0) {  //TODO
     reactTimeIteration = millis() - startTime;
-    // Serial.print("reactTimeIteration : ");
-    // Serial.println(reactTimeIteration);
     reactTime += reactTimeIteration;
-    // Serial.print("reactTime : ");
-    // Serial.println(reactTime);
     reactMovement = 1;
+  }
+}
+
+void wait() {
+  unsigned long randomDelay = random(2000, 5000);
+  delay(randomDelay);
+}
+
+void allumerLed() {
+  int randomNumber = random(1, 4);
+
+  if (randomNumber == 1) {
+    digitalWrite(greenLedPin, HIGH);
+  } else if (randomNumber == 2) {
+    digitalWrite(redLedPin, HIGH);
+  } else {
+    digitalWrite(yellowLedPin, HIGH);
+  }
+}
+
+void verifierLebtnClique() {
+  while (chronometerRunning) {
+    detectMovement();
+
+    goodBtnIsHigh(defaultBtnPin, greenLedPin);
+    goodBtnIsHigh(redBtnPin, redLedPin);
+    goodBtnIsHigh(yellowBtnPin, yellowLedPin);
   }
 }
 
 
 // =================================================== experience n°1
-
 void experience1() {
-  unsigned long randomDelay = random(2000, 5000);
-  delay(randomDelay);
-  int randomNumber = random(1, 4);
-
-  if (randomNumber == 1) {
-    digitalWrite(greenLedPin, HIGH);
-  } else if (randomNumber == 2) {
-    digitalWrite(redLedPin, HIGH);
-  } else {
-    digitalWrite(yellowLedPin, HIGH);
-  }
-
+  wait();
+  allumerLed();
   startChronometer();
-
-  while (chronometerRunning) {
-    detectMovement();
-
-    goodBtnIsHigh(defaultBtnPin, greenLedPin);
-    goodBtnIsHigh(redBtnPin, redLedPin);
-    goodBtnIsHigh(yellowBtnPin, yellowLedPin);
-  }
+  verifierLebtnClique();
 }
 
 
 // =================================================== experience n°2
-
-void experience2() { // TODO buzzer sonne tout le temps !
+void experience2() {  // TODO buzzer sonne tout le temps !
   tone(buzzerPin, 1000);
-
-  unsigned long randomDelay = random(2000, 5000);
-  delay(randomDelay);
-  int randomNumber = random(1, 4);
-
-  if (randomNumber == 1) {
-    digitalWrite(greenLedPin, HIGH);
-  } else if (randomNumber == 2) {
-    digitalWrite(redLedPin, HIGH);
-  } else {
-    digitalWrite(yellowLedPin, HIGH);
-  }
-
+  wait();
+  allumerLed();
   startChronometer();
-
-  while (chronometerRunning) {
-    detectMovement();
-
-    goodBtnIsHigh(defaultBtnPin, greenLedPin);
-    goodBtnIsHigh(redBtnPin, redLedPin);
-    goodBtnIsHigh(yellowBtnPin, yellowLedPin);
-  }
+  verifierLebtnClique();
 }
 
 
 // =================================================== experience n°3
-
 bool btnIsHigh(int btn) {
   return digitalRead(btn) == HIGH;
 }
 
-void experience3() {
-  int number = random(1, 4);
-
+void afficherUnNombreALEcran(int number) {
   tm1637.clearDisplay();
   tm1637.display(0, number);
-  startChronometer();
+}
 
+void verifieLeBtnClique2(int number, int nb1, int nb2, int nb3) {
   while (chronometerRunning) {
     detectMovement();
 
     if (aBtnIsHigh()) {
-      if (btnIsHigh(defaultBtnPin) && number == 1 || btnIsHigh(redBtnPin) && number == 2 || btnIsHigh(yellowBtnPin) && number == 3) { // TODO
+      if (btnIsHigh(defaultBtnPin) && number == nb1 || btnIsHigh(redBtnPin) && number == nb2 || btnIsHigh(yellowBtnPin) && number == nb3) {  // TODO
         Serial.println("Réussite");
       } else {
         errors += 1;
@@ -232,17 +212,17 @@ void experience3() {
   }
 }
 
+void experience3() {
+  int number = random(1, 4);  // TODO
+  afficherUnNombreALEcran(number);
+  startChronometer();
+  verifieLeBtnClique2(number, 1, 1 + 1, 1 + 2);
+}
+
 
 // =================================================== experience n°4 // peut pas faire d'erreur
 
-void experience4() {
-  unsigned long randomDelay = random(2000, 5000);
-  delay(randomDelay);
-
-  tone(buzzerPin, 1000);
-
-  startChronometer();
-
+void verifieCobayeCliqueBtnDefaut() {
   while (chronometerRunning) {
     detectMovement();
 
@@ -253,4 +233,11 @@ void experience4() {
       Serial.println(execTime);
     }
   }
+}
+
+void experience4() {
+  wait();
+  tone(buzzerPin, 1000);
+  startChronometer();
+  verifieCobayeCliqueBtnDefaut();
 }
