@@ -6,48 +6,53 @@ services:
     container_name: mongodb_dev
     networks:
       - multi-architecture
-    volumes:
-      - ./visualisation/api/database/db.init.js:/db/db.init.js
-      - ./visualisation/api/models:/db/models
+    # volumes:
+    #   - ./visualisation/api/database/db.init.js:/db/db.init.js
+    #   - ./visualisation/api/models:/db/models
     ports:
       - "27019:27017"
 
-  api_dev:
-    container_name: api_dev
-    command: bash -c "cd /app && npm run start"
-    build: 
-      context: ./visualisation/api
-      dockerfile: Dockerfile.api
-    depends_on:
-      - mongodb_dev
-    networks:
-      - multi-architecture
-    environment:
-      DOCKER_MONGO: mongodb_dev
-    volumes:
-      - ./visualisation/api:/app
-    ports:
-      - "5000:5000"
+  # api_dev:
+  #   container_name: api_dev
+  #   command: bash -c "cd /app && npm run start"
+  #   build: 
+  #     context: ./visualisation/api
+  #     dockerfile: Dockerfile.api
+  #   depends_on:
+  #     - mongodb_dev
+  #   networks:
+  #     - multi-architecture
+  #   environment:
+  #     DOCKER_MONGO: mongodb_dev
+  #   volumes:
+  #     - ./visualisation/api:/app
+  #   ports:
+  #     - "5000:5000"
 
   server_central:
     image: amazoncorretto
-    container_name: server_central
-    # build: 
-    #   dockerfile: Dockerfile.java.central
+    container_name: server_central_dev
+    build: 
+      context: ./serveur_central
+      dockerfile: Dockerfile.java.central
+    devices:
+      - "/dev/tty0:/dev/ttyACM0"
+      # - /dev/ttyUSB0:/dev/ttyUSB0
+      # - /dev/bus/usb/:/dev/bus/usb
+    volumes:
+      - /dev/bus/usb:/dev/bus/usb
     networks:
       - multi-architecture
-    volumes:
-      - ./serveur_central:/app
-    # ports:
-    #   - 127.0.0.1:5000:5000
+    ports:
+      - 8080:8080
 
-  server_mobile:
-    image: amazoncorretto
-    container_name: server_mobile
-    networks:
-      - multi-architecture
-    volumes:
-      - ./serveur_image:/app
+  # server_mobile:
+  #   image: amazoncorretto:17
+  #   container_name: server_mobile
+  #   networks:
+  #     - multi-architecture
+  #   volumes:
+  #     - ./serveur_image:/app
     # ports:
     #   - 127.0.0.1:5000:5000
 
