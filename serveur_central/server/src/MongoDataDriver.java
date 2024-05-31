@@ -46,14 +46,17 @@ public class MongoDataDriver implements DataDriver {
     }
 
     /**
-     * Initialize the connection to the database
-     * @return true if the connection is successful, false otherwise
+     * Initialise la connexion à la base de données
+     * @return true si la connexion fonctionne, false sinon
      */
     public boolean init()  {
+        // Création du client mongo pour accéder aux fonctionnalités
         mongoClient = MongoClients.create(mongoURL);
+        // Configuration des variables d'environnement
         Dotenv dotenv = Dotenv.configure().load();
         String name_db = dotenv.get("DATABASE_NAME");
         try {
+            // Récupération de la base de données avec l'option définissant la manière de sérialiser
             database = mongoClient.getDatabase(name_db).withCodecRegistry(pojoCodecRegistry);
             experiences = database.getCollection("experiences", Experience.class);
             modules = database.getCollection("modules", Module.class);
@@ -67,8 +70,8 @@ public class MongoDataDriver implements DataDriver {
     }
 
     /**
-     * Get the last experience's number
-     * @return the last experience's number
+     * Récupère le numéro de la dernière expérience dans la base de données
+     * @return le numéro de la dernière expérience
      */
     public synchronized int getLastExperience(){
         Experience experience = experiences.find().sort(descending("numero")).first();
@@ -81,14 +84,16 @@ public class MongoDataDriver implements DataDriver {
     }
 
     /**
-     * Request to add a new user in the database
-     * @param user the user to add
-     * @return a string containing the result of the request
+     * Requête d'ajout d'un nouveau utilisateur dans la base de données
+     * @param user l'utilisateur à ajouter
+     * @return un string avec les résultats de la requête
      */
     public synchronized String addUser(User user){
+        // Création d'un ID unique pour le nouvel user
         ObjectId key = generateUniqueKey("user");
         user.setId(key);
         String password = user.getPassword();
+        // Cryptage du mot de passe avant l'insertion en base de données
         String bcryptHashString = BCrypt.withDefaults().hashToString(10, password.toCharArray());
         user.setPassword(bcryptHashString);
         try {
@@ -101,18 +106,19 @@ public class MongoDataDriver implements DataDriver {
     }
 
     /**
-     * Request to add a new result in the database
-     * @param numero the experience's number
-     * @param reactTime the reaction time
-     * @param execTime the execution time
-     * @param nbErrors the number of errors
-     * @param user the user who did the experience
-     * @return a string containing the result of the request
+     * Requête d'ajout de nouveaux résultats dans la base de données
+     * @param numero le numéro de l'expérience
+     * @param reactTime le temps de réaction
+     * @param execTime le temps d'exécution
+     * @param nbErrors le nombre d'erreurs
+     * @param user l'objet user correspondant à celui ayant fait l'expérience
+     * @return un string avec le résultat de la requête
      */
     public synchronized String addResults(String numero, float reactTime, float execTime, int nbErrors, User user){
         int num = Integer.parseInt(numero);
-        // Request to get the experience _id using its numero
+        // Requête pour récupérer le experience _id à partir de son numéro
         Experience experience = experiences.find(eq("numero", num)).first();
+        // Création d'un ID unique pour le nouveau résultat
         ObjectId _id = generateUniqueKey("result");
         Result result = new Result(_id, experience.getId(), reactTime, execTime, nbErrors);
         try {
@@ -122,26 +128,27 @@ public class MongoDataDriver implements DataDriver {
             return "ERR unable to create the result";
         }
 
-        // Update a user's results tab by adding the new result
+        // Met à jour les résultats d'un user en ajoutant le nouveau résultat
         Bson update = Updates.addToSet("results", result);
         Bson query = Filters.eq("_id", user.getId());
         UpdateResult updateResult = users.updateOne(query, update);
-        // Prints the number of updated documents and the upserted document ID, if an upsert was performed
+        // Affiche le nombre de documents mis à jour et insérés s'il y en a
 //        System.out.println("Modified document count: " + updateResult.getModifiedCount());
         return "OK";
     }
 
     /**
-     * Generate a unique key for a new document
-     * @param collection the collection where the document will be added
-     * @return the unique key
+     * Génère une clé unique pour un nouveau document
+     * @param collection la collection où le document sera ajouté
+     * @return la clé unique
      */
     public ObjectId generateUniqueKey(String collection){
-        // must generate a unique key
+        // Génération d'une clé UUID aléatoire
         UUID key = UUID.randomUUID();
         ObjectId id = null;
         boolean stop = false;
         while(!stop) {
+            // On vérifie pour chaque collection indépendemment si l'ID existe déjà
             if(collection.equals("result")){
                 id = getResultId(key.toString());
             }
@@ -149,6 +156,7 @@ public class MongoDataDriver implements DataDriver {
                 id = getUserId(key.toString());
             }
 
+            // Tant que l'ID n'est pas unique, on continue d'en générer un
             if (id == null) {
                 stop = true;
             }
@@ -160,9 +168,9 @@ public class MongoDataDriver implements DataDriver {
     }
 
     /**
-     * Get the result's id using its key
-     * @param moduleKey the result's key
-     * @return the result's id or null if the result doesn't exist
+     * Récupère l'ID d'un résultat à partir de sa clé
+     * @param moduleKey la clé du résultat
+     * @return l'ID du résultat ou null si le résultat n'existe pas
      */
     private ObjectId getResultId(String moduleKey) {
         Result result = results.find(eq("_id",moduleKey)).first();
@@ -173,9 +181,9 @@ public class MongoDataDriver implements DataDriver {
     }
 
     /**
-     * Get the user's id using its key
-     * @param moduleKey the user's key
-     * @return the user's id or null if the user doesn't exist
+     * Récupère l'ID de l'utilisateur à partir de sa clé
+     * @param moduleKey la clé de l'utilisateur
+     * @return l'ID de l'utilisateur ou null si l'utilisateur n'existe pas
      */
     private ObjectId getUserId(String moduleKey) {
         User user = users.find(eq("_id",moduleKey)).first();
