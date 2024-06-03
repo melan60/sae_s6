@@ -7,7 +7,7 @@ const router = express.Router();
  *  /experience/add:
  *    post:
  *      tags:
- *        - Experience
+ *        - EXPERIENCES
  *      description: Create a new experience with the specified properties.
  *      parameters:
  *        - in: body
@@ -45,7 +45,7 @@ router.post("/add", controller.createExperience);
  *  /experience/module/add:
  *    post:
  *      tags:
- *        - Experience
+ *        - EXPERIENCES
  *      description: Create a new module with the specified properties.
  *      parameters:
  *        - in: body
@@ -84,7 +84,7 @@ router.post("/module/add", controller.createModule);
  *  /experience/updateModule:
  *    put:
  *      tags:
- *        - Experience
+ *        - EXPERIENCES
  *      description: Add module to an experience.
  *      parameters:
  *        - in: query
@@ -109,35 +109,35 @@ router.post("/module/add", controller.createModule);
  */
 router.put("/updateModule", controller.addModuleToAnExperience);
 
-// /**
-//  *  @swagger
-//  *  /experience:
-//  *    get:
-//  *      tags:
-//  *        - Experience
-//  *      description: Get all experiences, or one experience if numero is precised
-//  *      parameters:
-//  *        - in: query
-//  *          name: numero
-//  *          type: string
-//  *          required: false
-//  *          description: Numero of the experience
-//  *      responses:
-//  *        '200':
-//  *          description: Get experience successful
-//  *        '400':
-//  *          description: Bad request
-//  *        '500':
-//  *          description: Internal server error
-//  */
-// router.get("/", controller.getExperience);
+/**
+ *  @swagger
+ *  /experience:
+ *    get:
+ *      tags:
+ *        - EXPERIENCES
+ *      description: Get all experiences, or one experience if numero is precised
+ *      parameters:
+ *        - in: query
+ *          name: numero
+ *          type: string
+ *          required: false
+ *          description: Numero of the experience
+ *      responses:
+ *        '200':
+ *          description: Get experience successful
+ *        '400':
+ *          description: Bad request
+ *        '500':
+ *          description: Internal server error
+ */
+router.get("/", controller.getExperience);
 
 /**
  *  @swagger
  *  /experience/last:
  *    get:
  *      tags:
- *        - Experience
+ *        - EXPERIENCES
  *      description: Get the last experience created
  *      responses:
  *        '200':
@@ -149,6 +149,21 @@ router.put("/updateModule", controller.addModuleToAnExperience);
  */
 router.get("/last", controller.getLastExperience);
 
+/**
+ *  @swagger
+ *  /experience/experiences:
+ *    get:
+ *      tags:
+ *        - EXPERIENCES
+ *      description: Get all experiences
+ *      responses:
+ *        '200':
+ *          description: Get experiences successful
+ *        '400':
+ *          description: Bad request
+ *        '500':
+ *          description: Internal server error
+ */
 router.get("/experiences", controller.getAllExperiences);
 
 module.exports = router;

@@ -22,14 +22,13 @@ dotenv.config();
 // utilisation des requetes CORS
 server.use(cors());
 
-
 // lancement du serveur
 server.use(express.json());
-server.use(express.urlencoded({ extended: true }));
+server.use(express.urlencoded({extended: true}));
 server.use(express.static('assets'))
 
 server.use(bodyParser.json());
-server.use(bodyParser.urlencoded({ extended: false }));
+server.use(bodyParser.urlencoded({extended: false}));
 
 
 /**
@@ -38,14 +37,14 @@ server.use(bodyParser.urlencoded({ extended: false }));
 
 /** Swagger Initialization - START */
 const swaggerOption = {
-  swaggerDefinition: (swaggerJsdoc.Options = {
-    info: {
-      title: "API SAE-S5",
-      description: "API documentation",
-      servers: [`http://localhost:${process.env.PORT_SERVER}/`],
-    },
-  }),
-  apis: ["server.js", "./routers/*.js"],
+    swaggerDefinition: (swaggerJsdoc.Options = {
+        info: {
+            title: "API SAE-S5",
+            description: "API documentation",
+            servers: [`http://localhost:${process.env.PORT_SERVER}/`],
+        },
+    }),
+    apis: ["server.js", "./routers/*.js"],
 };
 
 const swaggerDocs = swaggerJsdoc(swaggerOption);
@@ -62,20 +61,19 @@ server.use("/user", routes_server_tcp_user);
 // initialisation de la base de donnees
 
 function initialisationBDD() {
-  let dev_db_url;
-  if (process.env.DOCKER_MONGO) {
-    dev_db_url = `mongodb://${process.env.DOCKER_MONGO}:27017/${process.env.DATABASE_NAME}`
-  }
-  else
-    dev_db_url = `mongodb://127.0.0.1/${process.env.DATABASE_NAME}`;
-  mongoose.connect(dev_db_url)
-    .then(async () => {
-      await db.initBdD();
-      server.listen(process.env.PORT_SERVER, () => {
-        console.log(`Server is listening port ${process.env.PORT_SERVER}`);
-      });
-    })
-    .catch(e => console.error(e)); // server
+    let dev_db_url;
+    if (process.env.DOCKER_MONGO) {
+        dev_db_url = `mongodb://${process.env.DOCKER_MONGO}:27017/${process.env.DATABASE_NAME}`
+    } else
+        dev_db_url = `mongodb://127.0.0.1/${process.env.DATABASE_NAME}`;
+    mongoose.connect(dev_db_url)
+        .then(async () => {
+            await db.initBdD();
+            server.listen(process.env.PORT_SERVER, () => {
+                console.log(`Server is listening port ${process.env.PORT_SERVER}`);
+            });
+        })
+        .catch(e => console.error(e)); // server
 }
 
 initialisationBDD();
@@ -84,7 +82,7 @@ initialisationBDD();
  * If path not found before then an error sent
  */
 server.use("*", (req, res, next) => {
-  const err = new Error("Not found !");
-  err.status = 404;
-  next(err);
+    const err = new Error("Not found !");
+    err.status = 404;
+    next(err);
 });

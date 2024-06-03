@@ -91,9 +91,9 @@ public class HttpDataDriver implements DataDriver {
     }
 
     /**
-     * Request to add a new user in the database
-     * @param user the user to add
-     * @return a string containing the result of the request
+     * Requête d'ajout d'un nouveau utilisateur dans la base de données
+     * @param user l'utilisateur à ajouter
+     * @return un string avec les résultats de la requête
      */
     public synchronized String addUser(User user){
         ResultsModel resultsModel = new ResultsModel();
@@ -116,8 +116,8 @@ public class HttpDataDriver implements DataDriver {
     }
 
     /**
-     * Get the last experience's number
-     * @return the last experience's number
+     * Récupère le numéro de la dernière expérience dans la base de données
+     * @return le numéro de la dernière expérience
      */
     public synchronized int getLastExperience(){
         Document doc = getRequest("/experience/last", "");
@@ -127,13 +127,13 @@ public class HttpDataDriver implements DataDriver {
     }
 
     /**
-     * Request to add a new result in the database
-     * @param numExp the experience's numero
-     * @param reactTime the reaction time
-     * @param execTime the execution time
-     * @param nbErrors the number of errors
-     * @param user the user who did the experience
-     * @return a string containing the result of the request
+     * Requête d'ajout de nouveaux résultats dans la base de données
+     * @param numExp le numéro de l'expérience
+     * @param reactTime le temps de réaction
+     * @param execTime le temps d'exécution
+     * @param nbErrors le nombre d'erreurs
+     * @param user l'objet user correspondant à celui ayant fait l'expérience
+     * @return un string avec le résultat de la requête
      */
     public synchronized String addResults(String numExp, float reactTime, float execTime, int nbErrors, User user){
         // used to get the _id of the experience

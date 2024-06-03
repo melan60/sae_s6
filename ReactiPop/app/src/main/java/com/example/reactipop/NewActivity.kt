@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.reactipop.R
 import java.io.IOException
+import java.io.PrintStream
 import java.net.Socket
 
 class NewActivity : AppCompatActivity() {
@@ -18,15 +19,14 @@ class NewActivity : AppCompatActivity() {
         setContentView(R.layout.activity_new)
 
         val imageUri = intent.getStringExtra("image_uri")
-        val startTime = intent.getStringExtra("start_time")
-        val stopTime = intent.getStringExtra("stop_time")
+        val time = intent.getStringExtra("date_time")
         val imageView = findViewById<ImageView>(R.id.imageView)
         imageView.setImageURI(Uri.parse(imageUri))
 
         // Bouton pour enregitrer la photo
         val saveButton = findViewById<Button>(R.id.save_button)
         saveButton.setOnClickListener {
-            sendToServer(Uri.parse(imageUri), startTime.toString(), stopTime.toString())
+            sendToServer(Uri.parse(imageUri), time.toString())
             Toast.makeText(this, "Photo enregistrée et envoyée au serveur", Toast.LENGTH_SHORT)
                 .show()
             finish()
@@ -41,8 +41,8 @@ class NewActivity : AppCompatActivity() {
         }
     }
 
-    private fun sendToServer(imageUri: Uri, startTime: String, stopTime: String) {
-        val serverName = "10.192.18.249"
+    private fun sendToServer(imageUri: Uri, time: String) {
+        val serverName = "192.168.43.221"
         val serverPort = 8000
         val imageData = getImageBytes(imageUri)
 
@@ -54,22 +54,15 @@ class NewActivity : AppCompatActivity() {
         Thread {
             try {
                 val socket = Socket(serverName, serverPort)
-                val outputStream = socket.getOutputStream()
+                val printStream = PrintStream(socket.getOutputStream())
 
-                val startTimeBytes = startTime.toByteArray(Charsets.UTF_8)
-                outputStream.write(startTimeBytes.size)
-                outputStream.write(startTimeBytes)
-                Log.e("bouboule", startTimeBytes.toString())
+                Log.e("Temps v8", time)
+                printStream.write(time.length)
+                printStream.println(time)
 
-                val stopTimeBytes = stopTime.toByteArray(Charsets.UTF_8)
-                outputStream.write(stopTimeBytes.size)
-                outputStream.write(stopTimeBytes)
-                Log.d("BOOOOBOOOO", stopTimeBytes.toString())
+                printStream.write(imageData)
 
-                outputStream.write(imageData)
-                Log.e("Image", imageData.toString())
-
-                outputStream.flush()
+                printStream.flush()
                 socket.close()
             } catch (e: IOException) {
                 Log.e("ERR sendToConnect", e.message.toString())

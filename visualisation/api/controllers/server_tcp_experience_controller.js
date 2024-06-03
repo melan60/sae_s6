@@ -1,6 +1,12 @@
 const errors = require("../common_variables");
 const services = require("../services/server_tcp_experience_service");
 
+/**
+ * Function to create an experience
+ * @param req
+ * @param res
+ * @returns {Promise<void>}
+ */
 const createExperience = async (req, res) => {
   const experience = req.body.experience;
 
@@ -14,6 +20,12 @@ const createExperience = async (req, res) => {
   });
 };
 
+/**
+ * Function to create a module
+ * @param req
+ * @param res
+ * @returns {Promise<void>}
+ */
 const createModule = async (req, res) => {
   const module = req.body.module;
 
@@ -27,6 +39,12 @@ const createModule = async (req, res) => {
   });
 };
 
+/**
+ * Function to add a module to an experience
+ * @param req
+ * @param res
+ * @returns {Promise<void>}
+ */
 const addModuleToAnExperience = async (req, res) => {
   const name_module = req.query.name_module;
   const name_experience = req.query.name_experience;
@@ -47,15 +65,21 @@ const addModuleToAnExperience = async (req, res) => {
   );
 };
 
-// const getExperience = async (req, res) => {
-//   const numero = req.query.numero;
+const getExperience = async (req, res) => {
+  const numero = req.query.numero;
 
-//   await services.getExperience(numero, (err, result) => {
-//     if (err) return res.status(400).send({ success: 0, data: err });
-//     return res.status(200).send({ success: 1, data: result });
-//   });
-// };
+  await services.getExperience(numero, (err, result) => {
+    if (err) return res.status(400).send({ success: 0, data: err });
+    return res.status(200).send({ success: 1, data: result });
+  });
+};
 
+/**
+ * Function to get all experiences
+ * @param req
+ * @param res
+ * @returns {Promise<void>}
+ */
 const getAllExperiences = async (req, res) => {
   await services.getAllExperiences((err, result) => {
     if (err) return res.status(400).send({ success: 0, data: err });
@@ -63,6 +87,12 @@ const getAllExperiences = async (req, res) => {
   });
 };
 
+/**
+ * Function to get the last experience
+ * @param req
+ * @param res
+ * @returns {Promise<void>}
+ */
 const getLastExperience = async (req, res) => {
   await services.getLastExperience((err, result) => {
     if (err) return res.status(400).send({ success: 0, data: err });
@@ -74,7 +104,7 @@ module.exports = {
   createExperience,
   createModule,
   addModuleToAnExperience,
-  // getExperience,
+  getExperience,
   getAllExperiences,
   getLastExperience,
 };

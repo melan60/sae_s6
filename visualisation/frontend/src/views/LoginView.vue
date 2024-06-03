@@ -112,15 +112,13 @@ export default {
           password: this.password
         });
 
-        await this.$router.push({ name: 'cobaye', params: { nomCobaye: userData.user.name } });
+        if (userData.user) {
+          await this.$router.push({name: userData.user.typeUser});
+        }
         this.loginError = '';
 
       } catch (error) {
-        if (error.response && error.response.data) {
-          this.loginError = error.response.data.message;
-        } else {
-          this.loginError = "Error during login. Please try again.";
-        }
+        this.loginError = error.response && error.response.data ? error.response.data.message : "Error during login. Please try again.";
         console.error("Error in login() LoginView:", error);
       }
     },
