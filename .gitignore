@@ -9,7 +9,7 @@ ReactiPop/.externalNativeBuild
 ReactiPop/.cxx
 ReactiPop/local.properties
 
-serveur_central/.env
+serveur_central/server/.env
 serveur_central/.idea/
 serveur_central/out/*
 
