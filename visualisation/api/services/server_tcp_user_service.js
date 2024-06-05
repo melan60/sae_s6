@@ -71,7 +71,79 @@ const addResult = async (result, user, callback) => {
         });
 };
 
+/**
+ * function to get all users
+ * @returns {Promise<*>}
+ */
+const getAllUsers = async () => {
+    try {
+        return await User.find({}).exec();
+    } catch (error) {
+        console.error("Error in fetching all users:", error);
+        throw new Error(`Error in getAllUsers service: ${error.message}`);
+    }
+}
+
+/**
+ * function to get all cobayes
+ * @returns {Promise<*>}
+ */
+const getAllCobayes = async () => {
+    try {
+        return await User.find({typeUser: "cobaye"}).exec();
+    } catch (error) {
+        console.error("Error in fetching all cobayes:", error);
+        throw new Error(`Error in getAllCobayes service: ${error.message}`);
+    }
+};
+
+/**
+ * function to delete all cobayes
+ * @returns {Promise<*>}
+ */
+const deleteAllCobayes = async () => {
+    try {
+        return await User.deleteMany({typeUser: "cobaye"}).exec();
+    } catch (error) {
+        console.error("Error in deleting all cobayes:", error);
+        throw new Error(`Error in deleteAllCobayes service: ${error.message}`);
+    }
+}
+
+/**
+ * function to delete all users
+ * @returns {Promise<*>}
+ */
+const deleteAllUsers = async () => {
+    try {
+        return await User.deleteMany({}).exec();
+    } catch (error) {
+        console.error("Error in deleting all users:", error);
+        throw new Error(`Error in deleteAllUsers service: ${error.message}`);
+    }
+}
+
+/**
+ * function to delete a user with a given id
+ * @param {String} id
+ * @returns {Promise<*>}
+ */
+const deleteUser = async (id) => {
+    try {
+        return await User.deleteOne({_id: id}).exec();
+    } catch (error) {
+        console.error("Error in deleting user:", error);
+        throw new Error(`Error in deleteUser service: ${error.message}`);
+    }
+}
+
+
 module.exports = {
     createUser,
     addResult,
+    getAllCobayes,
+    deleteAllCobayes,
+    deleteAllUsers,
+    getAllUsers,
+    deleteUser
 };

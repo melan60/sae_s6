@@ -2,48 +2,81 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import axios from "axios";
 
-Vue.use(Vuex)
+Vue.use(Vuex);
 
 export default new Vuex.Store({
-  state: {
-    user: null, // { _id: '655f6ac4b7eb21e278e04b34' },
-    stimuli: null,
-    isAuthenticated: false,
-  },
-  getters: {
-    getUser: state => state.user,
-    getStimuli: state => state.stimuli
-  },
-  mutations: {
-    setUser: function (state, user) {
-      state.user = user;
+    state: {
+        user: null,
+        stimuli: null,
+        isAuthenticated: false,
+        userId: null,
+        graphData: null,
     },
-    setStimuli: function (state, stimu) {
-      state.stimuli = stimu
+    getters: {
+        getUser: state => state.user,
+        getStimuli: state => state.stimuli,
+        getUserId: state => state.userId,
+        getGraphData: state => state.graphData,
     },
-    setAuthentication(state, status) {
-      state.isAuthenticated = status;
+    mutations: {
+        setUser(state, user) {
+            state.user = user;
+            state.userId = user._id || user.id;
+        },
+        setStimuli(state, stimu) {
+            state.stimuli = stimu;
+        },
+        setAuthentication(state, status) {
+            state.isAuthenticated = status;
+        },
+        setGraphs(state, graphData) {
+            state.graphData = graphData;
+        },
+        clearUser(state) {
+            state.user = null;
+            state.isAuthenticated = false;
+            state.userId = null;
+            state.graphData = null;
+        },
     },
-    clearUser(state) {
-      state.user = null;
-      state.isAuthenticated = false; // Update authentication state
+    actions: {
+        /**
+         * Logs the user in and sets the token in local storage
+         * @param commit
+         * @param credentials
+         * @returns {Promise<any>}
+         */
+        async login({ commit }, credentials) {
+            const response = await axios.post('/api/login', credentials);
+            localStorage.setItem('token', response.data.token);
+            commit('setUser', response.data.user);
+            commit('setAuthentication', true);
+            return response.data;
+        },
+        logout({ commit }) {
+            localStorage.removeItem('token');
+            commit('clearUser');
+        },
+        /**
+         * Fetches the current user's data and graphs
+         * @param commit
+         * @param state
+         * @returns {Promise<void>}
+         */
+        async fetchUserGraphs({ commit, state }) {
+            try {
+                const user = state.user;
+                const userId = state.userId;
+                if (!userId) {
+                    console.error("User ID is not defined");
+                    return;
+                }
+                let url = user.typeUser === 'admin' ? '/graphs/time' : `/graphs/user/${userId}`;
+                const res = await axios.get(`http://localhost:5000${url}`);
+                commit('setGraphs', res.data.data); // Set the graph data
+            } catch (error) {
+                console.error('Error fetching user graphs:', error);
+            }
+        },
     },
-  },
-  actions: {
-    async login({ commit }, credentials) {
-      const response = await axios.post('/api/login', credentials);
-      // Store the token in localStorage
-      localStorage.setItem('token', response.data.token);
-       // Commit the user data to the store
-        commit('setUser', response.data.user);
-        commit('setAuthentication', true);
-        console.log('login', response.data.user);
-
-        return response.data;
-    },
-    logout({ commit }) {
-      localStorage.removeItem('token'); // Clear token from local storage
-      commit('clearUser'); // Clear user data from state
-    },
-  },
 });

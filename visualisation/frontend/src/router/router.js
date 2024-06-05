@@ -20,7 +20,12 @@ const routes = [
     path: '/',
     name: 'cobaye',
     component: HomeView,
-  }
+  },
+  {
+    path: '/',
+    name: 'admin',
+    component: HomeView,
+  },
 ]
 
 const router = new VueRouter({

@@ -6,13 +6,13 @@ const router = express.Router();
  * @swagger
  * /graphs/users:
  *   get:
- *      description: Get results for one people
+ *      description: Get results for one person
  *      tags:
  *          - GRAPHS
  *      parameters:
- *          - in: query
+ *          - in: params
  *            name: id_user
- *            type: string
+ *            type: integer
  *            required: true
  *            description: ID of the user
  *      responses:
@@ -21,7 +21,7 @@ const router = express.Router();
  *          '400':
  *              description: Bad request
  */
-router.get("/users", controller.getIndividualData);
+router.get("/user/:id", controller.getIndividualData);
 
 /**
  * @swagger
