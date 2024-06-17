@@ -5,7 +5,7 @@ public class ArduinoConfig {
     private SerialPort serialPort;
 
     public ArduinoConfig() {
-        this.serialPort = System.getProperty("os.name").equals("Linux") ? new SerialPort("/dev/ttyACM0") : new SerialPort("COM4");
+        this.serialPort = new SerialPort("COM3");
     }
 
     public void init(){
@@ -29,6 +29,3 @@ public class ArduinoConfig {
         this.serialPort = serialPort;
     }
 }
-
-
-
