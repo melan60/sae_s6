@@ -31,6 +31,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewBinding: ActivityMainBinding
     private var imageCapture: ImageCapture? = null
     private lateinit var cameraExecutor: ExecutorService
+    val dateFormatter = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
     private var time: String = ""
 
     companion object {
@@ -51,6 +52,7 @@ class MainActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        intent = Intent(this@MainActivity, NewActivity::class.java)
         viewBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)
 
@@ -66,6 +68,13 @@ class MainActivity : AppCompatActivity() {
         // Set up the listeners for take photo
         viewBinding.imageCaptureButton.setOnClickListener { takePhoto() }
         viewBinding.startExperienceButton.setOnClickListener {
+            val currentTimeMillis = System.currentTimeMillis()
+            time = dateFormatter.format(currentTimeMillis)
+
+            intent.putExtra("start_time", time)
+
+            Log.e("ERR", time)
+
             viewBinding.startExperienceButton.visibility = View.GONE
             viewBinding.imageCaptureButton.visibility = View.VISIBLE
         }
@@ -118,14 +127,11 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
-                    val intent = Intent(this@MainActivity, NewActivity::class.java)
                     val currentTimeMillis = System.currentTimeMillis()
-                    val dateFormatter = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
                     time = dateFormatter.format(currentTimeMillis)
 
-                    Log.e("Temps", time)
                     intent.putExtra("image_uri", output.savedUri.toString())
-                    intent.putExtra("date_time", time)
+                    intent.putExtra("stop_time", time)
                     startActivity(intent)
                 }
             }
