@@ -213,7 +213,7 @@ void verifieLeBtnClique2(int number, int nb1, int nb2, int nb3) {
 }
 
 void experience3() {
-  int number = random(1, 4);  // TODO
+  int number = random(1, 4);  // TODO enlever le num de l'écran ap click
   afficherUnNombreALEcran(number);
   startChronometer();
   verifieLeBtnClique2(number, 1, 1 + 1, 1 + 2);
