@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import axios from "axios";
+import axios from 'axios';
 
 Vue.use(Vuex);
 
@@ -11,12 +11,16 @@ export default new Vuex.Store({
         isAuthenticated: false,
         userId: null,
         graphData: null,
+        cobayeUsers: [],
+        selectedUserDetails: null,
     },
     getters: {
         getUser: state => state.user,
         getStimuli: state => state.stimuli,
         getUserId: state => state.userId,
         getGraphData: state => state.graphData,
+        getCobayeUsers: state => state.cobayeUsers,
+        getSelectedUserDetails: state => state.selectedUserDetails,
     },
     mutations: {
         setUser(state, user) {
@@ -32,20 +36,25 @@ export default new Vuex.Store({
         setGraphs(state, graphData) {
             state.graphData = graphData;
         },
+        setCobayeUsers(state, users) {
+            state.cobayeUsers = users;
+        },
+        setSelectedUserDetails(state, userDetails) {
+            state.selectedUserDetails = userDetails;
+        },
         clearUser(state) {
             state.user = null;
             state.isAuthenticated = false;
             state.userId = null;
             state.graphData = null;
+            state.selectedUserDetails = null;
         },
     },
     actions: {
-        /**
-         * Logs the user in and sets the token in local storage
-         * @param commit
-         * @param credentials
-         * @returns {Promise<any>}
-         */
+        async initializeStore({ dispatch }) {
+            await dispatch('fetchCobayeUsers');
+            await dispatch('fetchAllUserGraphs');
+        },
         async login({ commit }, credentials) {
             const response = await axios.post('/api/login', credentials);
             localStorage.setItem('token', response.data.token);
@@ -57,25 +66,37 @@ export default new Vuex.Store({
             localStorage.removeItem('token');
             commit('clearUser');
         },
-        /**
-         * Fetches the current user's data and graphs
-         * @param commit
-         * @param state
-         * @returns {Promise<void>}
-         */
-        async fetchUserGraphs({ commit, state }) {
+        async fetchCobayeUsers({ commit }) {
             try {
-                const user = state.user;
-                const userId = state.userId;
-                if (!userId) {
-                    console.error("User ID is not defined");
-                    return;
+                const response = await axios.get('/user/cobayes');
+                commit('setCobayeUsers', response.data);
+            } catch (error) {
+                console.error('Error fetching cobaye users:', error);
+            }
+        },
+        async fetchUserGraphs({ commit, state }, userId = state.userId) {
+            try {
+                const response = await axios.get(`/graphs/user/${userId}`);
+                if (response.data && response.data.data) {
+                    commit('setGraphs', response.data.data);
+                } else {
+                    console.log('No graph data returned for user:', userId);
                 }
-                let url = user.typeUser === 'admin' ? '/graphs/time' : `/graphs/user/${userId}`;
-                const res = await axios.get(`http://localhost:5000${url}`);
-                commit('setGraphs', res.data.data); // Set the graph data
             } catch (error) {
                 console.error('Error fetching user graphs:', error);
+            }
+        },
+        async fetchSelectedUserDetails({ commit }, userId) {
+            try {
+                const response = await axios.get(`/user/details/${userId}`);
+                commit('setSelectedUserDetails', response.data);
+            } catch (error) {
+                console.error('Error fetching selected user details:', error);
+            }
+        },
+        async fetchAllUserGraphs({ state, dispatch }) {
+            for (let user of state.cobayeUsers) {
+                await dispatch('fetchUserGraphs', user._id);
             }
         },
     },

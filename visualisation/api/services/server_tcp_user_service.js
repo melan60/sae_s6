@@ -85,6 +85,20 @@ const getAllUsers = async () => {
 }
 
 /**
+ * Function used to get a user details by id
+ * @param id
+ * @returns {Promise<void>}
+ */
+const getUserById = async (id) => {
+    try {
+        return await User.findById(id).exec();
+    } catch (error) {
+        console.error("Error in fetching user by id:", error);
+        throw new Error(`Error in getUserById service: ${error.message}`);
+    }
+}
+
+/**
  * function to get all cobayes
  * @returns {Promise<*>}
  */
@@ -138,11 +152,13 @@ const deleteUser = async (id) => {
 }
 
 
+
 module.exports = {
     createUser,
     addResult,
     getAllCobayes,
     deleteAllCobayes,
+    getUserById,
     deleteAllUsers,
     getAllUsers,
     deleteUser

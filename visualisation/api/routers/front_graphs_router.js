@@ -4,9 +4,9 @@ const router = express.Router();
 
 /**
  * @swagger
- * /graphs/users:
+ * /graphs/user/{id}:
  *   get:
- *      description: Get results for one person
+ *      description: Get execution time, reaction time, number of errors for a given user
  *      tags:
  *          - GRAPHS
  *      parameters:
@@ -27,7 +27,7 @@ router.get("/user/:id", controller.getIndividualData);
  * @swagger
  * /graphs/time:
  *   get:
- *      description: Get react and exec time for all users
+ *      description: Get react and execution time for all users
  *      tags:
  *          - GRAPHS
  *      responses:

@@ -32,7 +32,7 @@ router.post('/login', controller.login);
  *          '500':
  *              description: Internal server error
  */
-router.get("/results", controller.getResults);
+router.get("/results", controller.getUserInfoFromToken);
 
 /**
  * Get the current user logged to identify the user when reloading the page
