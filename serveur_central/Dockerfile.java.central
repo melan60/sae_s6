@@ -14,10 +14,11 @@ COPY lib ./lib
 # Ajout des droits d'exécution sur le script de lancement du client
 RUN chmod +x ./start_client.sh
 # Ajout des droits d'exécution sur le script de compilation et exécution du script
-RUN chmod +x ./compile.sh && ./compile.sh
+RUN chmod +x ./compile.sh
+RUN ./compile.sh
 
 EXPOSE 8080
 
-COPY out-docker out-docker
+# COPY out-docker out-docker
 
-CMD java -cp "out-docker/server/server.jar:lib/*" CentralServer 4000
+CMD java -cp "out-docker/server/server.jar:lib/*" CentralServer 2000
