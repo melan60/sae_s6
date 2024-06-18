@@ -1,0 +1,17 @@
+FROM amazoncorretto:17
+
+# Création du dossier contenant les fichiers de l'application
+WORKDIR /app
+
+# Copie des fichies nécessaires au lancement de l'application
+COPY . .
+
+# Ajout des droits d'exécution sur le script de compilation et exécution du script
+RUN chmod +x ./compile.sh
+# RUN ./compile.sh
+
+EXPOSE 8000
+
+# COPY out-docker out-docker
+
+# CMD java -cp "out-docker/FaceDetector.jar:lib/*" FaceDetectorServer 8000 127.0.0.1 2000
