@@ -1,10 +1,10 @@
 # Création des répertoires
 mkdir -p out-docker/server out-docker/client
 
-# Compilation des fichiers server
+# Compilation des fichiers server zeze
 javac -d out-docker/server -cp "lib/*" ./server/src/*.java
 
-# Compilation des fichiers client
+# Compilation des fichiers client zeze
 javac -d out-docker/client -cp "lib/*" ./client/src/*.java
 
 # Création du fichier JAR server (c = créer un nouveau fichier JAR, v = verbose (affiche les détails des fichiers pdt l'execution), f = nom du fichier créé, m = fichier manifest)
