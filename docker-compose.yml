@@ -46,18 +46,18 @@ services:
     ports:
       - 8080:8080
 
-  # server_analyse:
-  #   image: amazoncorretto:17
-  #   container_name: server_analyse
-  #   build: 
-  #     context: ./serveur_analyse
-  #     dockerfile: Dockerfile.java.analyse
-  #   networks:
-  #     - multi-architecture
-  #   volumes:
-  #     - ./serveur_image:/app
-  #   ports:
-  #     - 127.0.0.1:8000:8000
+  server_analyse:
+    image: amazoncorretto:17
+    container_name: server_analyse
+    build: 
+      context: ./serveur_analyse
+      dockerfile: Dockerfile.java.analyse
+    networks:
+      - multi-architecture
+    volumes:
+      - ./serveur_image:/app
+    ports:
+      - 127.0.0.1:8000:8000
 
 networks:
   multi-architecture:

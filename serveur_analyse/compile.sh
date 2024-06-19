@@ -2,7 +2,7 @@
 mkdir -p out-docker/
 
 # Compilation des fichiers server
-javac -d out-docker/ -cp "lib/*" src/*.java
+javac -d out-docker/ -cp "lib/*" ./src/FaceDetectorServer.java
 
 # Compilation du fichier
-jar -cvfm out-docker/FaceDetector.jar MANIFEST_ANALYSE.MF -C out-docker/ .
+jar -cvfm out-docker/FaceDetectorServer.jar MANIFEST_ANALYSE.MF -C out-docker/ .
