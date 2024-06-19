@@ -15,5 +15,7 @@
     <orderEntry type="library" name="jssc-2.8.0" level="application" />
     <orderEntry type="library" name="mongodb-driver-core-4.10.2" level="application" />
     <orderEntry type="library" name="li" level="project" />
+    <orderEntry type="library" name="google.code.gson" level="project" />
+    <orderEntry type="library" name="bcrypt-0.10.2" level="project" />
   </component>
 </module>

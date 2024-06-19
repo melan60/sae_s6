@@ -5,10 +5,10 @@ public class ArduinoConfig {
     private SerialPort serialPort;
 
     public ArduinoConfig() {
-        this.serialPort = new SerialPort("COM3");
+        this.serialPort = System.getProperty("os.name").equals("Linux") ? new SerialPort("/dev/ttyACM0") : new SerialPort("COM4");
     }
 
-    public void init(){
+    public void init() {
         try {
             serialPort.openPort();
             serialPort.setParams(SerialPort.BAUDRATE_115200,
