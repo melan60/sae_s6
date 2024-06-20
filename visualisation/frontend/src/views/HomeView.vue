@@ -39,7 +39,7 @@
                 Voir tous les graphiques
               </b-dropdown-item>
               <b-dropdown-item v-for="cobaye in filteredCobayeUsers" :key="cobaye._id" @click="selectUser(cobaye)">
-                {{ cobaye.name }} {{ cobaye.firstName }}
+                {{ cobaye.firstName }} {{ cobaye.name }}
               </b-dropdown-item>
             </b-dropdown>
           </div>
