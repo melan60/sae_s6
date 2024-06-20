@@ -170,6 +170,9 @@ class ThreadServer extends Thread {
             ps.println("ERR : " + e);
             return;
         }
+        for(int i = 0; i < results.length; i++) {
+            System.out.println(results[i]);
+        }
         float[] res = checkValuesAddResults(results[0], results[1], results[2]);
         if (res[0] == 1) {
             ps.println("ERR invalid parameters");
