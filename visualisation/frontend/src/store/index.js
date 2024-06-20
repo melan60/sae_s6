@@ -13,6 +13,7 @@ export default new Vuex.Store({
         graphData: null,
         cobayeUsers: [],
         selectedUserDetails: null,
+        averageGraphData: null,
     },
     getters: {
         getUser: state => state.user,
@@ -21,6 +22,7 @@ export default new Vuex.Store({
         getGraphData: state => state.graphData,
         getCobayeUsers: state => state.cobayeUsers,
         getSelectedUserDetails: state => state.selectedUserDetails,
+        getAverageGraphData: state => state.averageGraphData,
     },
     mutations: {
         setUser(state, user) {
@@ -42,18 +44,28 @@ export default new Vuex.Store({
         setSelectedUserDetails(state, userDetails) {
             state.selectedUserDetails = userDetails;
         },
+        setAverageGraphData(state, data) {
+            state.averageGraphData = data;
+        },
         clearUser(state) {
             state.user = null;
             state.isAuthenticated = false;
             state.userId = null;
             state.graphData = null;
             state.selectedUserDetails = null;
+            state.averageGraphData = null;
         },
     },
     actions: {
-        async initializeStore({ dispatch }) {
-            await dispatch('fetchCobayeUsers');
-            await dispatch('fetchAllUserGraphs');
+        async initializeStore({ dispatch, commit }) {
+            const token = localStorage.getItem('token');
+            if (token) {
+                axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+                commit('setAuthentication', true);
+                await dispatch('fetchCurrentUser');
+                await dispatch('fetchCobayeUsers');
+                await dispatch('fetchAllUserGraphs');
+            }
         },
         async login({ commit }, credentials) {
             const response = await axios.post('/api/login', credentials);
@@ -65,6 +77,16 @@ export default new Vuex.Store({
         logout({ commit }) {
             localStorage.removeItem('token');
             commit('clearUser');
+        },
+        async fetchCurrentUser({ commit }) {
+            try {
+                const response = await axios.get('/api/me');
+                commit('setUser', response.data);
+            } catch (error) {
+                console.error('Error fetching current user data:', error);
+                localStorage.removeItem('token');
+                commit('clearUser');
+            }
         },
         async fetchCobayeUsers({ commit }) {
             try {
@@ -97,6 +119,18 @@ export default new Vuex.Store({
         async fetchAllUserGraphs({ state, dispatch }) {
             for (let user of state.cobayeUsers) {
                 await dispatch('fetchUserGraphs', user._id);
+            }
+        },
+        async fetchReactAndExecTime({ commit }) {
+            try {
+                const response = await axios.get('/graphs/time');
+                if (response.data && response.data.data) {
+                    commit('setAverageGraphData', response.data.data);
+                } else {
+                    console.log('No average graph data returned');
+                }
+            } catch (error) {
+                console.error('Error fetching average graph data:', error);
             }
         },
     },

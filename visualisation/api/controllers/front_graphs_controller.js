@@ -24,17 +24,12 @@ const getIndividualData = async (req, res) => {
  */
 const getReactAndExecTime = async (req, res) => {
     try {
-        const user_id = req.query.userId;
-        await services.getReactAndExecTime(user_id, (error, results) => {
-            if (error) {
-                return res.status(500).send({success: 0, data: error});
-            }
-            return res.status(200).send({success: 1, data: results});
-        });
+        const results = await services.getReactAndExecTime();
+        res.status(200).send({ success: 1, data: results });
     } catch (error) {
-        return res.status(500).send({success: 0, data: error});
+        res.status(500).send({ success: 0, data: error.message });
     }
-}
+};
 
 /**
  * Function used to get all stimulis

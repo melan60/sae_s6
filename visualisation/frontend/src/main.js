@@ -38,7 +38,9 @@ axios.interceptors.response.use(response => {
 }, error => {
   if (error.response && error.response.status === 401) {
     store.dispatch('logout'); // Use store directly
-    router.push('/login'); // Use router directly
+    if (router.currentRoute.path !== '/login') {
+      router.push('/login'); // Use router directly
+    }
   }
   return Promise.reject(error);
 });
@@ -48,25 +50,7 @@ new Vue({
   store,
   created() {
     AOS.init();
-
-    const token = localStorage.getItem('token');
-    if (token) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      this.$store.commit('setAuthentication', true);
-
-      axios.get('/api/me') // Fetch current user data from this endpoint
-          .then(response => {
-            this.$store.commit('setUser', response.data);
-            // Fetch graph data after setting the user
-            this.$store.dispatch('fetchUserGraphs');
-          })
-          .catch(error => {
-            console.error('Error fetching current user data:', error);
-            // If the token is invalid, remove it
-            localStorage.removeItem('token');
-            this.$store.commit('clearUser');
-          });
-    }
+    this.$store.dispatch('initializeStore');
   },
   render: h => h(App)
 }).$mount('#app');

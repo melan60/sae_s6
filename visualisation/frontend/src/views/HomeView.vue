@@ -1,18 +1,12 @@
 <template>
   <div>
-    <div id="bg-wrap">
-      <svg viewBox="0 0 100 200" preserveAspectRatio="xMidYMid slice">
-        <!-- SVG content here -->
-      </svg>
-    </div>
-
     <div class="main-content">
       <div v-if="user && user.typeUser === 'cobaye'">
         <div>
           <div class="image-container">
             <b-card
                 overlay
-                img-src="https://media.discordapp.net/attachments/1182622786150207548/1182630027372793866/markus-spiske-XrIfY_4cK1w-unsplash.jpg?ex=66720a4a&is=6670b8ca&hm=9cb385044e81eebcee66e08c8897d143c5bb04991e6f08d6926b923a81da4452&=&format=webp&width=1440&height=317"
+                img-src="https://media.discordapp.net/attachments/1182622786150207548/1182630027372793866/markus-spiske-XrIfY_4cK1w-unsplash.jpg?ex=6674ad4a&is=66735bca&hm=d7f0f33525bd75f0db9f784168cb1f8b022f5519f5992076a15ddbc2fb6ecdbd&=&format=webp&width=881&height=193"
                 text-variant="#2c3e50"
                 class="text-center cardbackground">
               <div class="centered-container">
@@ -83,10 +77,23 @@
           </div>
         </div>
       </div>
-      <div v-else>
-        <p>Vous n'êtes pas connecté</p>
+      <div v-else class="not-connected">
+        <h2>Bienvenue sur notre site !</h2>
+        <p>Veuillez vous connecter pour accéder à votre tableau de bord et voir les résultats de vos tests de réflexes.</p>
+        <b-button class="login-button" @click="$router.push('/login')">Se connecter</b-button>
+        <div class="general-data-overview">
+          <h3>Vue d'ensemble des données</h3>
+          <p class="p">Voici les statistiques générales basées sur les données des utilisateurs :</p>
+
+          <div class="grid-container">
+            <div v-for="(value, index) in averageGraphValues" :key="index" class="graph-container">
+              <GraphBarComponent v-if="index < 3" :data="value" :options="options" />
+              <GraphLineComponent v-else :data="value" :options="options" />
+            </div>
+          </div>
+        </div>
+        </div>
       </div>
-    </div>
   </div>
 </template>
 
@@ -112,13 +119,18 @@ export default {
       selectedUserId: null,
       allGraphValues: {},
       filter: '',
+      averageGraphValues: []
     };
   },
   async created() {
+    // Initialize store to fetch user data and graphs
     await this.$store.dispatch('initializeStore');
     this.interval = setInterval(async () => {
       await this.$store.dispatch('initializeStore');
     }, 3000);
+
+    // Fetch average graph data when component is created
+    await this.fetchAverageGraphs();
   },
   beforeDestroy() {
     clearInterval(this.interval);
@@ -152,7 +164,8 @@ export default {
       return this.selectedUserId ? this.$store.getters.getSelectedUserDetails : null;
     },
     ...mapState({
-      graphData: state => state.graphData
+      graphData: state => state.graphData,
+      averageGraphData: state => state.averageGraphData
     })
   },
   methods: {
@@ -175,6 +188,14 @@ export default {
         await this.$store.dispatch('fetchUserGraphs', user._id);
         const graphData = this.$store.getters.getGraphData;
         this.$set(this.allGraphValues, user._id, graphData ? this.initGraph(graphData) : []);
+      }
+    },
+    async fetchAverageGraphs() {
+      try {
+        await this.$store.dispatch('fetchReactAndExecTime');
+        this.averageGraphValues = this.initGraph(this.averageGraphData);
+      } catch (error) {
+        console.error('Error fetching average graphs:', error);
       }
     },
     initGraph(results) {
@@ -211,5 +232,36 @@ export default {
 }
 </script>
 
-<style scoped>@import '../../public/css/home.css';
+<style scoped>
+@import '../../public/css/home.css';
+
+.not-connected {
+  text-align: center;
+  margin-top: 50px;
+}
+
+.login-button {
+  background-color: #2c3e50;
+  color: white;
+  border: none;
+}
+
+.login-button:hover {
+  background-color: #6bc2e0;
+}
+
+.general-data-overview {
+  margin-top: 30px;
+}
+
+.summary-statistics {
+  margin-top: 20px;
+}
+
+.p {
+  text-align: center;
+  margin: 10px;
+  font-weight: normal;
+  color: #35a9a0;
+}
 </style>

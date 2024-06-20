@@ -17,13 +17,15 @@ const routes = [
     component: LoginView
   },
   {
-    path: '/',
+    path: '/cobaye',
     name: 'cobaye',
+    meta: { requiresAuth: true },
     component: HomeView,
   },
   {
-    path: '/',
+    path: '/admin',
     name: 'admin',
+    meta: { requiresAuth: true },
     component: HomeView,
   },
 ]
@@ -32,4 +34,7 @@ const router = new VueRouter({
   routes,
   mode: 'history'
 })
+
+
+
 export default router

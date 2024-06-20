@@ -99,7 +99,6 @@ const makeAnAverage = (results) => {
                     result[index].data = result[index].data.map(value => value / result.first.length[0]);
                 }
                 else{
-                    console.log("dans le else ---------------------------")
                     result[index].data = result[index].data.map(value => 0);
                 }
                 
@@ -122,47 +121,49 @@ const makeAnAverage = (results) => {
  * @param {function(error: Error, result: any)} callback
  * @return {Promise}
  */
-const getReactAndExecTime = async (callback) => {
-    const experiences = await Experience.find().exec();
-    const nameOfAllExperiences = experiences.map(experience => experience.name);
+const getReactAndExecTime = async () => {
+    try {
+        const experiences = await Experience.find().exec();
+        const nameOfAllExperiences = experiences.map(experience => experience.name);
 
-    const configurations = configureGraphs(nameOfAllExperiences);
-    const results = initializeTables(configurations);
+        const configurations = configureGraphs(nameOfAllExperiences);
+        const results = initializeTables(configurations);
 
-    User.find()
-        .exec()
-        .then(users => {
-            var compteurByAge = [0,0,0,0];
-            var compteurByGender = [0,0];
-            users.forEach(user => {
-                var index_1 = variables.age_category.indexOf(user.age) // getCategoryAge(user.age);
-                var index_2 = results[1].labels.indexOf(user.gender);
-                // TODO améliorer pour + d'évolutivité
-                user.results.forEach((result, index) => {
-                    compteurByAge[index_1]+=1;
-                    compteurByGender[index_2]+=1;
-                    results[0].data[index_1] += result.reactTime;
-                    results[1].data[index_2] += result.reactTime;
+        const users = await User.find().exec();
+        const compteurByAge = [0, 0, 0, 0];
+        const compteurByGender = [0, 0];
 
-                    results[2].data[index] += result.error;
+        users.forEach(user => {
+            const index_1 = variables.age_category.indexOf(user.age);
+            const index_2 = results[1].labels.indexOf(user.gender);
 
-                    results[3].first.data[index] += result.execTime;
-                    results[3].second.data[index] += result.reactTime;
-                });
+            user.results.forEach((result, index) => {
+                compteurByAge[index_1] += 1;
+                compteurByGender[index_2] += 1;
+                results[0].data[index_1] += result.reactTime;
+                results[1].data[index_2] += result.reactTime;
+
+                results[2].data[index] += result.error;
+
+                results[3].first.data[index] += result.execTime;
+                results[3].second.data[index] += result.reactTime;
             });
-            results[0].length = compteurByAge;
-            results[1].length = compteurByGender;
-            results[2].length = [users.length];
-            results[3].first.length = [users.length];
-            results[3].second.length = [users.length];
-            makeAnAverage(results);
-            return callback(null, results);
-        })
-        .catch(e => {
-            return callback(e)
-        }); // TODO message err ou juste e
-}
+        });
 
+        results[0].length = compteurByAge;
+        results[1].length = compteurByGender;
+        results[2].length = [users.length];
+        results[3].first.length = [users.length];
+        results[3].second.length = [users.length];
+
+        makeAnAverage(results);
+
+        return results;
+    } catch (error) {
+        console.error("Error fetching react and exec time:", error);
+        throw new Error(error.message);
+    }
+};
 // ============================================================================
 /**
  * function to get all stimulis

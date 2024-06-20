@@ -40,13 +40,11 @@ export default {
   methods: {
     ...mapActions(['logout']),
     async logout() {
-      // Dispatch the Vuex logout action
       await this.$store.dispatch('logout');
-      // Clear any additional user data stored locally, e.g., tokens
       localStorage.removeItem('token');
-      // Redirect the user to the home page
-      await this.$router.push('/');
-      this.$router.go();
+      if (this.$route.path !== '/login') {
+        await this.$router.push('/login');
+      }
     },
   },
   data() {
