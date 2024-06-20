@@ -201,22 +201,22 @@ void verifieLeBtnClique2(int number, int nb1, int nb2, int nb3) {
 
     if (aBtnIsHigh()) {
       if (btnIsHigh(defaultBtnPin) && number == nb1 || btnIsHigh(redBtnPin) && number == nb2 || btnIsHigh(yellowBtnPin) && number == nb3) {  // TODO
-        Serial.println("Réussite");
+
       } else {
         errors += 1;
       }
       execTime += stopChronometer() - reactTimeIteration;
-      Serial.print("execTime : ");
-      Serial.println(execTime);
+      tm1637.clearDisplay();
     }
   }
 }
 
 void experience3() {
+  wait();
   int number = random(1, 4);  // TODO
   afficherUnNombreALEcran(number);
   startChronometer();
-  verifieLeBtnClique2(number, 1, 1 + 1, 1 + 2);
+  verifieLeBtnClique2(number, 1, 2, 3);
 }
 
 
@@ -229,8 +229,6 @@ void verifieCobayeCliqueBtnDefaut() {
     if (digitalRead(defaultBtnPin) == HIGH) {
       noTone(buzzerPin);
       execTime += stopChronometer() - reactTimeIteration;
-      Serial.print("execTime : ");
-      Serial.println(execTime);
     }
   }
 }

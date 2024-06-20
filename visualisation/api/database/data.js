@@ -18,7 +18,7 @@ const experiences = [
         distraction: "",
     },
     {
-        name: "Vitesse du son ",
+        name: "Vitesse du son",
         numero: 4,
         typeStimulus: "Sonore",
         distraction: "",
@@ -26,6 +26,11 @@ const experiences = [
         name: "Chaise musicale",
         numero: 5,
         typeStimulus: "Sonore",
+        distraction: "",
+    }, {
+        name: "Mimétisme",
+        numero: 6,
+        typeStimulus: "Visuel",
         distraction: "",
     }
 ];

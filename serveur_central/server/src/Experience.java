@@ -11,7 +11,8 @@ public class Experience {
     private List<ObjectId> modules;
 
     // Necessary to decode the class using a POJO (MongoDriver)
-    public Experience() {}
+    public Experience() {
+    }
 
     public Experience(ObjectId id, String name, String typeStimulus, String distraction, int numero, List<ObjectId> modules) {
         this._id = id;

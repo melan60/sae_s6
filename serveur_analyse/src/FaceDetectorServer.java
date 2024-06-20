@@ -3,6 +3,8 @@ import java.net.*;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
+import java.time.Duration;
+import java.time.LocalTime;
 
 import javax.imageio.ImageIO;
 
@@ -35,9 +37,9 @@ public class FaceDetectorServer {
 
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 
-//        String addrMainServer = args[1];
-//        int portMainServer = Integer.parseInt(args[2]);
-//        PrintStream psMainServer = connectToMainServer(addrMainServer, portMainServer);
+        String addrMainServer = args[1];
+        int portMainServer = Integer.parseInt(args[2]);
+        PrintStream psMainServer = connectToMainServer(addrMainServer, portMainServer);
 
         try {
             while (true) {
@@ -45,16 +47,19 @@ public class FaceDetectorServer {
 
                 inputStream = socketClient.getInputStream();
 
-                getTime(inputStream);
-                Mat image = getImageFromMobile(inputStream);
+                String start_time = getTime(inputStream);
+                String stop_time = getTime(inputStream);
+                long execTime = calculateExecTime(start_time, stop_time);
 
+                Mat image = getImageFromMobile(inputStream);
                 Imgcodecs.imwrite("Images/output.jpg", image);
-                imageAnalyse(image);
+                int direction = imageAnalyse(image);
 
                 inputStream.close();
                 socketClient.close();
 
-//                sendToMainServer(psMainServer, "TODO");
+                sendToMainServer(psMainServer, "analyse");
+                sendToMainServer(psMainServer, String.valueOf(execTime) + " " + String.valueOf(direction));
             }
         } catch (IOException | NullPointerException e) {
             System.err.println(e.getMessage());
@@ -65,22 +70,33 @@ public class FaceDetectorServer {
     private static String getTime(InputStream inputStream) throws IOException {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         int size = inputStream.read();
-        byte[] time = new byte[size + 1];
+        byte[] tabTime = new byte[size + 1];
         int nRead;
 
-        if ((nRead = inputStream.read(time, 0, size + 1)) != -1) {
-            buffer.write(time, 0, nRead);
+        if ((nRead = inputStream.read(tabTime, 0, size + 1)) != -1) {
+            buffer.write(tabTime, 0, nRead);
         }
 
-        String endTime = "";
+        String time = "";
         for (int i = 0; i < size; i++) {
-            endTime += Character.toString(time[i]);
+            time += Character.toString(tabTime[i]);
         }
-
-        System.out.println(endTime);
 
         buffer.close();
-        return endTime;
+        return time;
+    }
+
+    private static long calculateExecTime(String start_time, String stop_time) {
+        LocalTime startTime = LocalTime.parse(start_time);
+        LocalTime endTime = LocalTime.parse(stop_time);
+
+        Duration duration = Duration.between(startTime, endTime);
+
+        long execTime = duration.getSeconds();
+
+        System.out.println("Temps d'exécution : " + execTime);
+
+        return execTime;
     }
 
     private static Mat getImageFromMobile(InputStream inputStream) throws IOException, NullPointerException {
@@ -100,7 +116,7 @@ public class FaceDetectorServer {
         return image;
     }
 
-    private static void imageAnalyse(Mat image) {
+    private static int imageAnalyse(Mat image) {
         Mat grayFrame = new Mat();
         Imgproc.cvtColor(image, grayFrame, Imgproc.COLOR_BGR2GRAY); //convert to gray scale
         Imgproc.equalizeHist(grayFrame, grayFrame); //improve contrast for better result
@@ -123,9 +139,11 @@ public class FaceDetectorServer {
         Rect[] faceArray = faces.toArray();
         if (faceArray.length == 1) {
             System.out.println("Les participants ne regardent pas dans la même direction.");
-        } else {
-            System.out.println("Les participants regardent dans la même direction.");
+            return 1;
         }
+
+        System.out.println("Les participants regardent dans la même direction.");
+        return 0;
     }
 
     private static PrintStream connectToMainServer(String addrMainServer, int portMainServer) {
@@ -134,7 +152,6 @@ public class FaceDetectorServer {
         try {
             socketMainServer = new Socket(addrMainServer, portMainServer);
             psMainServer = new PrintStream(socketMainServer.getOutputStream()); // création flux écriture lignes de texte
-            psMainServer.println("analyse");
         } catch (Exception e) {
             System.err.println("ERR connection with main server : " + e.getMessage());
             System.exit(1);

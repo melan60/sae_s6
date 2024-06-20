@@ -1,4 +1,5 @@
 import org.bson.types.*;
+
 import java.util.List;
 
 public class Module {
@@ -8,7 +9,8 @@ public class Module {
     private String uc;
     private String description;
 
-    public Module() {}
+    public Module() {
+    }
 
     public Module(String name, String uc, String description) {
         this.name = name;
