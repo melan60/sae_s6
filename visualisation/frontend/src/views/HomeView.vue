@@ -92,8 +92,8 @@
             </div>
           </div>
         </div>
-        </div>
       </div>
+    </div>
   </div>
 </template>
 
@@ -114,6 +114,7 @@ export default {
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        animation: false, // Disable animation
       },
       pictureHome: pictureHome,
       selectedUserId: null,
@@ -122,18 +123,31 @@ export default {
       averageGraphValues: []
     };
   },
-  async created() {
-    // Initialize store to fetch user data and graphs
-    await this.$store.dispatch('initializeStore');
-    this.interval = setInterval(async () => {
-      await this.$store.dispatch('initializeStore');
-    }, 3000);
+  async beforeRouteEnter(to, from, next) {
+    next(async (vm) => {
+      // Initialize store to fetch user data and graphs
+      await vm.$store.dispatch('initializeStore');
+      await vm.fetchAverageGraphs();
 
-    // Fetch average graph data when component is created
-    await this.fetchAverageGraphs();
+      // Set selected user ID from Vuex state
+      if (vm.$store.state.selectedUserId) {
+        vm.selectedUserId = vm.$store.state.selectedUserId;
+        await vm.fetchSelectedUserGraphs();
+      }
+    });
+  },
+  async beforeRouteUpdate(to, from, next) {
+    if (this.$store.state.selectedUserId) {
+      this.selectedUserId = this.$store.state.selectedUserId;
+      await this.fetchSelectedUserGraphs();
+    }
+    next();
+  },
+  mounted() {
+    this.startGraphRefreshInterval();
   },
   beforeDestroy() {
-    clearInterval(this.interval);
+    clearInterval(this.graphRefreshInterval);
   },
   watch: {
     cobayeUsers: {
@@ -169,6 +183,12 @@ export default {
     })
   },
   methods: {
+    startGraphRefreshInterval() {
+      this.graphRefreshInterval = setInterval(async () => {
+        await this.fetchSelectedUserGraphs();
+        await this.fetchAverageGraphs();
+      }, 5000); // Refresh every 5 seconds
+    },
     async fetchSelectedUserGraphs() {
       if (this.selectedUserId) {
         console.log('fetching user graphs for user:', this.selectedUserId);
@@ -178,6 +198,7 @@ export default {
     },
     async selectUser(user) {
       this.selectedUserId = user ? user._id : null;
+      this.$store.commit('setSelectedUserId', this.selectedUserId); // Add this line
       if (!this.selectedUserId) {
         this.$store.commit('setSelectedUserDetails', null);
       }

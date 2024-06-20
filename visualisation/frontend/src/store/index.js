@@ -13,6 +13,7 @@ export default new Vuex.Store({
         graphData: null,
         cobayeUsers: [],
         selectedUserDetails: null,
+        selectedUserId: localStorage.getItem('selectedUserId') || null, // Retrieve selectedUserId from localStorage
         averageGraphData: null,
     },
     getters: {
@@ -23,6 +24,7 @@ export default new Vuex.Store({
         getCobayeUsers: state => state.cobayeUsers,
         getSelectedUserDetails: state => state.selectedUserDetails,
         getAverageGraphData: state => state.averageGraphData,
+        getSelectedUserId: state => state.selectedUserId,
     },
     mutations: {
         setUser(state, user) {
@@ -44,6 +46,10 @@ export default new Vuex.Store({
         setSelectedUserDetails(state, userDetails) {
             state.selectedUserDetails = userDetails;
         },
+        setSelectedUserId(state, userId) {
+            state.selectedUserId = userId;
+            localStorage.setItem('selectedUserId', userId);
+        },
         setAverageGraphData(state, data) {
             state.averageGraphData = data;
         },
@@ -53,18 +59,25 @@ export default new Vuex.Store({
             state.userId = null;
             state.graphData = null;
             state.selectedUserDetails = null;
+            state.selectedUserId = null;
+            localStorage.removeItem('selectedUserId'); // Clear selectedUserId from localStorage
             state.averageGraphData = null;
         },
     },
     actions: {
-        async initializeStore({ dispatch, commit }) {
+        async initializeStore({ dispatch, commit, state }) {
             const token = localStorage.getItem('token');
             if (token) {
                 axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
                 commit('setAuthentication', true);
                 await dispatch('fetchCurrentUser');
                 await dispatch('fetchCobayeUsers');
-                await dispatch('fetchAllUserGraphs');
+                if (state.selectedUserId) {
+                    await dispatch('fetchSelectedUserDetails', state.selectedUserId);
+                    await dispatch('fetchUserGraphs', state.selectedUserId);
+                } else {
+                    await dispatch('fetchAllUserGraphs');
+                }
             }
         },
         async login({ commit }, credentials) {
