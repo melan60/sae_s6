@@ -64,7 +64,7 @@ router.post("/add", controller.createUser);
  *    post:
  *      tags:
  *        - USERS
- *      description: Create new result with specified properties to insert the result into a specific user.
+ *      description: Create new result with specified properties to insert the result into a specific user. If the result already exists, it will be updated.
  *      parameters:
  *        - in: body
  *          name: result

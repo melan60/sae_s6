@@ -28,7 +28,7 @@ const createUser = async (user, callback) => {
                 results: [],
             })
                 .then((user_created) => {
-                    return callback(null, user_created);
+                    return callback(null, errors.already_registered);
                 })
                 .catch((e) => {
                     console.log(e);
@@ -48,27 +48,74 @@ const createUser = async (user, callback) => {
  * @return {Promise}
  */
 const addResult = async (result, user, callback) => {
-    Result.create({
-        experience: result.experience,
-        reactTime: result.reactTime,
-        execTime: result.execTime,
-        error: result.error,
-    })
-        .then((res) => {
-            User.findOne({email: user.email})
-                .exec()
-                .then((u) => {
-                    if (!u) {
-                        return callback(errors.not_found);
-                    }
+    User.findOne({email: user.email}).exec()
+        .then((u) => {
+            if (!u) {
+                return callback(errors.not_found);
+            }
+
+            // Vérifier si un résultat pour cette expérience existe déjà
+            const existIndex = u.results.findIndex((r) => r.experience == result.experience);
+            
+            if(existIndex !== -1) {
+                // Mettre à jour le résultat existant
+                Result.findByIdAndUpdate(
+                    u.results[existIndex]._id,
+                    {
+                        reactTime: result.reactTime,
+                        execTime: result.execTime,
+                        error: result.error
+                    },
+                    {new: true}
+                ).then(updated => {
+                    u.results[existIndex] = updated;
+                    u.save();
+                    return callback(null, updated);
+                }).catch(e => {
+                    return callback(e);
+                });
+            } else {
+                // Créer un nouveau résultat
+                Result.create({
+                    experience: result.experience,
+                    reactTime: result.reactTime,
+                    execTime: result.execTime,
+                    error: result.error
+                }).then((res) => {
                     u.results.push(res);
                     u.save();
                     return callback(null, res);
+                }).catch(e => {
+                    return callback(e);
                 });
-        })
-        .catch((e) => {
+            }
+        }).catch(e => {
             return callback(e);
         });
+
+    // Result.findOneAndUpdate(
+    //     {experience: result.experience, user: user.email},
+    //     {
+    //         experience: result.experience,
+    //         reactTime: result.reactTime,
+    //         execTime: result.execTime,
+    //         error: result.error,
+    //     })
+    //     .then((res) => {
+    //         User.findOne({email: user.email})
+    //             .exec()
+    //             .then((u) => {
+    //                 if (!u) {
+    //                     return callback(errors.not_found);
+    //                 }
+    //                 u.results.push(res);
+    //                 u.save();
+    //                 return callback(null, res);
+    //             });
+    //     })
+    //     .catch((e) => {
+    //         return callback(e);
+    //     });
 };
 
 /**

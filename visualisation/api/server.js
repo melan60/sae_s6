@@ -49,6 +49,10 @@ const swaggerOption = {
 
 const swaggerDocs = swaggerJsdoc(swaggerOption);
 server.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerDocs));
+// Redirect to swagger doc
+server.get("/", (req, res) => {
+    res.redirect("/api-docs");
+});
 
 // redirections de chaques routes vers les routers appropriés
 server.use("/api", routes_auth);
