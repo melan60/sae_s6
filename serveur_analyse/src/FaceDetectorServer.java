@@ -23,7 +23,7 @@ public class FaceDetectorServer {
         Socket socketClient;
 
         if (args.length != 3) {
-            System.err.println("ERR usage");
+            System.err.println("ERR usage : portMobile (8000) localhost portServerCentral");
             System.exit(1);
         }
 

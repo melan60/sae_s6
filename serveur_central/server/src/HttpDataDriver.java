@@ -87,7 +87,7 @@ public class HttpDataDriver implements DataDriver {
         return doc;
     }
 
-    // TODO supprimer plus tard
+
     public synchronized User getUser() {
         return new User();
     }

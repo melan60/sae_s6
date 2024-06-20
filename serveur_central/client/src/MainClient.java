@@ -18,9 +18,8 @@ class MainClient  {
 		ps = new PrintStream(sock.getOutputStream());
 	}
 
-	// TODO supprimer cette méthode
 	public void devLoop() {
-		System.out.println("ENTERING DEV LOOP, TO DELETE LATER");
+		System.out.println("ENTERING DEV LOOP");
 		String req = "";
 		boolean stop = false;
 

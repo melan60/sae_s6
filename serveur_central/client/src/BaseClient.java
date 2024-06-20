@@ -15,8 +15,8 @@ class BaseClient {
       String serverAddr = args[0];
       int port = Integer.parseInt(args[1]);
       client = new MainClient(serverAddr,port);
-//      client.mainLoop();
-      client.devLoop();
+      client.mainLoop();
+//      client.devLoop();
     }
     catch(IOException e) {
       System.out.println("cannot connect to server : "+e.getMessage());
