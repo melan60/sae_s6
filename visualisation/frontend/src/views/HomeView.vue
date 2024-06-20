@@ -20,7 +20,7 @@
             </b-card>
             <div class="grid-container">
               <div v-for="(value, index) in graphValues" :key="index" class="graph-container">
-                <GraphBarComponent v-if="index < 3" :data="value" :options="options" />
+                <GraphBarComponent v-if="index < 4" :data="value" :options="options" />
                 <GraphLineComponent v-else :data="value" :is="options" />
               </div>
             </div>
@@ -62,7 +62,7 @@
             <h3 class="mt-4">{{ cobaye.firstName }} {{ cobaye.name }}</h3>
             <div class="grid-container">
               <div v-for="(value, index) in allGraphValues[cobaye._id]" :key="index" class="graph-container">
-                <GraphBarComponent v-if="index < 3" :data="value" :options="options" />
+                <GraphBarComponent v-if="index < 4" :data="value" :options="options" />
                 <GraphLineComponent v-else :data="value" :options="options" />
               </div>
             </div>
@@ -71,7 +71,7 @@
         <div v-else-if="selectedUserDetails">
           <div class="grid-container">
             <div v-for="(value, index) in graphValues" :key="index" class="graph-container">
-              <GraphBarComponent v-if="index < 3" :data="value" :options="options" />
+              <GraphBarComponent v-if="index < 4" :data="value" :options="options" />
               <GraphLineComponent v-else :data="value" :options="options" />
             </div>
           </div>
@@ -87,7 +87,7 @@
 
           <div class="grid-container">
             <div v-for="(value, index) in averageGraphValues" :key="index" class="graph-container">
-              <GraphBarComponent v-if="index < 3" :data="value" :options="options" />
+              <GraphBarComponent v-if="index < 4" :data="value" :options="options" />
               <GraphLineComponent v-else :data="value" :options="options" />
             </div>
           </div>
