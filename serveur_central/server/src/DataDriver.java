@@ -7,5 +7,5 @@ public interface DataDriver {
     String addUser(User user);
     String addResults(String idExp, float reactTime, float execTime, int nbErrors, User user);
     int getLastExperience();
-    User getUser(); // TODO supprimer
+    User getUser(String mail);
 }

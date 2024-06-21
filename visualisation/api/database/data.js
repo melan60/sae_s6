@@ -23,13 +23,8 @@ const experiences = [
         typeStimulus: "Sonore",
         distraction: "",
     }, {
-        name: "Chaise musicale",
-        numero: 5,
-        typeStimulus: "Sonore",
-        distraction: "",
-    }, {
         name: "Mimétisme",
-        numero: 6,
+        numero: 5,
         typeStimulus: "Visuel",
         distraction: "",
     }
