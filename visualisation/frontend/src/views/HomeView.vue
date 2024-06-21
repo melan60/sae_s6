@@ -21,7 +21,7 @@
             <div class="grid-container">
               <div v-for="(value, index) in graphValues" :key="index" class="graph-container">
                 <GraphBarComponent v-if="index < 4" :data="value" :options="options" />
-                <GraphLineComponent v-else :data="value" :is="options" />
+                <GraphLineComponent v-else :data="value" :options="options" />
               </div>
             </div>
           </div>
@@ -144,15 +144,21 @@ export default {
     next();
   },
   mounted() {
-    this.startGraphRefreshInterval();
+    this.startDataRefreshInterval();
   },
   beforeDestroy() {
-    clearInterval(this.graphRefreshInterval);
+    clearInterval(this.dataRefreshInterval);
   },
   watch: {
     cobayeUsers: {
       handler() {
         this.fetchAllUserGraphs();
+      },
+      immediate: true,
+    },
+    selectedUserId: {
+      handler() {
+        this.fetchSelectedUserGraphs();
       },
       immediate: true,
     },
@@ -183,11 +189,12 @@ export default {
     })
   },
   methods: {
-    startGraphRefreshInterval() {
-      this.graphRefreshInterval = setInterval(async () => {
+    startDataRefreshInterval() {
+      this.dataRefreshInterval = setInterval(async () => {
+        await this.$store.dispatch('fetchCobayeUsers');
         await this.fetchSelectedUserGraphs();
         await this.fetchAverageGraphs();
-      }, 5000); // Refresh every 5 seconds
+      }, 3000); // Refresh every 3 seconds
     },
     async fetchSelectedUserGraphs() {
       if (this.selectedUserId) {
@@ -198,7 +205,7 @@ export default {
     },
     async selectUser(user) {
       this.selectedUserId = user ? user._id : null;
-      this.$store.commit('setSelectedUserId', this.selectedUserId); // Add this line
+      this.$store.commit('setSelectedUserId', this.selectedUserId);
       if (!this.selectedUserId) {
         this.$store.commit('setSelectedUserDetails', null);
       }
