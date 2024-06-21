@@ -5,7 +5,7 @@ Ce projet, développé dans le cadre universitaire, est une application multi-ar
 **Plus d'instructions [ici](https://cours-info.iut-bm.univ-fcomte.fr/index.php/menu-lpsil/sae-dev-appli-avec-bdd/2505-presentation-de-la-sae)**
 
 ## Application mobile
-Cette application permet aux utilisateurs de prendre des photos de deux individus et de les envoyer au serveur d'analyse.
+Cette application permet aux utilisateurs de capturer des photos afin d’analyser si une personne tourne la tête dans la même direction ou non. La photo prise par l’application est analysée à l'aide de la reconnaissance faciale. L'application utilise la bibliothèque CameraX d'Android pour accéder à la caméra du dispositif.
 
 Pour accéder à ce serveur, il est essentiel de modifier les paramètres de connexion (adresse et port). De plus, le serveur et le téléphone doivent être sur le même réseau.
 
@@ -180,7 +180,7 @@ Veuillez changer le port dans le fichier `src/server/ArduinoConfig` à la ligne 
 - Sélectionner le dossier `SAE_S5/serveur_analyse/lib`
 
 4. Modifier la configuration du lanceur :
- <img src="./doc/img/confog_lanceur_server_analyse.png" alt="configuration du lanceur pour serveur analyse"/>
+ <img src="./doc/img/confog_lanceur_serveur_analyse.png" alt="configuration du lanceur pour serveur analyse"/>
 
 ### Mobile
 1. Ouvrir `SAE_S5/ReactiPop` avec Android Studio
