@@ -80,8 +80,8 @@ public class MongoDataDriver implements DataDriver {
         return experience.getNumero();
     }
 
-    public synchronized User getUser(){
-        return users.find(eq("name", "Patel")).first();
+    public synchronized User getUser(String mail){
+        return users.find(eq("email", mail)).first();
     }
 
     /**
@@ -121,7 +121,6 @@ public class MongoDataDriver implements DataDriver {
         Experience experience = experiences.find(eq("numero", num)).first();
         // Création d'un ID unique pour le nouveau résultat
         ObjectId _id = generateUniqueKey("result");
-        System.out.println("new generated ID : " + _id.toString());
         Result newResult = new Result(_id, experience.getId(), reactTime, execTime, nbErrors);
 
         User findedUser = users.find(eq("email", user.getEmail())).first();
@@ -145,16 +144,12 @@ public class MongoDataDriver implements DataDriver {
                     Updates.set("error", nbErrors)
             );
             results.updateOne(Filters.eq("_id", existingResult.getId()), updateResult);
-            System.out.println("ID current result : " + existingResult.getId());
             newResult.setId(existingResult.getId());
 
             // Mettre à jour la liste des résultats de l'utilisateur
             Bson updateUserResults = Updates.set("results.$[elem]", newResult);
-            System.out.println(updateUserResults);
             Bson arrayFilter = Filters.eq("elem._id", existingResult.getId());
-            System.out.println(arrayFilter);
             UpdateOptions updateOptions = new UpdateOptions().arrayFilters(Arrays.asList(arrayFilter));
-            System.out.println(updateOptions);
             UpdateResult updateRes = users.updateOne(Filters.eq("_id", findedUser.getId()), updateUserResults, updateOptions);
         } else {
             // Insérer un nouveau résultat

@@ -88,7 +88,8 @@ public class HttpDataDriver implements DataDriver {
     }
 
 
-    public synchronized User getUser() {
+    // TODO
+    public synchronized User getUser(String mail) {
         return new User();
     }
 

@@ -40,6 +40,7 @@ public class FaceDetectorServer {
         String addrMainServer = args[1];
         int portMainServer = Integer.parseInt(args[2]);
         PrintStream psMainServer = connectToMainServer(addrMainServer, portMainServer);
+        BufferedReader consoleIn = new BufferedReader(new InputStreamReader(System.in));
 
         try {
             while (true) {
@@ -55,11 +56,16 @@ public class FaceDetectorServer {
                 Imgcodecs.imwrite("Images/output.jpg", image);
                 int direction = imageAnalyse(image);
 
+                System.out.print("Veuillez saisir le mail du cobaye concerné : ");
+                String email = consoleIn.readLine();
+
                 inputStream.close();
                 socketClient.close();
+                consoleIn.close();
 
                 sendToMainServer(psMainServer, "analyse");
                 sendToMainServer(psMainServer, String.valueOf(execTime) + " " + String.valueOf(direction));
+                sendToMainServer(psMainServer, email);
             }
         } catch (IOException | NullPointerException e) {
             System.err.println(e.getMessage());

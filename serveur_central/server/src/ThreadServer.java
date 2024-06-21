@@ -39,7 +39,6 @@ class ThreadServer extends Thread {
         try {
             String clientType = br.readLine();
             lastExpNumero = exchanger.getMongoDriver().getLastExperience()-1;
-            this.currentUser = exchanger.getMongoDriver().getUser();
             if (clientType.equals("analyse")) {
                 analyseLoop();
             } else {
@@ -62,7 +61,11 @@ class ThreadServer extends Thread {
 
             int execTime = Integer.parseInt(response[0]);
             int direction = Integer.parseInt(response[1]);
-            System.out.println("Temps d'exécution : " + execTime + " " + "direction : " + direction);
+            System.out.println("Temps d'exécution : " + execTime + " " + ", direction : " + (direction == 0 ? "Identique" : "Différente"));
+
+            System.out.println("Récupération de l'email");
+            String mail = br.readLine();
+            this.currentUser = exchanger.getMongoDriver().getUser(mail);
 //            String responseBDD = exchanger.getHttpDriver().addResults(String.valueOf(lastExpNumero+1), 0, execTime, direction, currentUser);
             String responseBDD = exchanger.getMongoDriver().addResults(String.valueOf(lastExpNumero+1), 0, execTime, direction, currentUser);
             ps.println(responseBDD);
@@ -79,6 +82,7 @@ class ThreadServer extends Thread {
         System.out.println("ENTERING DEV LOOP");
         String req;
         int numExp;
+        this.currentUser = exchanger.getMongoDriver().getUser("patelaiden@gmail.com");
         System.out.println(currentUser);
         try {
             while (true) {
