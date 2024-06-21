@@ -180,7 +180,7 @@ Veuillez changer le port dans le fichier `src/server/ArduinoConfig` à la ligne 
 - Sélectionner le dossier `SAE_S5/serveur_analyse/lib`
 
 4. Modifier la configuration du lanceur :
- <img src="./doc/img/config_lanceur_server_analyse.png" alt="configuration du lanceur pour serveur analyse"/>
+ <img src="./doc/img/confog_lanceur_server_analyse.png" alt="configuration du lanceur pour serveur analyse"/>
 
 ### Mobile
 1. Ouvrir `SAE_S5/ReactiPop` avec Android Studio
