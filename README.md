@@ -52,23 +52,25 @@ Les parties représentées dans le cadre gris sont conteneurisées.
 ## Configuration et installation
 Vous devez suivre les étapes de configuration et d'installation dans l'ordre suivant.
 
-# Base de données
+
+### Base de données
 Activer le service mongoDB (pour linux) :
 ```shell
 sudo systemctl start mongod
 ``` 
 
-# API
+
+### API
 Voici comment démarrer cette partie l’application :
 
-1. Ouvrir le projet dans vscode : `SAE_S5/visualisation/api
+1. Ouvrir le projet dans vscode : SAE_S5/visualisation/api
 
 2. Ouvrir un terminal et installer les modules : 
 ```shell
 npm i
-``
+```
 
-3. Créer un .env dans SAE_S5/visualisation/api:
+3. Créer un .env dans `SAE_S5/visualisation/api`:
 ```shell
 ACCESS_TOKEN_SECRET = [votre token]
 DATABASE_NAME = [nom de la database]
@@ -78,10 +80,10 @@ PORT_SERVER = 5000
 ```shell
 npm start
 ```
-5. Vérifier que l'API tourne en accédant à la swagger : http://localhost:5000/api-docs/
+5. Vérifier que l'API tourne en accédant à la swagger : http://localhost:5000/
 
 
-# Frontend
+### Frontend
 Voici comment démarrer cette partie l’application :
 1. Ouvrir un terminal à la racine du projet et se diriger dans le répertoire frontend.
 ```shell
@@ -100,72 +102,92 @@ npm run serve
 
 4. Ouvrir le navigateur et allez dans http://localhost:8080
 
-# Arduino
+
+### Arduino
 1. Ajouter la librairie `grove_4-digit_display` 
-    Télécharger au lien suivant : https://www.arduino.cc/reference/en/libraries/tm1637/ 
-    Créer un dossier contenant les librairies
-    Fichier > préférence 
-    Dans la champ localisasion du croquis mettre le chemin du dossier contenant le librairies d'Arduino
-    Déplacer les librairies grove dans le dossier
-2.Configurations dans l'IDE
-    Sélectionner la carte ESP32 Dev Module
-    Sélectionner le port : 
-    - Linux:  `/dev/ttyACM0` (à adapter en fonction du port sur lequel est branché l'arduino)
-    - Window: `COM1` (à adapter en fonction du port sur lequel est branché l'arduino)
-    Dans l'onglet gestionnaire de carte à gauche avoir d'installé: 
-    - Arduino AVR boards version 1.8.6 
-    - ESP32 par Espressif system version 2.0.14
-    Téléverser
-    Mettre le niveau de baud : 115200
+    
+    - Télécharger au lien suivant : https://www.arduino.cc/reference/en/libraries/tm1637/ 
+    
+    - Créer un dossier contenant les librairies :
+    - Fichier > préférence 
+    - Dans la champ localisasion du croquis mettre le chemin du dossier contenant le librairies d'Arduino
+    - Déplacer les librairies téléchargées dans le dossier
+    
+2. Configurations dans l'IDE
+    - Sélectionner la carte ESP32 Dev Module
+    - Sélectionner le port : 
+        - Linux:  `/dev/ttyACM0` (à adapter en fonction du port sur lequel est branché l'arduino)
+        - Window: `COM1` (à adapter en fonction du port sur lequel est branché l'arduino)
+    - Dans l'onglet gestionnaire de carte à gauche avoir d'installé: 
+        - Arduino AVR boards version 1.8.6 
+        - ESP32 par Espressif system version 2.0.14
+    - Mettre le niveau de baud à 115200
+    - Téléverser
 
-# Serveur central
-1. Ouvrir le dossier SAE_S5/server_central dans l'IDE Intellij IDEA
 
-. Créer un .env dans SAE_S5/server_central :
+### Serveur central
+1. Ouvrir le dossier `SAE_S5/serveur_central` dans l'IDE Intellij IDEA
+
+. Créer un `.env` dans `SAE_S5/serveur_central`:
 ```shell
-DATABASE_NAME = [nom de la database identique que pour l'API]
+DATABASE_NAME = [nom de database identique que pour API]
 PORT_API = 5000
 ```
-2.Configurations dans l'IDE
-    Sélectionner le SDK :
-    - File > project structure
-    - Sélectionner le SDK : corretto 17
+2. Configurations dans l'IDE
+    - Sélectionner le SDK :
+        - File > project structure
+        - Sélectionner le SDK : corretto 17
 
-    Sélectionner le niveau de langage :
-    - File > project structure
-    - Language level : default
+    - Sélectionner le niveau de langage :
+        - File > project structure
+        - Language level : default
 
-    Ajouter les modules server et client :
-    - File > project structure > Module
-    - Cliquer sur le + > New module > Java
-    - Resnseigner name : server (resp client)
-    -  Sélctionner le dossier sae_s5/serveur_central/server (resp sae_s5/serveur_central/client)
-    - Cliquer sur advanced setting
-    - Vérifier le chemin dans content root : sae_s5/serveur_central/client (resp sae_s5/serveur_central/client)
+    - Ajouter les modules server et client :
+        - File > project structure > Module
+        - Cliquer sur le + > New module > Java
+        - Resnseigner name : server (resp client)
+        -  Sélctionner le dossier sae_s5/serveur_central/server (resp sae_s5/serveur_central/client)
+        - Cliquer sur advanced setting
+        - Vérifier le chemin dans content root : sae_s5/serveur_central/client (resp sae_s5/serveur_central/client)
 
-    Ajouter les librairies
-    - File > project structure > Libraries
-    - Cliquer sur le + 
-    - Sélctionner le dossier sae_s5/serveur_central/lib
-    - Ajouter les lib aux modules client et server
+    - Ajouter les librairies
+        - File > project structure > Libraries
+        - Cliquer sur le + 
+        - Sélctionner le dossier sae_s5/serveur_central/lib
+        - Ajouter les lib aux modules client et server
 
-    Modifier la configuration du lanceur pour le server comme dans l'image
+    - Modifier la configuration du lanceur pour le server comme dans l'image
     - <img src="./doc/img/config_lanceur_server.png" alt="configuration du lanceur"/>
 
-    Modifier la configuration du lanceur pour le client comme dans l'image
+    - Modifier la configuration du lanceur pour le client comme dans l'image
     - <img src="./doc/img/config_lanceur_client.png" alt="configuration du lanceur"/>
 
 3. Si vous rencontrez l'erreur : 
 ```shell
 Error opening the serial port: jssc.SerialPortException: Port name - COM; Method name - openPort(); Exception type - Port not found. 
 ```
-Veuillez changer le port dans le fichier src/server/ArduinoConfig à la ligne 8
+Veuillez changer le port dans le fichier `src/server/ArduinoConfig` à la ligne 8
 
 4. Brancher le micro-contrôleur en USB au PC, lancer le server, puis le client via l'IDE, l'expérience est prête à débuter.
 
-# Mobile
-# Serveur d'analyse
-## Docker
+### Serveur d'analyse
+1. Ouvrir le dossier `SAE_S5/serveur_analyse` dans l'IDE Intellij IDEA
+
+2. Documentation openCV 480 : https://opencv.org/releases/  
+
+3. Ajouter la librairie :
+- Project structure > Libraries >`cliquer sur +
+- Sélectionner le dossier `SAE_S5/serveur_analyse/lib`
+
+4. Modifier la configuration du lanceur :
+ <img src="./doc/img/config_lanceur_server_analyse.png" alt="configuration du lanceur pour serveur analyse"/>
+
+### Mobile
+1. Ouvrir `SAE_S5/ReactiPop` avec Android Studio
+2. Connecter le téléphone et l'ordinateur sur le même réseau wifi
+3. Dans le fichier `ReactiPop/app/src/main/java/com/example/reactipop/NewActivity.tk `modifier la ligne 46 en reseignant l’adresse IP du`correspondant au Wifi sur lequel les appareils sont connectés
+
+### Docker
 
 Pour utiliser Docker dans l'environnement de développement il suffit d'exécuter les commandes suivantes :
 1. Lancer le fichier "docker-compose.yml" qui contient la configuration de chaque partie conteneurisée
