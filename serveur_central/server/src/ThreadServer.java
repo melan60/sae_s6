@@ -38,7 +38,7 @@ class ThreadServer extends Thread {
         }
         try {
             String clientType = br.readLine();
-            lastExpNumero = exchanger.getMongoDriver().getLastExperience();
+            lastExpNumero = exchanger.getMongoDriver().getLastExperience()-1;
             this.currentUser = exchanger.getMongoDriver().getUser();
             if (clientType.equals("analyse")) {
                 analyseLoop();
@@ -63,8 +63,8 @@ class ThreadServer extends Thread {
             int execTime = Integer.parseInt(response[0]);
             int direction = Integer.parseInt(response[1]);
             System.out.println("Temps d'exécution : " + execTime + " " + "direction : " + direction);
-//            String responseBDD = exchanger.getHttpDriver().addResults(numExp, 0, execTime, direction, currentUser);
-            String responseBDD = exchanger.getMongoDriver().addResults(String.valueOf(lastExpNumero), 0, execTime, direction, currentUser);
+//            String responseBDD = exchanger.getHttpDriver().addResults(String.valueOf(lastExpNumero+1), 0, execTime, direction, currentUser);
+            String responseBDD = exchanger.getMongoDriver().addResults(String.valueOf(lastExpNumero+1), 0, execTime, direction, currentUser);
             ps.println(responseBDD);
             System.out.println(responseBDD);
         } catch (IOException e) {
@@ -114,7 +114,7 @@ class ThreadServer extends Thread {
         int numExp = -1;
 
         // Utilisé pour connaître le nombre d'expériences dans la base de données
-        lastExpNumero = exchanger.getMongoDriver().getLastExperience();
+        lastExpNumero = exchanger.getMongoDriver().getLastExperience()-1;
 
         try {
             // Boucle de création de l'utilisateur

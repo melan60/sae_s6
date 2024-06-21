@@ -1,8 +1,10 @@
+import java.util.Arrays;
 import java.util.UUID;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import com.mongodb.MongoException;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
 import io.github.cdimascio.dotenv.Dotenv;
@@ -113,26 +115,62 @@ public class MongoDataDriver implements DataDriver {
      * @param user l'objet user correspondant à celui ayant fait l'expérience
      * @return un string avec le résultat de la requête
      */
-    public synchronized String addResults(String numero, float reactTime, float execTime, int nbErrors, User user){
+    public synchronized String addResults(String numero, float reactTime, float execTime, int nbErrors, User user) {
         int num = Integer.parseInt(numero);
         // Requête pour récupérer le experience _id à partir de son numéro
         Experience experience = experiences.find(eq("numero", num)).first();
         // Création d'un ID unique pour le nouveau résultat
         ObjectId _id = generateUniqueKey("result");
-        Result result = new Result(_id, experience.getId(), reactTime, execTime, nbErrors);
-        try {
-            results.insertOne(result);
-        } catch (MongoException me) {
-            System.err.println("Unable to insert due to an error: " + me);
-            return "ERR unable to create the result";
+        System.out.println("new generated ID : " + _id.toString());
+        Result newResult = new Result(_id, experience.getId(), reactTime, execTime, nbErrors);
+
+        User findedUser = users.find(eq("email", user.getEmail())).first();
+        if (findedUser == null) {
+            return "ERR user not found";
+        }
+        // Vérifier s'il existe déjà un résultat lié à l'expérience
+        Result existingResult = null;
+        for (Result r : findedUser.getResults()) {
+            if (r.getExperience().equals(experience.getId())) {
+                existingResult = r;
+                break;
+            }
         }
 
-        // Met à jour les résultats d'un user en ajoutant le nouveau résultat
-        Bson update = Updates.addToSet("results", result);
-        Bson query = Filters.eq("_id", user.getId());
-        UpdateResult updateResult = users.updateOne(query, update);
-        // Affiche le nombre de documents mis à jour et insérés s'il y en a
-//        System.out.println("Modified document count: " + updateResult.getModifiedCount());
+        if (existingResult != null) {
+            // Mettre à jour le résultat existant
+            Bson updateResult = Updates.combine(
+                    Updates.set("reactTime", reactTime),
+                    Updates.set("execTime", execTime),
+                    Updates.set("error", nbErrors)
+            );
+            results.updateOne(Filters.eq("_id", existingResult.getId()), updateResult);
+            System.out.println("ID current result : " + existingResult.getId());
+            newResult.setId(existingResult.getId());
+
+            // Mettre à jour la liste des résultats de l'utilisateur
+            Bson updateUserResults = Updates.set("results.$[elem]", newResult);
+            System.out.println(updateUserResults);
+            Bson arrayFilter = Filters.eq("elem._id", existingResult.getId());
+            System.out.println(arrayFilter);
+            UpdateOptions updateOptions = new UpdateOptions().arrayFilters(Arrays.asList(arrayFilter));
+            System.out.println(updateOptions);
+            UpdateResult updateRes = users.updateOne(Filters.eq("_id", findedUser.getId()), updateUserResults, updateOptions);
+        } else {
+            // Insérer un nouveau résultat
+            try {
+                results.insertOne(newResult);
+            } catch (MongoException me) {
+                System.err.println("Unable to insert due to an error: " + me);
+                return "ERR unable to create the result";
+            }
+
+            // Mettre à jour les résultats de l'utilisateur en ajoutant le nouveau résultat
+            Bson updateUserResults = Updates.addToSet("results", newResult);
+            UpdateResult updateRes = users.updateOne(Filters.eq("_id", findedUser.getId()), updateUserResults);
+            // Affiche le nombre de documents mis à jour et insérés s'il y en a
+//            System.out.println("Modified document count: " + updateRes.getModifiedCount());
+        }
         return "OK";
     }
 
@@ -142,25 +180,21 @@ public class MongoDataDriver implements DataDriver {
      * @return la clé unique
      */
     public ObjectId generateUniqueKey(String collection){
-        // Génération d'une clé UUID aléatoire
-        UUID key = UUID.randomUUID();
         ObjectId id = null;
         boolean stop = false;
         while(!stop) {
-            // On vérifie pour chaque collection indépendemment si l'ID existe déjà
-            if(collection.equals("result")){
-                id = getResultId(key.toString());
-            }
-            else if(collection.equals("user")){
-                id = getUserId(key.toString());
-            }
+            // Génération d'une clé ObjectId aléatoire
+            id = new ObjectId();
 
-            // Tant que l'ID n'est pas unique, on continue d'en générer un
-            if (id == null) {
-                stop = true;
-            }
-            else {
-                key = UUID.randomUUID();
+            // On vérifie pour chaque collection indépendemment si l'ID existe déjà
+            if (collection.equals("result")) {
+                if (getResultId(id.toString()) == null) {
+                    stop = true;
+                }
+            } else if (collection.equals("user")) {
+                if (getUserId(id.toString()) == null) {
+                    stop = true;
+                }
             }
         }
         return id;

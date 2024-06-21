@@ -28,11 +28,11 @@ const createUser = async (user, callback) => {
                 results: [],
             })
                 .then((user_created) => {
-                    return callback(null, errors.already_registered);
+                    return callback(null, user_created);
                 })
                 .catch((e) => {
                     console.log(e);
-                    return callback(e);
+                    return callback(null, errors.already_registered);
                 });
         })
         .catch((e) => {

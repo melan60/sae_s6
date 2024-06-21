@@ -26,7 +26,7 @@ class MainClient  {
 		try {
 			ps.println("client");
 			nameUser = "Patel";
-			lastNumeroExperience = 5;
+			lastNumeroExperience = 4;
 			while (!stop) {
 				System.out.print(nameUser + " [Saisie du numéro de l'expérience (de 1 à " + lastNumeroExperience + ")]> ");
 				req = consoleIn.readLine();
@@ -68,6 +68,7 @@ class MainClient  {
 				req = consoleIn.readLine();
 				// Termine la boucle en fonction de la valeur saisie
 				if (req == null || req.equals("quit")) {
+					System.out.println("Fin du programme");
 					stop = true;
 				}
 				else {

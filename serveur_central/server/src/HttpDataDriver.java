@@ -109,10 +109,9 @@ public class HttpDataDriver implements DataDriver {
         Document doc = postRequest("/user/add", jsonRequest);
         if (doc == null)
             return "ERR cannot join the API";
-
-        String err = checkError(doc);
-        if (err != null)
+        else if(checkError(doc) != null)
             return "ERR wrong response from API";
+
         // if there is no error, get desired field in data
         Document data = (Document) doc.get("data");
         String name = data.getString("name");
