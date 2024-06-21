@@ -229,8 +229,8 @@ class ThreadServer extends Thread {
 
         User user = new User(params[1], params[2], params[3], params[4], resCheck[1], resCheck[2], resCheck[3]);
         // Ajout de l'utilisateur dans la base de données
-//		String response = exchanger.getMongoDriver().addUser(user);
-        String response = exchanger.getHttpDriver().addUser(user);
+		String response = exchanger.getMongoDriver().addUser(user);
+//        String response = exchanger.getHttpDriver().addUser(user);
         System.out.println(response);
         String[] res = response.split(" ");
         if (response.startsWith("ERR")) {

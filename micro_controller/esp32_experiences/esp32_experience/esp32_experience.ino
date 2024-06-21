@@ -72,25 +72,25 @@ void loop() {
       for (int i = 0; i < nb_repetitions; i += 1) {
         reactMovement = 0;
         experience1();
-        delay(2000);
+        delay(1000);
       }
     } else if (test == '2') {
       for (int i = 0; i < nb_repetitions; i += 1) {
         reactMovement = 0;
         experience2();
-        delay(2000);
+        delay(1000);
       }
     } else if (test == '3') {
       for (int i = 0; i < nb_repetitions; i += 1) {
         reactMovement = 0;
         experience3();
-        delay(2000);
+        delay(1000);
       }
     } else if (test == '4') {
       for (int i = 0; i < nb_repetitions; i += 1) {
         reactMovement = 0;
         experience4();
-        delay(2000);
+        delay(1000);
       }
     }
     // else {
