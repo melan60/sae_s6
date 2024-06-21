@@ -58,7 +58,6 @@ export default {
     },
     onDismissed() {
       this.alertCountDown = 0;
-      // Emit an event if parent component needs to be notified
       this.$emit('alertDismissed');
     },
   },
@@ -71,8 +70,8 @@ export default {
   position: absolute;
   right: 3rem;
   top: 0.5rem;
-  color: #d9534f; /* Adjust the color to match your design */
-  font-size: 1.5rem; /* Adjust the size as needed */
+  color: #d9534f;
+  font-size: 1.5rem;
 }
 
 </style>

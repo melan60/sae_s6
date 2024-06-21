@@ -29,16 +29,16 @@ const login = async (req, res) => {
  * @param res
  * @returns {Promise<void>}
  */
-const getResults = async (req, res) => {
+const getUserInfoFromToken = async (req, res) => {
     try {
         const token = req.headers.token; //token
-        const user = await authService.getResults(token);
+        const user = await authService.getUserInfoFromToken(token);
         res.status(200).json({
             title: 'User fetched',
             user: user,
         });
     } catch (error) {
-        console.error('Error in getResults controller:', error); // Log the error
+        console.error('Error in getUserInfoFromToken controller:', error); // Log the error
         res.status(401).json({ title: 'unauthorized', message: error.message });
     }
 }
@@ -78,6 +78,6 @@ const getCurrentUser = async (req, res) => {
 
 module.exports = {
     login,
-    getResults,
+    getUserInfoFromToken,
     getCurrentUser,
 }

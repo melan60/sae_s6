@@ -17,7 +17,7 @@ const int yellowLedPin = 5;   // Broche de la LED jaune
 const int CLK = 33;  // Broche de données
 const int DIO = 32;  // Broche d'horloge
 
-const int nb_repetitions = 2;
+const int nb_repetitions = 5;
 
 unsigned long startTime = 0;           // Variable pour stocker le temps de démarrage du chronomètre
 double reactTime = 0;                  // Variable pour stocker le temps de de réaction de l'utilisateur
@@ -72,19 +72,25 @@ void loop() {
       for (int i = 0; i < nb_repetitions; i += 1) {
         reactMovement = 0;
         experience1();
-        // delay(5000);
+        delay(1000);
       }
     } else if (test == '2') {
       for (int i = 0; i < nb_repetitions; i += 1) {
+        reactMovement = 0;
         experience2();
+        delay(1000);
       }
     } else if (test == '3') {
       for (int i = 0; i < nb_repetitions; i += 1) {
+        reactMovement = 0;
         experience3();
+        delay(1000);
       }
     } else if (test == '4') {
       for (int i = 0; i < nb_repetitions; i += 1) {
+        reactMovement = 0;
         experience4();
+        delay(1000);
       }
     }
     // else {
@@ -190,33 +196,28 @@ bool btnIsHigh(int btn) {
   return digitalRead(btn) == HIGH;
 }
 
-void afficherUnNombreALEcran(int number) {
-  tm1637.clearDisplay();
-  tm1637.display(0, number);
-}
-
 void verifieLeBtnClique2(int number, int nb1, int nb2, int nb3) {
   while (chronometerRunning) {
     detectMovement();
 
     if (aBtnIsHigh()) {
       if (btnIsHigh(defaultBtnPin) && number == nb1 || btnIsHigh(redBtnPin) && number == nb2 || btnIsHigh(yellowBtnPin) && number == nb3) {  // TODO
-        Serial.println("Réussite");
       } else {
         errors += 1;
       }
       execTime += stopChronometer() - reactTimeIteration;
-      Serial.print("execTime : ");
-      Serial.println(execTime);
     }
   }
 }
 
 void experience3() {
+  tm1637.clearDisplay();
+  wait();
   int number = random(1, 4);  // TODO
-  afficherUnNombreALEcran(number);
+  tm1637.display(0, number);
   startChronometer();
   verifieLeBtnClique2(number, 1, 1 + 1, 1 + 2);
+  tm1637.clearDisplay();
 }
 
 
@@ -229,8 +230,6 @@ void verifieCobayeCliqueBtnDefaut() {
     if (digitalRead(defaultBtnPin) == HIGH) {
       noTone(buzzerPin);
       execTime += stopChronometer() - reactTimeIteration;
-      Serial.print("execTime : ");
-      Serial.println(execTime);
     }
   }
 }

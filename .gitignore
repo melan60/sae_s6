@@ -12,6 +12,7 @@ ReactiPop/local.properties
 serveur_central/server/.env
 serveur_central/.idea/
 serveur_central/out/*
+serveur_central/out-docker/*
 
 visualisation/.idea
 visualisation/api/node_modules/

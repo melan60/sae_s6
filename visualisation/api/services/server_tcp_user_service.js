@@ -32,7 +32,7 @@ const createUser = async (user, callback) => {
                 })
                 .catch((e) => {
                     console.log(e);
-                    return callback(e);
+                    return callback(null, errors.already_registered);
                 });
         })
         .catch((e) => {
@@ -48,27 +48,74 @@ const createUser = async (user, callback) => {
  * @return {Promise}
  */
 const addResult = async (result, user, callback) => {
-    Result.create({
-        experience: result.experience,
-        reactTime: result.reactTime,
-        execTime: result.execTime,
-        error: result.error,
-    })
-        .then((res) => {
-            User.findOne({email: user.email})
-                .exec()
-                .then((u) => {
-                    if (!u) {
-                        return callback(errors.not_found);
-                    }
+    User.findOne({email: user.email}).exec()
+        .then((u) => {
+            if (!u) {
+                return callback(errors.not_found);
+            }
+
+            // Vérifier si un résultat pour cette expérience existe déjà
+            const existIndex = u.results.findIndex((r) => r.experience == result.experience);
+            
+            if(existIndex !== -1) {
+                // Mettre à jour le résultat existant
+                Result.findByIdAndUpdate(
+                    u.results[existIndex]._id,
+                    {
+                        reactTime: result.reactTime,
+                        execTime: result.execTime,
+                        error: result.error
+                    },
+                    {new: true}
+                ).then(updated => {
+                    u.results[existIndex] = updated;
+                    u.save();
+                    return callback(null, updated);
+                }).catch(e => {
+                    return callback(e);
+                });
+            } else {
+                // Créer un nouveau résultat
+                Result.create({
+                    experience: result.experience,
+                    reactTime: result.reactTime,
+                    execTime: result.execTime,
+                    error: result.error
+                }).then((res) => {
                     u.results.push(res);
                     u.save();
                     return callback(null, res);
+                }).catch(e => {
+                    return callback(e);
                 });
-        })
-        .catch((e) => {
+            }
+        }).catch(e => {
             return callback(e);
         });
+
+    // Result.findOneAndUpdate(
+    //     {experience: result.experience, user: user.email},
+    //     {
+    //         experience: result.experience,
+    //         reactTime: result.reactTime,
+    //         execTime: result.execTime,
+    //         error: result.error,
+    //     })
+    //     .then((res) => {
+    //         User.findOne({email: user.email})
+    //             .exec()
+    //             .then((u) => {
+    //                 if (!u) {
+    //                     return callback(errors.not_found);
+    //                 }
+    //                 u.results.push(res);
+    //                 u.save();
+    //                 return callback(null, res);
+    //             });
+    //     })
+    //     .catch((e) => {
+    //         return callback(e);
+    //     });
 };
 
 /**
@@ -81,6 +128,20 @@ const getAllUsers = async () => {
     } catch (error) {
         console.error("Error in fetching all users:", error);
         throw new Error(`Error in getAllUsers service: ${error.message}`);
+    }
+}
+
+/**
+ * Function used to get a user details by id
+ * @param id
+ * @returns {Promise<void>}
+ */
+const getUserById = async (id) => {
+    try {
+        return await User.findById(id).exec();
+    } catch (error) {
+        console.error("Error in fetching user by id:", error);
+        throw new Error(`Error in getUserById service: ${error.message}`);
     }
 }
 
@@ -138,11 +199,13 @@ const deleteUser = async (id) => {
 }
 
 
+
 module.exports = {
     createUser,
     addResult,
     getAllCobayes,
     deleteAllCobayes,
+    getUserById,
     deleteAllUsers,
     getAllUsers,
     deleteUser

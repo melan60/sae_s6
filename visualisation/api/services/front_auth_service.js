@@ -40,11 +40,13 @@ const login = async (email, password) => {
 }
 
 /**
- * Function used to get the results of the user
- * @param token
- * @returns {Promise<{email: *, name: *}>}
+ * Retrieves user information from a token.
+ *
+ * @param {string} token - JWT token to decode and verify.
+ * @returns {Promise<Object>} Promise that resolves to an object containing user email and name.
+ * @throws {Error} If token verification fails or user retrieval encounters an error.
  */
-const getResults = async (token) => {
+const getUserInfoFromToken = async (token) => {
     return new Promise((resolve, reject) => {
         // Verify the token
         jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
@@ -68,7 +70,8 @@ const getResults = async (token) => {
 }
 
 
+
 module.exports = {
     login,
-    getResults,
+    getUserInfoFromToken,
 };

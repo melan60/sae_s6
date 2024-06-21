@@ -1,5 +1,6 @@
 const express = require("express");
 const controller = require("../controllers/server_tcp_user_controller");
+const {authenticateJWT} = require("../middlewares/auth_middleware");
 const router = express.Router();
 
 /**
@@ -63,7 +64,7 @@ router.post("/add", controller.createUser);
  *    post:
  *      tags:
  *        - USERS
- *      description: Create new result with specified properties to insert the result into a specific user.
+ *      description: Create new result with specified properties to insert the result into a specific user. If the result already exists, it will be updated.
  *      parameters:
  *        - in: body
  *          name: result
@@ -128,7 +129,7 @@ router.post("/result/add", controller.addResult);
 
 /**
  *  @swagger
- *  /user/users:
+ *  /user:
  *    get:
  *      tags:
  *        - USERS
@@ -141,45 +142,11 @@ router.post("/result/add", controller.addResult);
  *        '500':
  *          description: Internal server error
  */
-router.get("/users", controller.getAllUsers);
-
-/**
- *  @swagger
- *  /user/cobayes:
- *    get:
- *      tags:
- *        - USERS
- *      description: Get all cobayes
- *      responses:
- *        '200':
- *          description: Get all cobayes successful
- *        '400':
- *          description: Bad request
- *        '500':
- *          description: Internal server error
- */
-router.get('/cobayes', controller.getAllCobayes);
+router.get("/", controller.getAllUsers);
 
 /**
  * @swagger
- * /user/cobayes:
- *  delete:
- *      tags:
- *          - USERS
- *      description: Delete all cobayes
- *      responses:
- *      '200':
- *          description: Delete all cobayes successful
- *      '500':
- *          description: Internal server error
- *      '400':
- *          description: Bad request
- */
-router.delete('/cobayes', controller.deleteAllCobayes)
-
-/**
- * @swagger
- * /user/users:
+ * /user:
  *  delete:
  *      tags:
  *          - USERS
@@ -192,11 +159,10 @@ router.delete('/cobayes', controller.deleteAllCobayes)
  *      '400':
  *          description: Bad request
  */
-router.delete('/users', controller.deleteAllUsers)
-
+router.delete('/', controller.deleteAllUsers)
 /**
  *  @swagger
- *  /user:
+ *  /user/{id}:
  *    delete:
  *      tags:
  *        - USERS
@@ -216,5 +182,42 @@ router.delete('/users', controller.deleteAllUsers)
  *          description: Internal server error
  */
 router.delete('/user/:id', controller.deleteUser)
+
+router.get("/details/:id", controller.getUserById);
+
+/**
+ *  @swagger
+ *  /user/cobayes:
+ *    get:
+ *      tags:
+ *        - USERS
+ *      description: Get all cobayes
+ *      responses:
+ *        '200':
+ *          description: Get all cobayes successful
+ *        '400':
+ *          description: Bad request
+ *        '500':
+ *          description: Internal server error
+ */
+router.get('/cobayes', authenticateJWT, controller.getAllCobayes);
+
+/**
+ * @swagger
+ * /user/cobayes:
+ *  delete:
+ *      tags:
+ *          - USERS
+ *      description: Delete all cobayes
+ *      responses:
+ *      '200':
+ *          description: Delete all cobayes successful
+ *      '500':
+ *          description: Internal server error
+ *      '400':
+ *          description: Bad request
+ */
+router.delete('/cobayes', controller.deleteAllCobayes)
+
 
 module.exports = router;
