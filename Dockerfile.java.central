@@ -1,0 +1,7 @@
+FROM amazoncorretto
+
+WORKDIR /app
+COPY . .
+
+EXPOSE 1200
+CMD npm run start

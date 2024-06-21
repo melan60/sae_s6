@@ -1,0 +1,28 @@
+version: "2.0"
+
+services:
+  mongodb_prod:
+    image: mongo
+    container_name: mongodb_prod
+    networks:
+      - multi_architecture
+    ports:
+      - "27018:27017"
+
+  api_prod:
+    build:
+      context: ./visualisation/api
+      dockerfile: Dockerfile.api.prod
+    container_name: api_prod
+    depends_on:
+      - mongodb_prod
+    environment:
+      DOCKER_MONGO: mongodb_prod
+    networks:
+      - multi_architecture
+    ports:
+      - "4000:5000"
+
+networks:
+  multi_architecture:
+    external: false

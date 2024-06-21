@@ -1,0 +1,1 @@
+java -cp "out-docker/client/client.jar:lib/*" BaseClient localhost 2000

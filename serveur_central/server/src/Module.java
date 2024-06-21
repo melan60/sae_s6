@@ -1,23 +1,20 @@
 import org.bson.types.*;
+
 import java.util.List;
 
 public class Module {
 
     private ObjectId id;
     private String name;
-    private String shortName;
-    private String key;
     private String uc;
-    private List<ObjectId> chipsets;
+    private String description;
 
-    public Module() {}
+    public Module() {
+    }
 
-    public Module(String name, String shortName, String key, String uc, List<ObjectId> chipsets) {
+    public Module(String name, String uc, String description) {
         this.name = name;
-        this.shortName = shortName;
-        this.key = key;
         this.uc = uc;
-        this.chipsets = chipsets;
     }
 
     public ObjectId getId() {
@@ -36,21 +33,6 @@ public class Module {
         this.name = name;
     }
 
-    public String getShortName() {
-        return shortName;
-    }
-
-    public void setShortName(String shortName) {
-        this.shortName = shortName;
-    }
-
-    public String getKey() {
-        return key;
-    }
-
-    public void setKey(String key) {
-        this.key = key;
-    }
 
     public String getUc() {
         return uc;
@@ -58,17 +40,5 @@ public class Module {
 
     public void setUc(String uc) {
         this.uc = uc;
-    }
-
-    public List<ObjectId> getChipsets() {
-        return chipsets;
-    }
-
-    public void setChipsets(List<ObjectId> chipsets) {
-        this.chipsets = chipsets;
-    }
-
-    public String toString() {
-        return id+" "+name+" "+shortName+" "+key+" "+ uc+" "+ chipsets;
     }
 }
