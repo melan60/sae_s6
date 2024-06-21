@@ -43,7 +43,7 @@ class NewActivity : AppCompatActivity() {
     }
 
     private fun sendToServer(imageUri: Uri, start_time: String, stop_time: String) {
-        val serverName = "192.168.148.221"
+        val serverName = "192.168.43.52"
         val serverPort = 8000
         val imageData = getImageBytes(imageUri)
 
